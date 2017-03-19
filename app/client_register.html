@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!--Materialize Styling Stuff:-->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/css/materialize.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/js/materialize.min.js"></script>
+  <!--Firebase Stuff:-->
+  <script src="https://www.gstatic.com/firebasejs/3.7.2/firebase.js"></script>
+  <!--Main script-->
+  <script src="main.js"></script>
+</head>
+
+<body>
+  <!--Registration inputs:-->
+  <div class="row">
+  <div class="input-field col s3">
+    <input id="fullname" type="text" class="validate">
+    <label class="active" for="fullname">Full Name</label>
+  </div>
+ </div>
+ <div class="row">
+ <div class="input-field col s3">
+   <input id="username" type="text" class="validate">
+   <label class="active" for="username">Username/Nickname</label>
+ </div>
+</div>
+ <div class="row">
+ <div class="input-field col s3">
+   <input id="password" type="password" class="validate">
+   <label class="active" for="password">Password</label>
+ </div>
+</div>
+<div class="row">
+<div class="input-field col s3">
+  <input id="email" type="email" class="validate">
+  <label class="active" for="email">E-Mail Address</label>
+</div>
+</div>
+<div class="row">
+<div class="input-field col s3">
+  <input id="country" type="text" class="validate">
+  <label class="active" for="country">Country</label>
+</div>
+</div>
+<div class="row">
+<div class="input-field col s3">
+  <input id="city" type="text" class="validate">
+  <label class="active" for="city">City</label>
+</div>
+</div>
+<div class="row">
+<div class="input-field col s6">
+  <input id="address" type="text" class="validate">
+  <label class="active" for="address">Address</label>
+</div>
+</div>
+<div class="row">
+<div class="input-field col s3">
+  <input id="business" type="text" class="validate">
+  <label class="active" for="business">Business</label>
+</div>
+</div>
+
+<center>
+<div class="btn" onclick="finish_client()"> <!--See main.js-->
+  <span>Register</span>
+</div>
+</center>
+
+<script>
+username = getCookie("username");
+if (username != "") {
+  alert("You have already logged in.");
+  window.location = "index.html";
+}
+</script>
+
+</body>
+
+</html>

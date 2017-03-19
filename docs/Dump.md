@@ -1,3 +1,6 @@
+#### Inspiration
+https://itunes.apple.com/us/app/logos-quiz-guess-the-logos/id478364212?mt=8
+
 #### Random Dump
 
 Emotional tracking brain tracking 
