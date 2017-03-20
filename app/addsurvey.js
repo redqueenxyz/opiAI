@@ -1,12 +1,12 @@
 acctype = getCookie("acctype"); //get 'accounttype cookie (user/client)'
 username = getCookie("username"); //get username
 if (username == "") { //check if username is empty/does not exist
-alert("Please login"); //login request
-window.location = "client_options.html"; //redirect
+  alert("Please login"); //login request
+  window.location = "client_options.html"; //redirect
 }
 else if (acctype != "client") { //if the username is valid/if you are logged in, but you're a user
-alert("This is a client page, for creating surveys."); //informs that this page is for clients only
-window.location = "index.html"; //redirects
+  alert("This is a client page, for creating surveys."); //informs that this page is for clients only
+  window.location = "index.html"; //redirects
 }
 
 //Prepare... for... BADLY WRITTEN CODE:

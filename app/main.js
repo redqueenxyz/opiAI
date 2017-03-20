@@ -15,28 +15,30 @@ function login_user() { //from login_user.html
   pass = document.getElementById("password").value; //get password
   var usersRef = firebase.database().ref('user'); //user directory
 
-  usersRef.orderByChild('username').equalTo(user).once('value', function(snap){ //find a child (username) in user equal to the username you've provided
-      if(snap.exists()){ //if the username exists
+  usersRef.orderByChild('username').equalTo(user).once('value', function (snap) { //find a child (username) in user equal to the username you've provided
+    if (snap.exists()) { //if the username exists
 
-        return firebase.database().ref('/user/' + user).once('value').then(function(snapshot) { //move to the user's directory
-          var password_login_user = snapshot.val().password; //get the password from db
-          if (password_login_user == pass) { //if provided password matches the password from db
-            alert("Success!"); //yay
-            document.cookie = "username=" + user + ";"; //adds cookies. Enjoy, cookie monster!
-            user = "user";
-            document.cookie = "acctype=" + user + ";";
-            document.location.href='user.html';
-          }
-          else { //db password doesn't match given password
-            alert("Invalid Password!"); //lala
-            document.location.href='user_login.html'; //redirect
-          }
-        });
+      return firebase.database().ref('/user/' + user).once('value').then(function (snapshot) { //move to the user's directory
+        var password_login_user = snapshot.val().password; //get the password from db
+        if (password_login_user == pass) { //if provided password matches the password from db
+          alert("Success!"); //yay
+          document.cookie = "username=" + user + ";"; //adds cookies. Enjoy, cookie monster!
+          user = "user";
+          document.cookie = "acctype=" + user + ";";
+          document.location.href = 'user.html';
 
-      }
-      else { //username is invalid
-        alert("Invalid Username!"); //lala
-        document.location.href='user_login.html'; //redirect
+          // # TODO: ca
+        }
+        else { //db password doesn't match given password
+          alert("Invalid Password!"); //lala
+          document.location.href = 'user_login.html'; //redirect
+        }
+      });
+
+    }
+    else { //username is invalid
+      alert("Invalid Username!"); //lala
+      document.location.href = 'user_login.html'; //redirect
     }
   });
 
@@ -47,28 +49,28 @@ function login_client() {
   pass = document.getElementById("password").value;
   var clientRef = firebase.database().ref('client');
 
-  clientRef.orderByChild('username').equalTo(user).once('value', function(snap){
-      if(snap.exists()){
+  clientRef.orderByChild('username').equalTo(user).once('value', function (snap) {
+    if (snap.exists()) {
 
-        return firebase.database().ref('/client/' + user).once('value').then(function(snapshot) {
-          var password_login_client = snapshot.val().password;
-          if (password_login_client == pass) {
-            alert("Success!");
-            document.cookie = "username=" + user + ";";
-            user = "client";
-            document.cookie = "acctype=" + user + ";";
-            document.location.href='client.html';
-          }
-          else {
-            alert("Invalid Password!");
-            document.location.href='client_login.html';
-          }
-        });
+      return firebase.database().ref('/client/' + user).once('value').then(function (snapshot) {
+        var password_login_client = snapshot.val().password;
+        if (password_login_client == pass) {
+          alert("Success!");
+          document.cookie = "username=" + user + ";";
+          user = "client";
+          document.cookie = "acctype=" + user + ";";
+          document.location.href = 'client.html';
+        }
+        else {
+          alert("Invalid Password!");
+          document.location.href = 'client_login.html';
+        }
+      });
 
-      }
-      else {
-        alert("Invalid Username!");
-        document.location.href='client_login.html';
+    }
+    else {
+      alert("Invalid Username!");
+      document.location.href = 'client_login.html';
     }
   });
 
@@ -121,13 +123,13 @@ function addUser(username, password, city, state, country, email) {
 }
 
 function addUserInterests(user, a, b, c, d, e, f) { //intersts for user
-  firebase.database().ref('user/' + user+ '/interests').set({
-     1: a,
-     2: b,
-     3: c,
-     4: d,
-     5: e,
-     6: f
+  firebase.database().ref('user/' + user + '/interests').set({
+    1: a,
+    2: b,
+    3: c,
+    4: d,
+    5: e,
+    6: f
   });
 }
 
@@ -147,17 +149,17 @@ function finish_user() {
 }
 
 function getCookie(cname) { //function to return value of the cookie
-    var name = cname + "=";
-    var decodedCookie = decodeURIComponent(document.cookie);
-    var ca = decodedCookie.split(';');
-    for(var i = 0; i <ca.length; i++) {
-        var c = ca[i];
-        while (c.charAt(0) == ' ') {
-            c = c.substring(1);
-        }
-        if (c.indexOf(name) == 0) {
-            return c.substring(name.length, c.length);
-        }
+  var name = cname + "=";
+  var decodedCookie = decodeURIComponent(document.cookie);
+  var ca = decodedCookie.split(';');
+  for (var i = 0; i < ca.length; i++) {
+    var c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
     }
-    return "";
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
 }
