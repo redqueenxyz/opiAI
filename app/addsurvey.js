@@ -10,6 +10,7 @@ else if (acctype != "client") { //if the username is valid/if you are logged in,
 }
 
 //Prepare... for... BADLY WRITTEN CODE:
+// Lol
 
 function stp1() { //step 1
   name = document.getElementById("surveyname").value; //recieve data from the surveyname
