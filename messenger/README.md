@@ -8,7 +8,7 @@ For more detailed setup instructions, see [Messenger Platform Quick Start](https
 
 This is an an echo bot that responds to a user's message by repeating their message back to them. It also sends a generic template when a message with "generic" text is received. This project is not dependent on any external libraries and can easily be extended.
 
-![](https://cdn.gomix.com/ca73ace5-3fff-4b8f-81c5-c64452145271%2FmessengerBotGIF.gif)
+![](v1.gif)
 
 This repo is also self-contained for interaction with GAE, and can be accessed via the [GCloud SDK](https://cloud.google.com/sdk/) with appropriate permissions. 
 
