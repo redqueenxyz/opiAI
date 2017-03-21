@@ -1,0 +1,14 @@
+{
+  "name": "messenger-bot",
+  "version": "1.0.0",
+  "description": "Messenger Demo",
+  "main": "index.js",
+  "scripts": {
+    "start": "node bot.js"
+  },
+  "dependencies": {
+    "request": "^2.72.0",
+    "express": "*",
+    "body-parser": "*"
+  }
+}
