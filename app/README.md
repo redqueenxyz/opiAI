@@ -1,6 +1,6 @@
-## **Client webpage/web app for the creation of surveys.**
+**Client webpage/web app for the creation of surveys.**
 
-## **Code is running at http://botperson.eu5.org/redqueen/client**
+**Code is running at http://botperson.eu5.org/redqueen/client**
 
 
 ***CHANGELOG (v2.0):***
