@@ -1,8 +1,8 @@
-*Client webpage/web app for the creation of surveys.
-Code is running at http://botperson.eu5.org/redqueen/client*
+#**Client webpage/web app for the creation of surveys.
+#Code is running at http://botperson.eu5.org/redqueen/client**
 
 
-*CHANGELOG (v2.0):*
+***CHANGELOG (v2.0):***
 
 • Removed user features
 
@@ -13,7 +13,7 @@ Code is running at http://botperson.eu5.org/redqueen/client*
 • New format for data (Changed a little bit)
 
 
-*CHANGELOG (v1.0):*
+***CHANGELOG (v1.0):***
 
 • Made a dummy version of FeedbackAI
 
