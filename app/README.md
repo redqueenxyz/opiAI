@@ -8,9 +8,12 @@ CHANGELOG (v2.0):
 • Removed acctype cookie
 
 • Survey creator completed (kinda)
+
 • New format for data (Changed a little bit)
-• Graphs added for survey results
+
 
 CHANGELOG (v1.0):
+
 • Made a dummy version of FeedbackAI
+
 • Half-baked survey
