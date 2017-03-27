@@ -10,7 +10,7 @@ The goal of this test is to explore the capabilities of Facebook's Messenger Pla
 
 This is primarily an echo bot that responds to a user's message by repeating their message back to them, with some added functionality accessible via certain keywords. This project is not dependent on any external libraries for it's core functionality, so it can be easily extended.For more detailed setup instructions, see [Messenger Platform Quick Start](https://developers.facebook.com/docs/messenger-platform/guides/quick-start).
 
-<script type="text/javascript" src="https://asciinema.org/a/4x9izzb6xxeu1g5xx785tlioa.js" id="asciicast-4x9izzb6xxeu1g5xx785tlioa" async></script>
+[![asciicast](https://asciinema.org/a/4x9izzb6xxeu1g5xx785tlioa.png)](https://asciinema.org/a/4x9izzb6xxeu1g5xx785tlioa)
 
 This repo is also self-contained for interaction with GAE, and can be accessed via the [GCloud SDK](https://cloud.google.com/sdk/) with appropriate permissions.   This is what has been implemented so far:
 
