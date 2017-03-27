@@ -29,4 +29,4 @@ This repo is also self-contained for interaction with GAE, and can be accessed v
 It is now capable of the following functions:
 - `sendTextMessage()`: The base protocol (Thanks Facebook) that allows more complex messaging protocols to be created.
 - `sendGenericMessage()`: A simple Structured Response example, using the [Generic template](https://developers.facebook.com/docs/messenger-platform/send-api-reference/generic-template).
-- `sendQuickReply()`:  A simple Quick Reply example, using the [Quick Reply template.](https://developers.facebook.com/docs/messenger-platform/send-api-reference/quick-replies).
+- `sendQuickReply()`:  A simple Quick Reply example, using the [Quick Reply template](https://developers.facebook.com/docs/messenger-platform/send-api-reference/quick-replies).
