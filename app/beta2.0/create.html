@@ -1,0 +1,59 @@
+<!--Page for the creation of a survey. Pretty self explanatory, see addsurvey.js for more.-->
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!--Firebase Stuff:-->
+  <script src="https://www.gstatic.com/firebasejs/3.7.2/firebase.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <!--Materialize Styling Stuff:-->
+  <link rel="stylesheet" href="css/materialize.min.css">
+  <script src="js/materialize.min.js"></script>
+  <!--Main script-->
+  <script src="main.js"></script>
+  <script src="addsurvey.js"></script>
+  <style>
+  #select {
+    font-family: Georgia, "Times New Roman", Times, serif;
+    background: rgba(255,255,255,.1);
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    margin: 0;
+    outline: 0;
+    padding: 7px;
+    width: 100%;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    background-color: #e8eeef;
+    color:#8a97a0;
+    -webkit-box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
+    margin-bottom: 30px;
+
+  }
+  </style>
+</head>
+
+<body>
+
+  <div id = "main">
+
+  <div class="row">
+  <div class="input-field col s3">
+    <input id="surveyname" type="text" class="validate">
+    <label class="active" for="surveyname">Survey Name</label>
+  </div>
+ </div>
+
+ <center>
+ <div class="btn" onclick="stp2()">
+   <span>Create Survey!</span>
+ </div>
+ </center>
+ </div>
+
+</body>
+
+</html>
