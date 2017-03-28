@@ -58,6 +58,7 @@ app.get('/webhook', function (req, res) {
 
     console.log("Validating webhook");
     res.status(200).send(req.query['hub.challenge']);
+
   } else {
     console.error("Failed validation. Make sure the validation tokens match.");
     res.sendStatus(403);
@@ -199,6 +200,14 @@ function receivedMessage(event) {
         // if the text is 'quick reply', run the Quick Reply example, then break
         sendQuickReply(senderID);
         break;
+      case 'setmenu':
+        //TODO: Successfully passing, but no change to the Bot UI
+        setPersistentMenu();
+        break;
+      case 'setgreeting':
+        //TODO: Successfully passing, but no change to the Bot UI
+        setGreeting();
+        break;        
       default:
         // else, run the general Echo example
         sendTextMessage(senderID, messageText);
@@ -304,7 +313,6 @@ function sendGenericMessage(recipientId) {
 
 /** This function demonstrates the Quick Reply capability (!!) which provides the users buttons to respond and returns a defined payload */
 // Reference: https://developers.facebook.com/docs/messenger-platform/send-api-reference/quick-replies
-
 function sendQuickReply(recipientId) {
   console.log('\nWe heard \'quick reply\', get the Quick Reply template!');
   var messageData = {
@@ -335,13 +343,66 @@ function sendQuickReply(recipientId) {
   callSendAPI(messageData);
 }
 
+
+/** This function attemps to explore the Greeting capability which sets a new users default message */
+// Reference: https://developers.facebook.com/docs/messenger-platform/send-api-reference/quick-replies
+function setGreeting() {
+  console.log('\nWe are sending a greeting!');
+  var settingData = {
+    setting_type: "greeting",
+    greeting: {
+      text: "Welcome to another bot {{user_first_name}}."
+    }
+  }
+tellSendAPI(settingData);
+};
+
+/** TThis function attemps to explore the Persistent Menu capability which sets a new users default message */
+// Reference: https://developers.facebook.com/docs/messenger-platform/send-api-reference/quick-replies
+function setPersistentMenu() {
+  console.log('\nWe are changing the Persistent Menu!');
+  var settingData = {
+  "setting_type":"call_to_actions",
+  "thread_state":"new_thread",
+  "call_to_actions":[
+    {
+      "payload":"Test1"
+    }
+  ]
+}
+tellSendAPI(settingData);
+};
+
+function tellSendAPI(settingData) {
+  console.log('\nMessage has been processed, attempting to set something via the Facebook Send API...');
+
+  request({
+    uri: 'https://graph.facebook.com/v2.6/me/thread_settings', // The API endpoint to POST to
+    qs: { access_token: process.env.PAGE_ACCESS_TOKEN || 'EAAKOoRO0eWgBAKLeeZAr3GO06ggHjnjCxsOsbkBPkCgNPcykOg0TQOKHizeLuGc2ul7vghYAEwbvhcuMIfWVLImJ68oH9CoeIoistETH70MIDzv2icDhbs0HCuqEe7rnYQiEsl8MXbBmonMeSMxg3c7unDWkujZATVADTHOAZDZD' },
+    // TODO: Maybe find a less hacky way to pass the PAGE_TOKEN to the API? Using boolean or here
+    method: 'POST',
+    json: settingData // actual message to send to the Send API 
+
+  }, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      // If there's NO error or the response is good (200), then print the message
+      console.log("\nSuccessfully sent setting!");
+    } else {
+      console.error("Failed to send new setting; check your errors!");
+      // console.error(response); // Dumps the whole response; very messy console, removed this
+      console.error(error); // Should get the error though
+    }
+  });
+}
+ 
+
 /** This function is a wrapper function that is called after every template, and it handles actually submitting the final POST request to the Send API */
 function callSendAPI(messageData) {
   console.log('\nMessage has been processed, attempting to send a response back to Facebook Send API...');
 
   request({
     uri: 'https://graph.facebook.com/v2.6/me/messages', // The API endpoint to POST to
-    qs: { access_token: process.env.PAGE_ACCESS_TOKEN || 'EAAafieH0vP8BAJSZCRK8dAgTZAuBUZCmaPCAZA5GY05lVZCj3HtK69fv1QGGiGL02IJtGZCWv9sVGaJKek5eD5YDDMxUxnDDhal1iD3pqOtx612WeOmIfVyRN41c8RSQbUEPrMRkgrXwReUPycusvOrkluexXtZBJC0XKWZC5SW75wZDZD' },
+    qs: { access_token: process.env.PAGE_ACCESS_TOKEN || 'EAAKOoRO0eWgBAKLeeZAr3GO06ggHjnjCxsOsbkBPkCgNPcykOg0TQOKHizeLuGc2ul7vghYAEwbvhcuMIfWVLImJ68oH9CoeIoistETH70MIDzv2icDhbs0HCuqEe7rnYQiEsl8MXbBmonMeSMxg3c7unDWkujZATVADTHOAZDZD' },
     // TODO: Maybe find a less hacky way to pass the PAGE_TOKEN to the API? Using boolean or here
     method: 'POST',
     json: messageData // actual message to send to the Send API 
