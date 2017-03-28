@@ -15,6 +15,7 @@
 // Quickstart: https://developers.facebook.com/docs/messenger-platform/guides/quick-start
 // Additional: https://www.gitbook.com/book/node-bloggers/creating-a-fb-messenger-bot-with-nodejs/details
 
+
 /**************/
 /// Setup
 /**************/
@@ -39,6 +40,11 @@ app.use(bodyParser.urlencoded({  // support encoded bodies
 // Start Message
 var messengerButton = "<html><head><title>Facebook Messenger Bot</title></head><body><h1>Facebook Messenger Bot</h1>This is a bot based on Messenger Platform QuickStart, as modified for feedbackAI. For more details, see their <a href=\"https://developers.facebook.com/docs/messenger-platform/guides/quick-start\">docs</a>.</body></html>";
 
+// Local variables
+var PAGE_ACCESS_TOKEN = "EAAKOoRO0eWgBAKLeeZAr3GO06ggHjnjCxsOsbkBPkCgNPcykOg0TQOKHizeLuGc2ul7vghYAEwbvhcuMIfWVLImJ68oH9CoeIoistETH70MIDzv2icDhbs0HCuqEe7rnYQiEsl8MXbBmonMeSMxg3c7unDWkujZATVADTHOAZDZD"
+var VERIFY_TOKEN = "fuckyouappengine"
+var PORT = 3000
+
 /**************/
 // Authorization
 // Typically takes a couple seconds to authorize before going live; don't be surprised if there is a delay!
@@ -54,7 +60,7 @@ app.get('/webhook', function (req, res) {
   if (
 
     req.query['hub.mode'] === 'subscribe' &&
-    req.query['hub.verify_token'] === process.env.VERIFY_TOKEN || 'fuckyouappengine') {
+    req.query['hub.verify_token'] === VERIFY_TOKEN) {
 
     console.log("Validating webhook");
     res.status(200).send(req.query['hub.challenge']);
@@ -241,7 +247,7 @@ function receivedPostback(event) {
 }
 
 /**************/
-// Sending Messages
+// Sending Helpers
 // Reference: https://developers.facebook.com/docs/messenger-platform/send-api-reference/contenttypes 
 /**************/
 
@@ -373,17 +379,21 @@ function setPersistentMenu() {
 tellSendAPI(settingData);
 };
 
+/**************/
+// Sending Messages
+/**************/
+
+/** This function is a wrapper function that is called after every setting, and it handles actually submitting the final POST request to the Send API */
 function tellSendAPI(settingData) {
   console.log('\nMessage has been processed, attempting to set something via the Facebook Send API...');
-
   request({
     uri: 'https://graph.facebook.com/v2.6/me/thread_settings', // The API endpoint to POST to
-    qs: { access_token: process.env.PAGE_ACCESS_TOKEN || 'EAAKOoRO0eWgBAKLeeZAr3GO06ggHjnjCxsOsbkBPkCgNPcykOg0TQOKHizeLuGc2ul7vghYAEwbvhcuMIfWVLImJ68oH9CoeIoistETH70MIDzv2icDhbs0HCuqEe7rnYQiEsl8MXbBmonMeSMxg3c7unDWkujZATVADTHOAZDZD' },
-    // TODO: Maybe find a less hacky way to pass the PAGE_TOKEN to the API? Using boolean or here
+    qs: { access_token: PAGE_ACCESS_TOKEN },
     method: 'POST',
     json: settingData // actual message to send to the Send API 
 
   }, function (error, response, body) {
+    console.log(settingData)
     if (!error && response.statusCode == 200) {
       // If there's NO error or the response is good (200), then print the message
       console.log("\nSuccessfully sent setting!");
@@ -402,13 +412,15 @@ function callSendAPI(messageData) {
 
   request({
     uri: 'https://graph.facebook.com/v2.6/me/messages', // The API endpoint to POST to
-    qs: { access_token: process.env.PAGE_ACCESS_TOKEN || 'EAAKOoRO0eWgBAKLeeZAr3GO06ggHjnjCxsOsbkBPkCgNPcykOg0TQOKHizeLuGc2ul7vghYAEwbvhcuMIfWVLImJ68oH9CoeIoistETH70MIDzv2icDhbs0HCuqEe7rnYQiEsl8MXbBmonMeSMxg3c7unDWkujZATVADTHOAZDZD' },
+    qs: { access_token: PAGE_ACCESS_TOKEN },
     // TODO: Maybe find a less hacky way to pass the PAGE_TOKEN to the API? Using boolean or here
     method: 'POST',
     json: messageData // actual message to send to the Send API 
 
   }, function (error, response, body) {
     if (!error && response.statusCode == 200) {
+      console.log(messageData)
+
       // If there's NO error or the response is good (200), then print the message
       var recipientId = body.recipient_id;
       var messageId = body.message_id;
@@ -429,7 +441,7 @@ function callSendAPI(messageData) {
 /**************/
 
 // Set Express to listen out for HTTP requests
-var server = app.listen(process.env.PORT || 3000, function () {
+var server = app.listen( PORT, function () {
   // TODO: Again, using a hacky boolean solution to what should be passed through in that process.env shell file; app prefers port 3000 for some reason. 
   console.log("Listening on port %s", server.address().port);
 });
