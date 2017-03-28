@@ -5,6 +5,3 @@ runtime: nodejs
 
 skip_files:
   - ^(.*/)?.*/node_modules/.*$
-
-manual_scaling:
-  instances: 1

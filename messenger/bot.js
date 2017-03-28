@@ -213,7 +213,7 @@ function receivedMessage(event) {
       case 'setgreeting':
         //TODO: Successfully passing, but no change to the Bot UI
         setGreeting();
-        break;        
+        break;
       default:
         // else, run the general Echo example
         sendTextMessage(senderID, messageText);
@@ -360,7 +360,7 @@ function setGreeting() {
       text: "Welcome to another bot {{user_first_name}}."
     }
   }
-tellSendAPI(settingData);
+  tellSendAPI(settingData);
 };
 
 /** TThis function attemps to explore the Persistent Menu capability which sets a new users default message */
@@ -368,15 +368,15 @@ tellSendAPI(settingData);
 function setPersistentMenu() {
   console.log('\nWe are changing the Persistent Menu!');
   var settingData = {
-  "setting_type":"call_to_actions",
-  "thread_state":"new_thread",
-  "call_to_actions":[
-    {
-      "payload":"Test1"
-    }
-  ]
-}
-tellSendAPI(settingData);
+    "setting_type": "call_to_actions",
+    "thread_state": "new_thread",
+    "call_to_actions": [
+      {
+        "payload": "Test1"
+      }
+    ]
+  }
+  tellSendAPI(settingData);
 };
 
 /**************/
@@ -404,7 +404,7 @@ function tellSendAPI(settingData) {
     }
   });
 }
- 
+
 
 /** This function is a wrapper function that is called after every template, and it handles actually submitting the final POST request to the Send API */
 function callSendAPI(messageData) {
@@ -441,7 +441,7 @@ function callSendAPI(messageData) {
 /**************/
 
 // Set Express to listen out for HTTP requests
-var server = app.listen( PORT, function () {
+var server = app.listen(PORT, function () {
   // TODO: Again, using a hacky boolean solution to what should be passed through in that process.env shell file; app prefers port 3000 for some reason. 
   console.log("Listening on port %s", server.address().port);
 });
