@@ -243,6 +243,9 @@ function receivedPostback(event) {
 
   // When a postback is called, we'll send a message back to the sender to 
   // let them know it was successful
+
+  // TODO: Do some checking to ensure the payload from the AD (typically the AD Campaign ID itself) using case checking from before
+  // Totally works, but switching to ads to make sure we can generate these ad campaigns quickly
   sendTextMessage(senderID, "Postback called");
 }
 
