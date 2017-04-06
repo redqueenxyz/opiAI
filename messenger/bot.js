@@ -62,6 +62,28 @@ var client = firebase.database().ref('client');
 // })
 
 
+var lol = 
+  {question1: {
+      text: "Pick a color:",
+      quick_replies: [
+        {
+          content_type: "text",
+          title: "Red",
+          payload: "answered_red", // Recieves this payload back as the new 'message, so maybe just grab this and toss it into FB as part of the 'incoming' loop?
+          // TODO: Maybe explore Postbacks for Quick Replies, if necesssary
+          image_url: "http://petersfantastichats.com/img/red.png" // Even takes a cute little image for friendliness
+          // TODO: Emojis?!
+        },
+        {
+          content_type: "text",
+          title: "Green",
+          payload: "answered_green",
+          image_url: "http://petersfantastichats.com/img/green.png"
+        }
+      ]
+    }
+  } 
+
 
 // Routing via Express JS
 let app = express();
@@ -250,7 +272,9 @@ function receivedMessage(event) {
         // if the text is 'quick reply', run the Quick Reply example, then break
         sendQuickReply(senderID);
         break;
-
+      case 'specificquickreply':
+        sendSpecificQuickReply(senderID, lol.question1);
+        break;
 
       case 'setmenu':
         //TODO: Successfully passing, but no change to the Bot UI
@@ -294,35 +318,6 @@ function receivedPostback(event) {
   // Totally works, but switching to ads to make sure we can generate these ad campaigns quickly
   sendTextMessage(senderID, "Postback called");
 }
-
-
-//** This function runs when we recieve a quick reply payload, and decides how to handle it  */
-function receivedQuickReplyPayload(payload) {
-  // TODO: Subroutine to chain messages after answer green or red
-    switch (payload) {
-      case 'answered_green':
-        // if the text is 'generic', run the Structured Message example
-        sendGenericMessage(senderID); 
-        break;
-      case 'quickreply':
-        // if the text is 'quick reply', run the Quick Reply example, then break
-        sendQuickReply(senderID);
-        break;
-
-
-      case 'setmenu':
-        //TODO: Successfully passing, but no change to the Bot UI
-        setPersistentMenu();
-        break;
-      case 'setgreeting':
-        //TODO: Successfully passing, but no change to the Bot UI
-        setGreeting();
-        break;
-      default:
-        // else, run the general Echo example
-        sendTextMessage(senderID, messageText);
-    }
-  } 
 
 /**************/
 // Sending Helpers
@@ -411,7 +406,7 @@ function sendQuickReply(recipientId) {
         {
           content_type: "text",
           title: "Red",
-          payload: "DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_RED", // Recieves this payload back as the new 'message, so maybe just grab this and toss it into FB as part of the 'incoming' loop?
+          payload: "answered_red", // Recieves this payload back as the new 'message, so maybe just grab this and toss it into FB as part of the 'incoming' loop?
           // TODO: Maybe explore Postbacks for Quick Replies, if necesssary
           image_url: "http://petersfantastichats.com/img/red.png" // Even takes a cute little image for friendliness
           // TODO: Emojis?!
@@ -419,7 +414,7 @@ function sendQuickReply(recipientId) {
         {
           content_type: "text",
           title: "Green",
-          payload: "DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_GREEN",
+          payload: "answered_green",
           image_url: "http://petersfantastichats.com/img/green.png"
         }
       ]
@@ -431,7 +426,17 @@ function sendQuickReply(recipientId) {
   callSendAPI(messageData);
 }
 
+function sendSpecificQuickReply(recipientId, question) {
+  console.log('\nWe heard \'quick reply\', get the Quick Reply template!');
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: question 
+  };
 
+  callSendAPI(messageData);
+}
 
 
 
