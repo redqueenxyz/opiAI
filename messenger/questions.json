@@ -3,7 +3,6 @@
 // Create an object holding this "question_one"
 // Reference this object and have the bot use it as a reply for a given case
 
-
 {
     "question_one": {
       "text": "Pick a color:",

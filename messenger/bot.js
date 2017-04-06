@@ -29,6 +29,39 @@ const request = require('request');
 const path = require('path');
 const date = require('datejs');
 
+// Firebase
+var firebase = require('firebase');
+
+var configStaging = {
+   apiKey: "AIzaSyCtEcVnsA9QU-PJfIhipBgIV4ii2LLTza8",
+   authDomain: "redqueen-1912e.firebaseapp.com",
+   databaseURL: "https://redqueen-1912e.firebaseio.com",
+   storageBucket: "redqueen-1912e.appspot.com",
+   messagingSenderId: "554508156764"
+};
+
+firebase.initializeApp(configStaging);
+
+var client = firebase.database().ref('client');
+
+// Reading
+// client.once('value').then(function(snap){
+//       var orgObj = snap.val();
+//       // Your code here
+
+//       for (var key in orgObj) {
+//            // Your code here
+//            console.log(orgObj[key]);
+//       }
+// });
+
+// // Writing
+// var key = Date.now();
+// firebase.database().ref('write_here/' + key).set({key: key}).then(result => {
+//    console.log("done setting at:" + key);
+// })
+
+
 
 // Routing via Express JS
 let app = express();
@@ -37,6 +70,8 @@ app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({  // support encoded bodies
   extended: true
 }));
+
+
 
 // Start Message
 var messengerButton = "<html><head><title>Facebook Messenger Bot</title></head><body><h1>Facebook Messenger Bot</h1>This is a bot based on Messenger Platform QuickStart, as modified for feedbackAI. For more details, see their <a href=\"https://developers.facebook.com/docs/messenger-platform/guides/quick-start\">docs</a>.</body></html>";
@@ -183,7 +218,6 @@ function receivedMessage(event) {
   console.log("\n     The received message for our app %d from page %d and the timestamp %d is: \"%s\" ",
     senderID, recipientID, timeOfMessage, message.text); // Turn just the message from JSON into a string
 
-
   console.log('\nThe message component inside the message event contains: \n')
   console.log(message);
 
@@ -194,8 +228,17 @@ function receivedMessage(event) {
   console.log("\n  The message id is %s, it\'s sequence number is %s, and it says: \"%s\" \n",
     messageId, message.seq, messageText); // Modify if message.attachments is necessary
 
-  // Now that we have the actual text, let's decide some logic to handle it 
-  if (messageText) {
+  if ('quick_reply' in message) { // Looking for quick_reply payloads as a means to chain
+      console.log('\nFucking around: \n')
+
+      console.log('\n Received a quick_reply payload: \n')     
+      var payload = message.quick_reply.payload;
+      console.log(payload)
+
+      
+    }
+
+  else if (messageText) {
     // If we receive a text message, check to see if it matches a keyword
     // if so, send it to a given template, else defaultt o sendtextMessage() which just echoes the text we received.
     switch (messageText) {
@@ -207,6 +250,8 @@ function receivedMessage(event) {
         // if the text is 'quick reply', run the Quick Reply example, then break
         sendQuickReply(senderID);
         break;
+
+
       case 'setmenu':
         //TODO: Successfully passing, but no change to the Bot UI
         setPersistentMenu();
@@ -226,7 +271,7 @@ function receivedMessage(event) {
 }
 
 
-//** This function runs when we recieve a postback, and decides how to handle it  */
+/** This function runs when we recieve a postback, and decides how to handle it  */
 function receivedPostback(event) {
   // TODO: Explore postbacks and see if they are helpful
   // Skipping the logic here for now; we'll come back if we need Postback functionality
@@ -249,6 +294,35 @@ function receivedPostback(event) {
   // Totally works, but switching to ads to make sure we can generate these ad campaigns quickly
   sendTextMessage(senderID, "Postback called");
 }
+
+
+//** This function runs when we recieve a quick reply payload, and decides how to handle it  */
+function receivedQuickReplyPayload(payload) {
+  // TODO: Subroutine to chain messages after answer green or red
+    switch (payload) {
+      case 'answered_green':
+        // if the text is 'generic', run the Structured Message example
+        sendGenericMessage(senderID); 
+        break;
+      case 'quickreply':
+        // if the text is 'quick reply', run the Quick Reply example, then break
+        sendQuickReply(senderID);
+        break;
+
+
+      case 'setmenu':
+        //TODO: Successfully passing, but no change to the Bot UI
+        setPersistentMenu();
+        break;
+      case 'setgreeting':
+        //TODO: Successfully passing, but no change to the Bot UI
+        setGreeting();
+        break;
+      default:
+        // else, run the general Echo example
+        sendTextMessage(senderID, messageText);
+    }
+  } 
 
 /**************/
 // Sending Helpers
@@ -321,6 +395,8 @@ function sendGenericMessage(recipientId) {
   callSendAPI(messageData);
 }
 
+
+
 /** This function demonstrates the Quick Reply capability (!!) which provides the users buttons to respond and returns a defined payload */
 // Reference: https://developers.facebook.com/docs/messenger-platform/send-api-reference/quick-replies
 function sendQuickReply(recipientId) {
@@ -347,12 +423,21 @@ function sendQuickReply(recipientId) {
           image_url: "http://petersfantastichats.com/img/green.png"
         }
       ]
-    }
+    } 
+         
+    
   };
 
   callSendAPI(messageData);
 }
 
+
+
+
+
+/**************/
+// Setting Bot Parameters
+/**************/
 
 /** This function attemps to explore the Greeting capability which sets a new users default message */
 // Reference: https://developers.facebook.com/docs/messenger-platform/send-api-reference/quick-replies
@@ -367,7 +452,7 @@ function setGreeting() {
   tellSendAPI(settingData);
 };
 
-/** TThis function attemps to explore the Persistent Menu capability which sets a new users default message */
+/** This function attemps to explore the Persistent Menu capability which sets a new users default message */
 // Reference: https://developers.facebook.com/docs/messenger-platform/send-api-reference/quick-replies
 function setPersistentMenu() {
   console.log('\nWe are changing the Persistent Menu!');
