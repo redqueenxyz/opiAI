@@ -30,30 +30,30 @@ const path = require('path');
 const date = require('datejs');
 
 // Firebase
-var firebase = require('firebase');
+const firebase = require("firebase");
 
-var configStaging = {
-   apiKey: "AIzaSyCtEcVnsA9QU-PJfIhipBgIV4ii2LLTza8",
-   authDomain: "redqueen-1912e.firebaseapp.com",
-   databaseURL: "https://redqueen-1912e.firebaseio.com",
-   storageBucket: "redqueen-1912e.appspot.com",
-   messagingSenderId: "554508156764"
+var configDB = {
+   apiKey: "AIzaSyBv-kr-kh531Tz6weM5-xxAauGEK9QTSik",
+   authDomain: "feedbackio-ddb4e.firebaseapp.com",
+   databaseURL: "https://feedbackio-ddb4e.firebaseio.com",
+   storageBucket: "feedbackio-ddb4e.appspot.com",
+   messagingSenderId: "436778363649"
 };
 
-firebase.initializeApp(configStaging);
+firebase.initializeApp(configDB);
 
-var client = firebase.database().ref('client');
+var question = firebase.database().ref('question_one');
 
-// Reading
-// client.once('value').then(function(snap){
-//       var orgObj = snap.val();
-//       // Your code here
+// // Reading
+question.once('value').then(function(snap){
+      var orgObj = snap.val();
+      // Your code here
 
-//       for (var key in orgObj) {
-//            // Your code here
-//            console.log(orgObj[key]);
-//       }
-// });
+      for (var key in orgObj) {
+           // Your code here
+           console.log(orgObj[key]);
+      }
+});
 
 // // Writing
 // var key = Date.now();
@@ -224,8 +224,6 @@ function receivedMessage(event) {
   // TODO: Find and store a sequence of conversations by their Message ID? 
   // These are the message ids for a sequence of messages through FB, they have the same string until _ then an appended unique identifier
   // mid.$cAARb3bQd_bFhQhawJFbENFnUpGLG Message 
-  // mid.$cAARb3bQd_bFhQhc-HFbENH1beZUc
-  // mid.$cAARb3bQd_bFhQhiDqVbENM69CBge 
   //
   // Source: https://developers.facebook.com/docs/messenger-platform/webhook-reference/message
 
@@ -273,6 +271,7 @@ function receivedMessage(event) {
         sendQuickReply(senderID);
         break;
       case 'specificquickreply':
+        // Experimenting with quick reply wrapper
         sendSpecificQuickReply(senderID, lol.question1);
         break;
 
