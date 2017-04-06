@@ -29,6 +29,7 @@ const request = require('request');
 const path = require('path');
 const date = require('datejs');
 
+
 // Routing via Express JS
 let app = express();
 
@@ -390,7 +391,7 @@ function setPersistentMenu() {
 function tellSendAPI(settingData) {
   console.log('\nMessage has been processed, attempting to set something via the Facebook Send API...');
   request({
-    uri: 'https://graph.facebook.com/v2.6/me/thread_settings', // The API endpoint to POST to
+    uri: 'https://graph.facebook.com/v2.8/me/thread_settings', // The API endpoint to POST to
     qs: { access_token: PAGE_ACCESS_TOKEN },
     method: 'POST',
     json: settingData // actual message to send to the Send API 
@@ -414,7 +415,7 @@ function callSendAPI(messageData) {
   console.log('\nMessage has been processed, attempting to send a response back to Facebook Send API...');
 
   request({
-    uri: 'https://graph.facebook.com/v2.6/me/messages', // The API endpoint to POST to
+    uri: 'https://graph.facebook.com/v2.8/me/messages', // The API endpoint to POST to
     qs: { access_token: PAGE_ACCESS_TOKEN },
     // TODO: Maybe find a less hacky way to pass the PAGE_TOKEN to the API? Using boolean or here
     method: 'POST',

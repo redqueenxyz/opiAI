@@ -1,0 +1,27 @@
+// TODO:
+// Setup Firebase
+// Create an object holding this "question_one"
+// Reference this object and have the bot use it as a reply for a given case
+
+
+{
+    "question_one": {
+      "text": "Pick a color:",
+      "quick_replies": [
+        {
+          "content_type": "text",
+          "title": "Red",
+          "payload": "DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_RED", // Recieves this payload back as the new 'message, so maybe just grab this and toss it into FB as part of the 'incoming' loop?
+          // TODO: Maybe explore Postbacks for Quick Replies, if necesssary
+          "image_url": "http://petersfantastichats.com/img/red.png" // Even takes a cute little image for friendliness
+          // TODO: Emojis?!
+        },
+        {
+          "content_type": "text",
+          "title": "Green",
+          "payload": "DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_GREEN",
+          "image_url": "http://petersfantastichats.com/img/green.png"
+        }
+      ]
+    }
+}
