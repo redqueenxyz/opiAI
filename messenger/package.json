@@ -7,13 +7,15 @@
     "start": "node bot.js"
   },
   "repository": {
-  "type": "git",
-  "url": "git://github.com/redqueenxyz/feedbackAI.git"
-},
+    "type": "git",
+    "url": "git://github.com/redqueenxyz/feedbackAI.git"
+  },
   "dependencies": {
     "body-parser": "*",
     "datejs": "^1.0.0-rc3",
     "express": "*",
+    "firebase": "^3.7.5",
+    "firebase-admin": "^4.2.0",
     "request": "^2.72.0"
   }
 }
