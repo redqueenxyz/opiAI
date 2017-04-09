@@ -29,10 +29,23 @@ const request = require('request');
 const path = require('path');
 const date = require('datejs');
 
+
+// Routing via Express JS
+let app = express();
+
+app.use(bodyParser.json()); // support json encoded bodies
+app.use(bodyParser.urlencoded({  // support encoded bodies
+  extended: true
+}));
+
+
+/**************/
+/// Database
+/**************/
+
 // Firebase
 var firebaseAdmin = require("firebase-admin");
 var firebase = require("firebase");
-
 
 // Auth
 var firebaseAccount = require("./auth.json");
@@ -54,43 +67,16 @@ var config = {
 firebase.initializeApp(config); //FIXME: Setup Firebase rules for auth only access
 
 
-var ref = firebase.database().ref("clients/client_one/survey_one");
-
-// Attach an asynchronous callback to read the data at our survey reference
-// ref.on("value", function(snapshot) {
-//   console.log(snapshot.val());
-// }, function (errorObject) {
-//   console.log("The read failed: " + errorObject.code);
-// });
-var test = {}
-
-ref.once("value", function (data) {
-  console.log(data.val())
-  var test = data.val
-});
-
-console.log(test["question_one"])
+function saveToFirebase(senderId, payload) {
+  var userAnswers = firebase.database().ref("userAnswers/" + senderId);
+  userAnswers.set({
+    answer: payload
+  })
+}
 
 
-// Reading
-// survey.once('value').then(function(snap){
-//       var orgObj = snap.val();
-//       // Your code here
 
-//       for (var key in orgObj) {
-//            // Your code here
-//            console.log(orgObj[key]);
-//       }
-// });
-
-// // Writing
-// var key = Date.now();
-// firebase.database().ref('write_here/' + key).set({key: key}).then(result => {
-//    console.log("done setting at:" + key);
-// })
-
-
-// Testing json
+//FIXME: Reference the DB
 var lol =
   {
     question1: {
@@ -152,17 +138,6 @@ var lol =
 
 
   }
-
-
-
-// Routing via Express JS
-let app = express();
-
-app.use(bodyParser.json()); // support json encoded bodies
-app.use(bodyParser.urlencoded({  // support encoded bodies
-  extended: true
-}));
-
 
 
 // Start Message
@@ -253,9 +228,9 @@ app.post('/webhook', function (req, res) {
           console.log('\nIt has a message object, what\'s in it?')
           receivedMessage(event);
 
-          // if('quick_reply' in event.message) {
-          //   QRHandler(event);
-          // }
+          if('quick_reply' in event.message) {
+            QRHandler(event);
+          }
           
         } else if (event.postback) {
           // if it has a postback component, run recievedPostback()
@@ -342,34 +317,8 @@ function receivedMessage(event) {
   console.log("\n  The message id is %s, it\'s sequence number is %s, and it says: \"%s\" \n",
     messageId, message.seq, messageText); // Modify if message.attachments is necessary
 
-  // if (message[quick_reply][payload] != null) {
-  //   console.log("there is a quick reply");
-  //   console.log(message);
-  // }
-
-  if ('quick_reply' in message) { // FIXME: This object exists, but its not jumpinginto this if statement for some reason.
-    QRHandler(event)
-
-    // console.log('\n Received a quick_reply payload: \n')
-    // var payload = message.quick_reply.payload;
-    // console.log(payload)
-
-    // switch (payload) { // If the QR returned a payload, run the next 
-    //   case 'answered_q1':
-    //     // if the text is 'generic', run the Structured Message example
-    //     // sendTextMessage(senderID, "I see you answered q1");
-    //     sendSpecificQuickReply(senderID, lol.question2);
-    //     saveToFirebase(senderID, payload);
-    //     break;
-    //   case 'answered_q2':
-    //     sendSpecificQuickReply(senderID, lol.question3);
-    //     break;
-    //   case 'answered_q3':
-    //     sendTextMessage(senderID, "I see you answered q3");
-    //     break;
-    // }
     
-  } else if (messageText) {
+  if (messageText) {
     // If we receive a text message, check to see if it matches a keyword
     // if so, send it to a given template, else defaultt o sendtextMessage() which just echoes the text we received.
     switch (messageText) {
@@ -386,6 +335,8 @@ function receivedMessage(event) {
         sendSpecificQuickReply(senderID, lol.question1);
         break;
 
+
+      //FIXME: WHY U NO CHANGE
       case 'setmenu':
         //TODO: Successfully passing, but no change to the Bot UI
         setPersistentMenu();
@@ -404,12 +355,6 @@ function receivedMessage(event) {
   }
 }
 
-function saveToFirebase(senderId, payload) {
-  var userAnswers = firebase.database().ref("userAnswers/" + senderId);
-  userAnswers.set({
-    answer: payload
-  })
-}
 
 
 /** This function runs when we recieve a postback, and decides how to handle it  */
@@ -434,6 +379,8 @@ function receivedPostback(event) {
   // TODO: Do some checking to ensure the payload from the AD (typically the AD Campaign ID itself) using case checking from before
   // Totally works, but switching to ads to make sure we can generate these ad campaigns quickly
   sendTextMessage(senderID, "Postback called");
+
+  
 }
 
 /**************/
@@ -583,7 +530,7 @@ function setPersistentMenu() {
     "thread_state": "new_thread",
     "call_to_actions": [
       {
-        "payload": "Test1"
+        "payload": "Launch Program"
       }
     ]
   }
