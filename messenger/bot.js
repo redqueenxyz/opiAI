@@ -90,6 +90,7 @@ console.log(test["question_one"])
 // })
 
 
+// Testing json
 var lol =
   {
     question1: {
@@ -98,7 +99,25 @@ var lol =
         {
           content_type: "text",
           title: "Red",
-          payload: "answered_red", // Recieves this payload back as the new 'message, so maybe just grab this and toss it into FB as part of the 'incoming' loop?
+          payload: "answered_q1",
+          image_url: "http://petersfantastichats.com/img/red.png" // Even takes a cute little image for friendliness
+          // TODO: Emojis?!
+        },
+        {
+          content_type: "text",
+          title: "Green",
+          payload: "answered_q1",
+          image_url: "http://petersfantastichats.com/img/green.png"
+        }
+      ]
+    },
+    question2: {
+      text: "Pick another color:",
+      quick_replies: [
+        {
+          content_type: "text",
+          title: "Red",
+          payload: "answered_q2", // Recieves this payload back as the new 'message, so maybe just grab this and toss it into FB as part of the 'incoming' loop?
           // TODO: Maybe explore Postbacks for Quick Replies, if necesssary
           image_url: "http://petersfantastichats.com/img/red.png" // Even takes a cute little image for friendliness
           // TODO: Emojis?!
@@ -106,12 +125,34 @@ var lol =
         {
           content_type: "text",
           title: "Green",
-          payload: "answered_green",
+          payload: "answered_q2",
+          image_url: "http://petersfantastichats.com/img/green.png"
+        }
+      ]
+    },
+    question3: {
+      text: "Pick a last color color:",
+      quick_replies: [
+        {
+          content_type: "text",
+          title: "Red",
+          payload: "answered_q3", // Recieves this payload back as the new 'message, so maybe just grab this and toss it into FB as part of the 'incoming' loop?
+          // TODO: Maybe explore Postbacks for Quick Replies, if necesssary
+          image_url: "http://petersfantastichats.com/img/red.png" // Even takes a cute little image for friendliness
+          // TODO: Emojis?!
+        },
+        {
+          content_type: "text",
+          title: "Green",
+          payload: "answered_q3",
           image_url: "http://petersfantastichats.com/img/green.png"
         }
       ]
     }
+
+
   }
+
 
 
 // Routing via Express JS
@@ -277,19 +318,31 @@ function receivedMessage(event) {
   console.log("\n  The message id is %s, it\'s sequence number is %s, and it says: \"%s\" \n",
     messageId, message.seq, messageText); // Modify if message.attachments is necessary
 
+  // if (message[quick_reply][payload] != null) {
+  //   console.log("there is a quick reply");
+  //   console.log(message);
+  // }
 
-  if ('quick_reply.payload' in message) { // FIXME: This object exists, but its not jumpinginto this if statement for some reason.
+  if ('quick_reply' in message) { // FIXME: This object exists, but its not jumpinginto this if statement for some reason.
 
     console.log('\n Received a quick_reply payload: \n')
     var payload = message.quick_reply.payload;
     console.log(payload)
 
-    switch (payload) {
+    switch (payload) { // If the QR returned a payload, run the next 
       case 'answered_q1':
         // if the text is 'generic', run the Structured Message example
         sendTextMessage(senderID, "I see you answered q1");
-        sendTextMessage(senderID, "Now answer q2");
+        sendSpecificQuickReply(senderID, lol.question2);
+        break;
+      case 'answered_q2':
+        sendSpecificQuickReply(senderID, lol.question3);
+        break;
+      case 'answered_q3':
+        sendTextMessage(senderID, "I see you answered q3");
+        break;
     }
+    
   } else if (messageText) {
     // If we receive a text message, check to see if it matches a keyword
     // if so, send it to a given template, else defaultt o sendtextMessage() which just echoes the text we received.
@@ -459,7 +512,7 @@ function sendQuickReply(recipientId) {
 
 function sendSpecificQuickReply(recipientId, question) {
   console.log('\nWe heard \'quick reply\', get the Quick Reply template!');
-  var messageData = { 
+  var messageData = {
     recipient: {
       id: recipientId
     },
