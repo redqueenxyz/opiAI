@@ -253,6 +253,10 @@ app.post('/webhook', function (req, res) {
           console.log('\nIt has a message object, what\'s in it?')
           receivedMessage(event);
 
+          if('quick_reply' in event.message) {
+            QRHandler(event);
+          }
+          
         } else if (event.postback) {
           // if it has a postback component, run recievedPostback()
           console.log('It has a postback object, how should we handle it?')
@@ -276,6 +280,25 @@ app.post('/webhook', function (req, res) {
 /**************/
 // Recieving Messages
 /**************/
+
+function QRHandler(event) {
+  //
+  firebase.database().object("users/" + event.sender.id).once('value', function(snapshot) {
+    if(snapshot.val() !== null){
+      // if it doesn't exist save user data
+      var userObject = {
+        currentSurvey: "survey_1",
+        questionLastAnswered: "q1"
+      }
+      firebase.database().object("users/" + event.sender.id).set(userObject);
+      firebase.database().object("responses/survey_1/" + event.sender.id).set({q1: event.message.text});
+    } else {
+      
+    }
+  });
+
+}
+
 
 
 //** This function runs when we recieve a message, and decides how to handle it  */
