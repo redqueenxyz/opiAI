@@ -253,9 +253,9 @@ app.post('/webhook', function (req, res) {
           console.log('\nIt has a message object, what\'s in it?')
           receivedMessage(event);
 
-          if('quick_reply' in event.message) {
-            QRHandler(event);
-          }
+          // if('quick_reply' in event.message) {
+          //   QRHandler(event);
+          // }
           
         } else if (event.postback) {
           // if it has a postback component, run recievedPostback()
@@ -282,16 +282,17 @@ app.post('/webhook', function (req, res) {
 /**************/
 
 function QRHandler(event) {
+  console.log('QRHandler called!')
   //
-  firebase.database().object("users/" + event.sender.id).once('value', function(snapshot) {
-    if(snapshot.val() !== null){
+  firebase.database().ref("users/" + event.sender.id).once('value').then( function(snapshot) {
+    if(snapshot.val() == null){
       // if it doesn't exist save user data
       var userObject = {
         currentSurvey: "survey_1",
         questionLastAnswered: "q1"
       }
-      firebase.database().object("users/" + event.sender.id).set(userObject);
-      firebase.database().object("responses/survey_1/" + event.sender.id).set({q1: event.message.text});
+      firebase.database().ref("users/" + event.sender.id).set(userObject);
+      firebase.database().ref("responses/survey_1/" + event.sender.id).set({q1: event.message.text});
     } else {
       
     }
@@ -347,25 +348,26 @@ function receivedMessage(event) {
   // }
 
   if ('quick_reply' in message) { // FIXME: This object exists, but its not jumpinginto this if statement for some reason.
+    QRHandler(event)
 
-    console.log('\n Received a quick_reply payload: \n')
-    var payload = message.quick_reply.payload;
-    console.log(payload)
+    // console.log('\n Received a quick_reply payload: \n')
+    // var payload = message.quick_reply.payload;
+    // console.log(payload)
 
-    switch (payload) { // If the QR returned a payload, run the next 
-      case 'answered_q1':
-        // if the text is 'generic', run the Structured Message example
-        sendTextMessage(senderID, "I see you answered q1");
-        sendSpecificQuickReply(senderID, lol.question2);
-        saveToFirebase(senderID, payload);
-        break;
-      case 'answered_q2':
-        sendSpecificQuickReply(senderID, lol.question3);
-        break;
-      case 'answered_q3':
-        sendTextMessage(senderID, "I see you answered q3");
-        break;
-    }
+    // switch (payload) { // If the QR returned a payload, run the next 
+    //   case 'answered_q1':
+    //     // if the text is 'generic', run the Structured Message example
+    //     // sendTextMessage(senderID, "I see you answered q1");
+    //     sendSpecificQuickReply(senderID, lol.question2);
+    //     saveToFirebase(senderID, payload);
+    //     break;
+    //   case 'answered_q2':
+    //     sendSpecificQuickReply(senderID, lol.question3);
+    //     break;
+    //   case 'answered_q3':
+    //     sendTextMessage(senderID, "I see you answered q3");
+    //     break;
+    // }
     
   } else if (messageText) {
     // If we receive a text message, check to see if it matches a keyword
