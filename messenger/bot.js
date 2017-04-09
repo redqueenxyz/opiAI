@@ -29,6 +29,91 @@ const request = require('request');
 const path = require('path');
 const date = require('datejs');
 
+// Firebase
+var firebaseAdmin = require("firebase-admin");
+var firebase = require("firebase");
+
+
+// Auth
+var firebaseAccount = require("./auth.json");
+
+firebaseAdmin.initializeApp({
+  credential: firebaseAdmin.credential.cert(firebaseAccount),
+  databaseURL: "https://feedbackio-ddb4e.firebaseio.com"
+});
+
+// DB
+var config = {
+  apiKey: "AIzaSyBv-kr-kh531Tz6weM5-xxAauGEK9QTSik",
+  authDomain: "feedbackio-ddb4e.firebaseapp.com",
+  databaseURL: "https://feedbackio-ddb4e.firebaseio.com",
+  storageBucket: "feedbackio-ddb4e.appspot.com",
+  messagingSenderId: "436778363649"
+};
+
+firebase.initializeApp(config); //FIXME: Setup Firebase rules for auth only access
+
+
+var ref = firebase.database().ref("clients/client_one/survey_one");
+
+// Attach an asynchronous callback to read the data at our survey reference
+// ref.on("value", function(snapshot) {
+//   console.log(snapshot.val());
+// }, function (errorObject) {
+//   console.log("The read failed: " + errorObject.code);
+// });
+var test = {}
+
+ref.once("value", function (data) {
+  console.log(data.val())
+  var test = data.val
+});
+
+console.log(test["question_one"])
+
+
+// Reading
+// survey.once('value').then(function(snap){
+//       var orgObj = snap.val();
+//       // Your code here
+
+//       for (var key in orgObj) {
+//            // Your code here
+//            console.log(orgObj[key]);
+//       }
+// });
+
+// // Writing
+// var key = Date.now();
+// firebase.database().ref('write_here/' + key).set({key: key}).then(result => {
+//    console.log("done setting at:" + key);
+// })
+
+
+var lol =
+  {
+    question1: {
+      text: "Pick a color:",
+      quick_replies: [
+        {
+          content_type: "text",
+          title: "Red",
+          payload: "answered_red", // Recieves this payload back as the new 'message, so maybe just grab this and toss it into FB as part of the 'incoming' loop?
+          // TODO: Maybe explore Postbacks for Quick Replies, if necesssary
+          image_url: "http://petersfantastichats.com/img/red.png" // Even takes a cute little image for friendliness
+          // TODO: Emojis?!
+        },
+        {
+          content_type: "text",
+          title: "Green",
+          payload: "answered_green",
+          image_url: "http://petersfantastichats.com/img/green.png"
+        }
+      ]
+    }
+  }
+
+
 // Routing via Express JS
 let app = express();
 
@@ -36,6 +121,8 @@ app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({  // support encoded bodies
   extended: true
 }));
+
+
 
 // Start Message
 var messengerButton = "<html><head><title>Facebook Messenger Bot</title></head><body><h1>Facebook Messenger Bot</h1>This is a bot based on Messenger Platform QuickStart, as modified for feedbackAI. For more details, see their <a href=\"https://developers.facebook.com/docs/messenger-platform/guides/quick-start\">docs</a>.</body></html>";
@@ -166,8 +253,6 @@ function receivedMessage(event) {
   // TODO: Find and store a sequence of conversations by their Message ID? 
   // These are the message ids for a sequence of messages through FB, they have the same string until _ then an appended unique identifier
   // mid.$cAARb3bQd_bFhQhawJFbENFnUpGLG Message 
-  // mid.$cAARb3bQd_bFhQhc-HFbENH1beZUc
-  // mid.$cAARb3bQd_bFhQhiDqVbENM69CBge 
   //
   // Source: https://developers.facebook.com/docs/messenger-platform/webhook-reference/message
 
@@ -182,7 +267,6 @@ function receivedMessage(event) {
   console.log("\n     The received message for our app %d from page %d and the timestamp %d is: \"%s\" ",
     senderID, recipientID, timeOfMessage, message.text); // Turn just the message from JSON into a string
 
-
   console.log('\nThe message component inside the message event contains: \n')
   console.log(message);
 
@@ -193,8 +277,20 @@ function receivedMessage(event) {
   console.log("\n  The message id is %s, it\'s sequence number is %s, and it says: \"%s\" \n",
     messageId, message.seq, messageText); // Modify if message.attachments is necessary
 
-  // Now that we have the actual text, let's decide some logic to handle it 
-  if (messageText) {
+
+  if ('quick_reply.payload' in message) { // FIXME: This object exists, but its not jumpinginto this if statement for some reason.
+
+    console.log('\n Received a quick_reply payload: \n')
+    var payload = message.quick_reply.payload;
+    console.log(payload)
+
+    switch (payload) {
+      case 'answered_q1':
+        // if the text is 'generic', run the Structured Message example
+        sendTextMessage(senderID, "I see you answered q1");
+        sendTextMessage(senderID, "Now answer q2");
+    }
+  } else if (messageText) {
     // If we receive a text message, check to see if it matches a keyword
     // if so, send it to a given template, else defaultt o sendtextMessage() which just echoes the text we received.
     switch (messageText) {
@@ -206,6 +302,11 @@ function receivedMessage(event) {
         // if the text is 'quick reply', run the Quick Reply example, then break
         sendQuickReply(senderID);
         break;
+      case 'specificquickreply':
+        // Experimenting with quick reply wrapper
+        sendSpecificQuickReply(senderID, lol.question1);
+        break;
+
       case 'setmenu':
         //TODO: Successfully passing, but no change to the Bot UI
         setPersistentMenu();
@@ -225,7 +326,7 @@ function receivedMessage(event) {
 }
 
 
-//** This function runs when we recieve a postback, and decides how to handle it  */
+/** This function runs when we recieve a postback, and decides how to handle it  */
 function receivedPostback(event) {
   // TODO: Explore postbacks and see if they are helpful
   // Skipping the logic here for now; we'll come back if we need Postback functionality
@@ -243,6 +344,9 @@ function receivedPostback(event) {
 
   // When a postback is called, we'll send a message back to the sender to 
   // let them know it was successful
+
+  // TODO: Do some checking to ensure the payload from the AD (typically the AD Campaign ID itself) using case checking from before
+  // Totally works, but switching to ads to make sure we can generate these ad campaigns quickly
   sendTextMessage(senderID, "Postback called");
 }
 
@@ -317,6 +421,8 @@ function sendGenericMessage(recipientId) {
   callSendAPI(messageData);
 }
 
+
+
 /** This function demonstrates the Quick Reply capability (!!) which provides the users buttons to respond and returns a defined payload */
 // Reference: https://developers.facebook.com/docs/messenger-platform/send-api-reference/quick-replies
 function sendQuickReply(recipientId) {
@@ -331,7 +437,7 @@ function sendQuickReply(recipientId) {
         {
           content_type: "text",
           title: "Red",
-          payload: "DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_RED", // Recieves this payload back as the new 'message, so maybe just grab this and toss it into FB as part of the 'incoming' loop?
+          payload: "answered_q1", // Recieves this payload back as the new 'message, so maybe just grab this and toss it into FB as part of the 'incoming' loop?
           // TODO: Maybe explore Postbacks for Quick Replies, if necesssary
           image_url: "http://petersfantastichats.com/img/red.png" // Even takes a cute little image for friendliness
           // TODO: Emojis?!
@@ -339,16 +445,35 @@ function sendQuickReply(recipientId) {
         {
           content_type: "text",
           title: "Green",
-          payload: "DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_GREEN",
+          payload: "answered_q1",
           image_url: "http://petersfantastichats.com/img/green.png"
         }
       ]
     }
+
+
   };
 
   callSendAPI(messageData);
 }
 
+function sendSpecificQuickReply(recipientId, question) {
+  console.log('\nWe heard \'quick reply\', get the Quick Reply template!');
+  var messageData = { 
+    recipient: {
+      id: recipientId
+    },
+    message: question
+  };
+
+  callSendAPI(messageData);
+}
+
+
+
+/**************/
+// Setting Bot Parameters
+/**************/
 
 /** This function attemps to explore the Greeting capability which sets a new users default message */
 // Reference: https://developers.facebook.com/docs/messenger-platform/send-api-reference/quick-replies
@@ -363,7 +488,7 @@ function setGreeting() {
   tellSendAPI(settingData);
 };
 
-/** TThis function attemps to explore the Persistent Menu capability which sets a new users default message */
+/** This function attemps to explore the Persistent Menu capability which sets a new users default message */
 // Reference: https://developers.facebook.com/docs/messenger-platform/send-api-reference/quick-replies
 function setPersistentMenu() {
   console.log('\nWe are changing the Persistent Menu!');
@@ -387,7 +512,7 @@ function setPersistentMenu() {
 function tellSendAPI(settingData) {
   console.log('\nMessage has been processed, attempting to set something via the Facebook Send API...');
   request({
-    uri: 'https://graph.facebook.com/v2.6/me/thread_settings', // The API endpoint to POST to
+    uri: 'https://graph.facebook.com/v2.8/me/thread_settings', // The API endpoint to POST to
     qs: { access_token: PAGE_ACCESS_TOKEN },
     method: 'POST',
     json: settingData // actual message to send to the Send API 
@@ -411,7 +536,7 @@ function callSendAPI(messageData) {
   console.log('\nMessage has been processed, attempting to send a response back to Facebook Send API...');
 
   request({
-    uri: 'https://graph.facebook.com/v2.6/me/messages', // The API endpoint to POST to
+    uri: 'https://graph.facebook.com/v2.8/me/messages', // The API endpoint to POST to
     qs: { access_token: PAGE_ACCESS_TOKEN },
     // TODO: Maybe find a less hacky way to pass the PAGE_TOKEN to the API? Using boolean or here
     method: 'POST',
