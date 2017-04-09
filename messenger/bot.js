@@ -277,7 +277,7 @@ function receivedMessage(event) {
   console.log("\n  The message id is %s, it\'s sequence number is %s, and it says: \"%s\" \n",
     messageId, message.seq, messageText); // Modify if message.attachments is necessary
 
-  
+
   if ('quick_reply.payload' in message) { // FIXME: This object exists, but its not jumpinginto this if statement for some reason.
 
     console.log('\n Received a quick_reply payload: \n')
@@ -287,287 +287,287 @@ function receivedMessage(event) {
     switch (payload) {
       case 'answered_q1':
         // if the text is 'generic', run the Structured Message example
-          sendTextMessage(senderID, "I see you answered q1");
-          sendTextMessage(senderID, "Now answer q2");
-      }
-    } else if (messageText) {
-      // If we receive a text message, check to see if it matches a keyword
-      // if so, send it to a given template, else defaultt o sendtextMessage() which just echoes the text we received.
-      switch (messageText) {
-        case 'generic':
-          // if the text is 'generic', run the Structured Message example
-          sendGenericMessage(senderID);
-          break;
-        case 'quickreply':
-          // if the text is 'quick reply', run the Quick Reply example, then break
-          sendQuickReply(senderID);
-          break;
-        case 'specificquickreply':
-          // Experimenting with quick reply wrapper
-          sendSpecificQuickReply(senderID, lol.question1);
-          break;
-
-        case 'setmenu':
-          //TODO: Successfully passing, but no change to the Bot UI
-          setPersistentMenu();
-          break;
-        case 'setgreeting':
-          //TODO: Successfully passing, but no change to the Bot UI
-          setGreeting();
-          break;
-        default:
-          // else, run the general Echo example
-          sendTextMessage(senderID, messageText);
-      }
-    } else if (messageAttachments) {
-      // If there's an attachment, run the general sendTextMessage() function, but with the defined text 'message with attachment recieved'.
-      sendTextMessage(senderID, "Message with attachment received");
+        sendTextMessage(senderID, "I see you answered q1");
+        sendTextMessage(senderID, "Now answer q2");
     }
-  }
+  } else if (messageText) {
+    // If we receive a text message, check to see if it matches a keyword
+    // if so, send it to a given template, else defaultt o sendtextMessage() which just echoes the text we received.
+    switch (messageText) {
+      case 'generic':
+        // if the text is 'generic', run the Structured Message example
+        sendGenericMessage(senderID);
+        break;
+      case 'quickreply':
+        // if the text is 'quick reply', run the Quick Reply example, then break
+        sendQuickReply(senderID);
+        break;
+      case 'specificquickreply':
+        // Experimenting with quick reply wrapper
+        sendSpecificQuickReply(senderID, lol.question1);
+        break;
 
-
-  /** This function runs when we recieve a postback, and decides how to handle it  */
-  function receivedPostback(event) {
-    // TODO: Explore postbacks and see if they are helpful
-    // Skipping the logic here for now; we'll come back if we need Postback functionality
-
-    var senderID = event.sender.id;
-    var recipientID = event.recipient.id;
-    var timeOfPostback = event.timestamp;
-
-    // The 'payload' param is a developer-defined field which is set in a postback 
-    // button for Structured Messages. 
-    var payload = event.postback.payload;
-
-    console.log("Received postback for user %d and page %d with payload '%s' " +
-      "at %d", senderID, recipientID, payload, timeOfPostback);
-
-    // When a postback is called, we'll send a message back to the sender to 
-    // let them know it was successful
-
-    // TODO: Do some checking to ensure the payload from the AD (typically the AD Campaign ID itself) using case checking from before
-    // Totally works, but switching to ads to make sure we can generate these ad campaigns quickly
-    sendTextMessage(senderID, "Postback called");
-  }
-
-  /**************/
-  // Sending Helpers
-  // Reference: https://developers.facebook.com/docs/messenger-platform/send-api-reference/contenttypes 
-  /**************/
-
-  /** This function sends a text message back to the User with the message Text it was called with (in the example, it's called with incoming messageText) */
-  function sendTextMessage(recipientId, messageText) {
-    console.log('\nWe heard nothing special, get the Echo template!');
-    var messageData = {
-      recipient: {
-        id: recipientId
-      },
-      message: {
-        text: messageText
-      }
-    };
-
-    callSendAPI(messageData);
-  }
-
-  //** This function demonstrates the Structured Response capability, and takes a more complex JSON object back to the Messenger API */
-  // Reference: https://developers.facebook.com/docs/messenger-platform/send-api-reference/generic-template
-
-  function sendGenericMessage(recipientId) {
-    console.log('\nWe heard \'generic\', get the Structured Message template!');
-    var messageData = {
-      recipient: {
-        id: recipientId
-      },
-      message: {
-        attachment: {
-          type: "template",
-          payload: {
-            template_type: "generic",
-            elements: [{
-              title: "rift",
-              subtitle: "Next-generation virtual reality",
-              item_url: "https://www.oculus.com/en-us/rift/",
-              image_url: "http://messengerdemo.parseapp.com/img/rift.png",
-              buttons: [{
-                type: "web_url",
-                url: "https://www.oculus.com/en-us/rift/",
-                title: "Open Web URL"
-              }, {
-                type: "postback",
-                title: "Call Postback",
-                payload: "Payload for first bubble",
-              }],
-            }, {
-              title: "touch",
-              subtitle: "Your Hands, Now in VR",
-              item_url: "https://www.oculus.com/en-us/touch/",
-              image_url: "http://messengerdemo.parseapp.com/img/touch.png",
-              buttons: [{
-                type: "web_url",
-                url: "https://www.oculus.com/en-us/touch/",
-                title: "Open Web URL"
-              }, {
-                type: "postback",
-                title: "Call Postback",
-                payload: "Payload for second bubble",
-              }]
-            }]
-          }
-        }
-      }
-    };
-
-    callSendAPI(messageData);
-  }
-
-
-
-  /** This function demonstrates the Quick Reply capability (!!) which provides the users buttons to respond and returns a defined payload */
-  // Reference: https://developers.facebook.com/docs/messenger-platform/send-api-reference/quick-replies
-  function sendQuickReply(recipientId) {
-    console.log('\nWe heard \'quick reply\', get the Quick Reply template!');
-    var messageData = {
-      recipient: {
-        id: recipientId
-      },
-      message: {
-        text: "Pick a color:",
-        quick_replies: [
-          {
-            content_type: "text",
-            title: "Red",
-            payload: "answered_q1", // Recieves this payload back as the new 'message, so maybe just grab this and toss it into FB as part of the 'incoming' loop?
-            // TODO: Maybe explore Postbacks for Quick Replies, if necesssary
-            image_url: "http://petersfantastichats.com/img/red.png" // Even takes a cute little image for friendliness
-            // TODO: Emojis?!
-          },
-          {
-            content_type: "text",
-            title: "Green",
-            payload: "answered_q1",
-            image_url: "http://petersfantastichats.com/img/green.png"
-          }
-        ]
-      }
-
-
-    };
-
-    callSendAPI(messageData);
-  }
-
-  function sendSpecificQuickReply(recipientId, question) {
-    console.log('\nWe heard \'quick reply\', get the Quick Reply template!');
-    var messageData = {
-      recipient: {
-        id: recipientId
-      },
-      message: question
-    };
-
-    callSendAPI(messageData);
-  }
-
-
-
-  /**************/
-  // Setting Bot Parameters
-  /**************/
-
-  /** This function attemps to explore the Greeting capability which sets a new users default message */
-  // Reference: https://developers.facebook.com/docs/messenger-platform/send-api-reference/quick-replies
-  function setGreeting() {
-    console.log('\nWe are sending a greeting!');
-    var settingData = {
-      setting_type: "greeting",
-      greeting: {
-        text: "Welcome to another bot {{user_first_name}}."
-      }
+      case 'setmenu':
+        //TODO: Successfully passing, but no change to the Bot UI
+        setPersistentMenu();
+        break;
+      case 'setgreeting':
+        //TODO: Successfully passing, but no change to the Bot UI
+        setGreeting();
+        break;
+      default:
+        // else, run the general Echo example
+        sendTextMessage(senderID, messageText);
     }
-    tellSendAPI(settingData);
+  } else if (messageAttachments) {
+    // If there's an attachment, run the general sendTextMessage() function, but with the defined text 'message with attachment recieved'.
+    sendTextMessage(senderID, "Message with attachment received");
+  }
+}
+
+
+/** This function runs when we recieve a postback, and decides how to handle it  */
+function receivedPostback(event) {
+  // TODO: Explore postbacks and see if they are helpful
+  // Skipping the logic here for now; we'll come back if we need Postback functionality
+
+  var senderID = event.sender.id;
+  var recipientID = event.recipient.id;
+  var timeOfPostback = event.timestamp;
+
+  // The 'payload' param is a developer-defined field which is set in a postback 
+  // button for Structured Messages. 
+  var payload = event.postback.payload;
+
+  console.log("Received postback for user %d and page %d with payload '%s' " +
+    "at %d", senderID, recipientID, payload, timeOfPostback);
+
+  // When a postback is called, we'll send a message back to the sender to 
+  // let them know it was successful
+
+  // TODO: Do some checking to ensure the payload from the AD (typically the AD Campaign ID itself) using case checking from before
+  // Totally works, but switching to ads to make sure we can generate these ad campaigns quickly
+  sendTextMessage(senderID, "Postback called");
+}
+
+/**************/
+// Sending Helpers
+// Reference: https://developers.facebook.com/docs/messenger-platform/send-api-reference/contenttypes 
+/**************/
+
+/** This function sends a text message back to the User with the message Text it was called with (in the example, it's called with incoming messageText) */
+function sendTextMessage(recipientId, messageText) {
+  console.log('\nWe heard nothing special, get the Echo template!');
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      text: messageText
+    }
   };
 
-  /** This function attemps to explore the Persistent Menu capability which sets a new users default message */
-  // Reference: https://developers.facebook.com/docs/messenger-platform/send-api-reference/quick-replies
-  function setPersistentMenu() {
-    console.log('\nWe are changing the Persistent Menu!');
-    var settingData = {
-      "setting_type": "call_to_actions",
-      "thread_state": "new_thread",
-      "call_to_actions": [
+  callSendAPI(messageData);
+}
+
+//** This function demonstrates the Structured Response capability, and takes a more complex JSON object back to the Messenger API */
+// Reference: https://developers.facebook.com/docs/messenger-platform/send-api-reference/generic-template
+
+function sendGenericMessage(recipientId) {
+  console.log('\nWe heard \'generic\', get the Structured Message template!');
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "generic",
+          elements: [{
+            title: "rift",
+            subtitle: "Next-generation virtual reality",
+            item_url: "https://www.oculus.com/en-us/rift/",
+            image_url: "http://messengerdemo.parseapp.com/img/rift.png",
+            buttons: [{
+              type: "web_url",
+              url: "https://www.oculus.com/en-us/rift/",
+              title: "Open Web URL"
+            }, {
+              type: "postback",
+              title: "Call Postback",
+              payload: "Payload for first bubble",
+            }],
+          }, {
+            title: "touch",
+            subtitle: "Your Hands, Now in VR",
+            item_url: "https://www.oculus.com/en-us/touch/",
+            image_url: "http://messengerdemo.parseapp.com/img/touch.png",
+            buttons: [{
+              type: "web_url",
+              url: "https://www.oculus.com/en-us/touch/",
+              title: "Open Web URL"
+            }, {
+              type: "postback",
+              title: "Call Postback",
+              payload: "Payload for second bubble",
+            }]
+          }]
+        }
+      }
+    }
+  };
+
+  callSendAPI(messageData);
+}
+
+
+
+/** This function demonstrates the Quick Reply capability (!!) which provides the users buttons to respond and returns a defined payload */
+// Reference: https://developers.facebook.com/docs/messenger-platform/send-api-reference/quick-replies
+function sendQuickReply(recipientId) {
+  console.log('\nWe heard \'quick reply\', get the Quick Reply template!');
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      text: "Pick a color:",
+      quick_replies: [
         {
-          "payload": "Test1"
+          content_type: "text",
+          title: "Red",
+          payload: "answered_q1", // Recieves this payload back as the new 'message, so maybe just grab this and toss it into FB as part of the 'incoming' loop?
+          // TODO: Maybe explore Postbacks for Quick Replies, if necesssary
+          image_url: "http://petersfantastichats.com/img/red.png" // Even takes a cute little image for friendliness
+          // TODO: Emojis?!
+        },
+        {
+          content_type: "text",
+          title: "Green",
+          payload: "answered_q1",
+          image_url: "http://petersfantastichats.com/img/green.png"
         }
       ]
     }
-    tellSendAPI(settingData);
+
+
   };
 
-  /**************/
-  // Sending Messages
-  /**************/
+  callSendAPI(messageData);
+}
 
-  /** This function is a wrapper function that is called after every setting, and it handles actually submitting the final POST request to the Send API */
-  function tellSendAPI(settingData) {
-    console.log('\nMessage has been processed, attempting to set something via the Facebook Send API...');
-    request({
-      uri: 'https://graph.facebook.com/v2.8/me/thread_settings', // The API endpoint to POST to
-      qs: { access_token: PAGE_ACCESS_TOKEN },
-      method: 'POST',
-      json: settingData // actual message to send to the Send API 
+function sendSpecificQuickReply(recipientId, question) {
+  console.log('\nWe heard \'quick reply\', get the Quick Reply template!');
+  var messageData = { 
+    recipient: {
+      id: recipientId
+    },
+    message: question
+  };
 
-    }, function (error, response, body) {
-      console.log(settingData)
-      if (!error && response.statusCode == 200) {
-        // If there's NO error or the response is good (200), then print the message
-        console.log("\nSuccessfully sent setting!");
-      } else {
-        console.error("Failed to send new setting; check your errors!");
-        // console.error(response); // Dumps the whole response; very messy console, removed this
-        console.error(error); // Should get the error though
-      }
-    });
+  callSendAPI(messageData);
+}
+
+
+
+/**************/
+// Setting Bot Parameters
+/**************/
+
+/** This function attemps to explore the Greeting capability which sets a new users default message */
+// Reference: https://developers.facebook.com/docs/messenger-platform/send-api-reference/quick-replies
+function setGreeting() {
+  console.log('\nWe are sending a greeting!');
+  var settingData = {
+    setting_type: "greeting",
+    greeting: {
+      text: "Welcome to another bot {{user_first_name}}."
+    }
   }
+  tellSendAPI(settingData);
+};
 
-
-  /** This function is a wrapper function that is called after every template, and it handles actually submitting the final POST request to the Send API */
-  function callSendAPI(messageData) {
-    console.log('\nMessage has been processed, attempting to send a response back to Facebook Send API...');
-
-    request({
-      uri: 'https://graph.facebook.com/v2.8/me/messages', // The API endpoint to POST to
-      qs: { access_token: PAGE_ACCESS_TOKEN },
-      // TODO: Maybe find a less hacky way to pass the PAGE_TOKEN to the API? Using boolean or here
-      method: 'POST',
-      json: messageData // actual message to send to the Send API 
-
-    }, function (error, response, body) {
-      if (!error && response.statusCode == 200) {
-        console.log(messageData)
-
-        // If there's NO error or the response is good (200), then print the message
-        var recipientId = body.recipient_id;
-        var messageId = body.message_id;
-
-        console.log("\nSuccessfully sent message with id %s to recipient %s: \"%s\" !",
-          messageId, recipientId, messageData.message.text);
-
-      } else {
-        console.error("Failed to send new message; check your errors!");
-        // console.error(response); // Dumps the whole response; very messy console, removed this
-        console.error(error); // Should get the error though
+/** This function attemps to explore the Persistent Menu capability which sets a new users default message */
+// Reference: https://developers.facebook.com/docs/messenger-platform/send-api-reference/quick-replies
+function setPersistentMenu() {
+  console.log('\nWe are changing the Persistent Menu!');
+  var settingData = {
+    "setting_type": "call_to_actions",
+    "thread_state": "new_thread",
+    "call_to_actions": [
+      {
+        "payload": "Test1"
       }
-    });
+    ]
   }
+  tellSendAPI(settingData);
+};
 
-  /**************/
-  //  Server 
-  /**************/
+/**************/
+// Sending Messages
+/**************/
 
-  // Set Express to listen out for HTTP requests
-  var server = app.listen(PORT, function () {
-    // TODO: Again, using a hacky boolean solution to what should be passed through in that process.env shell file; app prefers port 3000 for some reason. 
-    console.log("Listening on port %s", server.address().port);
+/** This function is a wrapper function that is called after every setting, and it handles actually submitting the final POST request to the Send API */
+function tellSendAPI(settingData) {
+  console.log('\nMessage has been processed, attempting to set something via the Facebook Send API...');
+  request({
+    uri: 'https://graph.facebook.com/v2.8/me/thread_settings', // The API endpoint to POST to
+    qs: { access_token: PAGE_ACCESS_TOKEN },
+    method: 'POST',
+    json: settingData // actual message to send to the Send API 
+
+  }, function (error, response, body) {
+    console.log(settingData)
+    if (!error && response.statusCode == 200) {
+      // If there's NO error or the response is good (200), then print the message
+      console.log("\nSuccessfully sent setting!");
+    } else {
+      console.error("Failed to send new setting; check your errors!");
+      // console.error(response); // Dumps the whole response; very messy console, removed this
+      console.error(error); // Should get the error though
+    }
   });
+}
+
+
+/** This function is a wrapper function that is called after every template, and it handles actually submitting the final POST request to the Send API */
+function callSendAPI(messageData) {
+  console.log('\nMessage has been processed, attempting to send a response back to Facebook Send API...');
+
+  request({
+    uri: 'https://graph.facebook.com/v2.8/me/messages', // The API endpoint to POST to
+    qs: { access_token: PAGE_ACCESS_TOKEN },
+    // TODO: Maybe find a less hacky way to pass the PAGE_TOKEN to the API? Using boolean or here
+    method: 'POST',
+    json: messageData // actual message to send to the Send API 
+
+  }, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      console.log(messageData)
+
+      // If there's NO error or the response is good (200), then print the message
+      var recipientId = body.recipient_id;
+      var messageId = body.message_id;
+
+      console.log("\nSuccessfully sent message with id %s to recipient %s: \"%s\" !",
+        messageId, recipientId, messageData.message.text);
+
+    } else {
+      console.error("Failed to send new message; check your errors!");
+      // console.error(response); // Dumps the whole response; very messy console, removed this
+      console.error(error); // Should get the error though
+    }
+  });
+}
+
+/**************/
+//  Server 
+/**************/
+
+// Set Express to listen out for HTTP requests
+var server = app.listen(PORT, function () {
+  // TODO: Again, using a hacky boolean solution to what should be passed through in that process.env shell file; app prefers port 3000 for some reason. 
+  console.log("Listening on port %s", server.address().port);
+});
 
