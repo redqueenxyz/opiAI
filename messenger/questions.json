@@ -1,42 +1,96 @@
 {
-  "clients": {
-    "client_one": {
-      "survey_one": {
-        "question_one": {
-          "text": "Pick a color:",
+      "survey_1": {
+        "q1": {
+          "text": "Have you heard of Tesla?",
           "quick_replies": [
             {
               "content_type": "text",
-              "title": "Red",
-              "payload": "DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_RED",
+              "title": "Yes",
+              "payload": "answered_q1",
               "image_url": "http://petersfantastichats.com/img/red.png"
             },
             {
               "content_type": "text",
-              "title": "Green",
-              "payload": "DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_GREEN",
+              "title": "No",
+              "payload": "answered_q2",
               "image_url": "http://petersfantastichats.com/img/green.png"
             }
           ]
         },
-        "question_two": {
-          "text": "Pick a color:",
+        "q2": {
+          "text": "Have you heard about the model M3?",
           "quick_replies": [
             {
               "content_type": "text",
-              "title": "Red",
-              "payload": "DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_RED",
+              "title": "Yes",
+              "payload": "answered_q2",
               "image_url": "http://petersfantastichats.com/img/red.png"
             },
             {
-              "content_type": "text",
+              "content_type": "No",
               "title": "Green",
-              "payload": "DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_GREEN",
+              "payload": "answered_q2",
+              "image_url": "http://petersfantastichats.com/img/green.png"
+            }
+          ]
+        },
+        "q3": {
+          "text": "Would you buy the M3?",
+          "quick_replies": [
+            {
+              "content_type": "text",
+              "title": "Yes",
+              "payload": "answered_q3",
+              "image_url": "http://petersfantastichats.com/img/red.png"
+            },
+            {
+              "content_type": "No",
+              "title": "Green",
+              "payload": "answered_q3",
+              "image_url": "http://petersfantastichats.com/img/green.png"
+            }
+            ,
+            {
+              "content_type": "Maybe",
+              "title": "Green",
+              "payload": "answered_q3",
+              "image_url": "http://petersfantastichats.com/img/green.png"
+            }
+          ]
+        },
+        "q4": {
+          "text": "Does anyone you know own the M3?",
+          "quick_replies": [
+            {
+              "content_type": "text",
+              "title": "Yes",
+              "payload": "answered_q4",
+              "image_url": "http://petersfantastichats.com/img/red.png"
+            },
+            {
+              "content_type": "No",
+              "title": "Green",
+              "payload": "answered_q4",
+              "image_url": "http://petersfantastichats.com/img/green.png"
+            }
+          ]
+        },
+        "q5": {
+          "text": "Would you buy any Vehicle from Tesla?",
+          "quick_replies": [
+            {
+              "content_type": "text",
+              "title": "Yes",
+              "payload": "answered_q5",
+              "image_url": "http://petersfantastichats.com/img/red.png"
+            },
+            {
+              "content_type": "No",
+              "title": "Green",
+              "payload": "answered_q5",
               "image_url": "http://petersfantastichats.com/img/green.png"
             }
           ]
         }
       }
     }
-  }
-}
