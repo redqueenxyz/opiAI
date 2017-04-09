@@ -334,6 +334,7 @@ function receivedMessage(event) {
         // if the text is 'generic', run the Structured Message example
         sendTextMessage(senderID, "I see you answered q1");
         sendSpecificQuickReply(senderID, lol.question2);
+        saveToFirebase(senderID, payload);
         break;
       case 'answered_q2':
         sendSpecificQuickReply(senderID, lol.question3);
@@ -376,6 +377,13 @@ function receivedMessage(event) {
     // If there's an attachment, run the general sendTextMessage() function, but with the defined text 'message with attachment recieved'.
     sendTextMessage(senderID, "Message with attachment received");
   }
+}
+
+function saveToFirebase(senderId, payload) {
+  var userAnswers = firebase.database().ref("userAnswers/" + senderId);
+  userAnswers.set({
+    answer: payload
+  })
 }
 
 
