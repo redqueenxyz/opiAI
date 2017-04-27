@@ -15,7 +15,7 @@ firebase.initializeApp(database);
 var app = express();     
 app.use(require('lib/routes')); // use the routing in lib/routes
 
-// routing =====================================================================
+// serving =====================================================================
 
 app.listen(3000, () => {
   console.log('App listening on port 3000');
