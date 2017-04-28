@@ -1,22 +1,29 @@
 {
-  "name": "feedbackAI",
-  "version": "1.0.0",
-  "description": "",
+  "name": "feedbackai",
+  "version": "0.0.1",
+  "description": "## Intro",
   "main": "main.js",
   "scripts": {
-    "start": "nodemon main.js",
+    "start": "nodemon bot.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall" : "node -e \"var s='../lib',d='node_modules/lib',fs=require('fs');fs.exists(d,function(e){e||fs.symlinkSync(s,d,'dir')});\""
-      },
+    "postinstall": "node bot_postinstall.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/redqueenxyz/feedbackAI.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "redqueen",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/redqueenxyz/feedbackAI/issues"
   },
-  "homepage": "https://github.com/redqueenxyz/feedbackAI#readme"
+  "homepage": "https://github.com/redqueenxyz/feedbackAI#readme",
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "express": "^4.15.2",
+    "firebase": "^3.9.0",
+    "request": "^2.81.0",
+    "slinker": "^1.1.0"
+  }
 }

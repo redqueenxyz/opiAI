@@ -1,18 +1,19 @@
 // Dependencies
-var app = require('express').Router();
-var bodyParser = require('body-parser')
+var bot = require('express').Router();
 var request = require('request')
+var bodyParser = require('body-parser')
+var messages = require('@bot_messenger/services/messages')
 
 // Auth
-const facebookAuth = require('lib/config/facebook_auth');
+const facebookAuth = require('@bot_messenger/config/facebook_auth');
 
 // Parsing
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+bot.use(bodyParser.json());
+bot.use(bodyParser.urlencoded({ extended: true }));
 
 // Messaging
 
-app.post('/', function (req, res) {
+bot.post('/', function (req, res) {
 
   console.log('\n' + 'We have recieved a request!\n    The body is:\n');
   console.log(req.body);
@@ -51,19 +52,14 @@ app.post('/', function (req, res) {
         }
       });
     });
-
-    // After processing, assume all went well
-    //
-    // You must send back a 200, within 20 seconds, to let FB know
-    // we've successfully received the callback. Otherwise, the request
-    // will time out and FB will keep trying to resend.
+    // Send 200 after processing; must send back a 200 within 20 seconds, otherwise times out and FB keeps retrying
     res.sendStatus(200);
   }
 });
 
 
 
-//** This function runs when we recieve a message, and decides how to handle it  */
+/** This function runs when we recieve a message, and decides how to handle it  */
 function receivedMessage(event) {
 
   console.log('\nThe message object contains:\n')
@@ -74,7 +70,7 @@ function receivedMessage(event) {
   var timeOfMessage = event.timestamp;
   var message = event.message;
 
-  console.log("\n     The received message for our app %d from page %d and the timestamp %d is: \"%s\" ",
+  console.log("\n     The received message for our bot %d from page %d and the timestamp %d is: \"%s\" ",
     senderID, recipientID, timeOfMessage, message.text); // Turn just the message from JSON into a string
 
   console.log('\nThe message component inside the message event contains: \n')
@@ -146,7 +142,7 @@ function sendGenericMessage(recipientId) {
             title: "rift",
             subtitle: "Next-generation virtual reality",
             item_url: "https://www.oculus.com/en-us/rift/",
-            image_url: "http://messengerdemo.parseapp.com/img/rift.png",
+            image_url: "http://messengerdemo.parsebot.com/img/rift.png",
             buttons: [{
               type: "web_url",
               url: "https://www.oculus.com/en-us/rift/",
@@ -160,7 +156,7 @@ function sendGenericMessage(recipientId) {
             title: "touch",
             subtitle: "Your Hands, Now in VR",
             item_url: "https://www.oculus.com/en-us/touch/",
-            image_url: "http://messengerdemo.parseapp.com/img/touch.png",
+            image_url: "http://messengerdemo.parsebot.com/img/touch.png",
             buttons: [{
               type: "web_url",
               url: "https://www.oculus.com/en-us/touch/",
@@ -182,7 +178,7 @@ function sendGenericMessage(recipientId) {
 
 
 
-/** This function is a wrapper function that is called after every template, and it handles actually submitting the final POST request to the Send API */
+/** This function is a wrboter function that is called after every template, and it handles actually submitting the final POST request to the Send API */
 function callSendAPI(messageData) {
   console.log('\nMessage has been processed, attempting to send a response back to Facebook Send API...');
   request({
@@ -212,4 +208,4 @@ function callSendAPI(messageData) {
 }
 
 
-module.exports = app; // export this as 'routes'
+module.exports = bot; // export this as 'routes'
