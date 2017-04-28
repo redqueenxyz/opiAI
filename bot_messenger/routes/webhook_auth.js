@@ -2,7 +2,7 @@
 var router = require('express').Router();
 
 // Imports
-const facebookAuth = require('lib/config/facebook_auth');
+const facebookAuth = require('@bot_messenger/config/facebook_auth');
 // console.log(facebookAuth);
 
 // Facebook Authorization
