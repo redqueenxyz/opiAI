@@ -2,7 +2,7 @@
 
 var TextMessage = {
     message: {
-      text: messageText
+      text: "text!"
     }
   }
 

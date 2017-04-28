@@ -7,6 +7,7 @@ const facebookAuth = require('@bot_messenger/config/facebook_auth');
 
 // Facebook Authorization
 router.get('/', function (req, res) {
+  console.log('\nAuthorizing bot with Facebook...');
   if (
     req.query['hub.mode'] === 'subscribe' &&
     req.query['hub.verify_token'] === facebookAuth.verifyToken) {

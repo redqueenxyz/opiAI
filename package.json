@@ -20,11 +20,10 @@
   },
   "homepage": "https://github.com/redqueenxyz/feedbackAI#readme",
   "dependencies": {
+    "body-parser": "^1.17.1",
     "express": "^4.15.2",
     "firebase": "^3.9.0",
+    "request": "^2.81.0",
     "slinker": "^1.1.0"
-  },
-  "devDependencies": {
-    "request": "^2.81.0"
   }
 }
