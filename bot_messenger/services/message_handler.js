@@ -5,7 +5,7 @@ var message_handler = module.exports = {};
 
 // Local Dependencies
 sender = require('@bot_messenger/routes/facebook_sender')
-surveyer = require('@bot_messenger/services/survey_handler')
+surveyer = require('@bot_messenger/services/payload_handler')
 
 // Message Handler
 // The primary handler; looks for a string in a message and responds as necessary 
@@ -28,11 +28,16 @@ message_handler.receivedMessage = function(event) {
   var messageId = message.mid;
   var messageText = message.text;
   var messageAttachments = message.attachments;
+  var messageQuickReply = message.quick_reply;
 
   console.log("\n  The message id is %s, it\'s sequence number is %s, and it says: \"%s\" \n",
     messageId, message.seq, messageText); // Modify if message.attachments is necessary
 
-  if (messageText) {
+
+
+    // TODO: Need to start saving these variables on Firebase as users, message stamps, etc. Good example here: https://firebase.google.com/docs/database/web/structure-data
+
+  if (messageText && typeof(messageQuickReply) == 'undefined') {
     // If we receive a text message, check to see if it matches a keyword
     // if so, send it to a given template, else defaultt o sendtextMessage() which just echoes the text we received.
     switch (messageText) {
@@ -46,10 +51,14 @@ message_handler.receivedMessage = function(event) {
         break;
       default:
         // else, run the general Echo example
-        sender.sendMessage(senderID, messageText);
+        sender.sendTextMessage(senderID, messageText);
     }
-  } else if (messageAttachments) {
+  }  if (messageQuickReply) {
+      console.log('Payload recieved!') 
+      surveyer.surveyChecker(senderID, messageQuickReply.payload) // QuickReply has an internal object called payload; that's what we need
+  }
+  else if (messageAttachments) {
     // If there's an attachment, run the general sendTextMessage() function, but with the defined text 'message with attachment recieved'.
-    sender.sendMessage(senderID, "Message with attachment received");
+    sender.sendTextMessage(senderID, "Message with attachment received");
   }
 }

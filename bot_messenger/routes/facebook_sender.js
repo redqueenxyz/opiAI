@@ -5,9 +5,24 @@ var request = require('request')
 // Local Dependencies
 const facebookAuth = require('@bot_messenger/config/facebook_auth');
 
-// Send Message 
-sender.sendMessage = function(recipientId, messageText) {
+// Send Any Message
+sender.sendMessage = function(recipientId, messageObject) {
   console.log('\  Sending a message back to Facebook...');
+
+  // Intialize the messageData object that FB will recieve
+  var messageData = {
+     recipient: {
+        id: recipientId
+    },
+    message:  messageObject
+  }
+    callSendAPI(messageData);
+  };
+
+
+// Send Text Message 
+sender.sendTextMessage = function(recipientId, messageText) {
+  console.log('\  Sending a text message back to Facebook...');
 
   // Intialize the messageData object that FB will recieve
   var messageData = {
@@ -128,7 +143,7 @@ function callSendAPI(messageData) {
     } else {
       console.error("Failed to send new message; check your errors!");
       console.log(messageData)
-      //console.error(response); // Dumps the whole response; very messy console
+      console.error(response); // Dumps the whole response; very messy console
       console.error(error); // Should still get the error though
     }
   });
