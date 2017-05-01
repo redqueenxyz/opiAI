@@ -3,37 +3,104 @@ var sender = require('express').Router(); //TODO: Does this need to be a router?
 var request = require('request')
 
 // Local Dependencies
-var messageTemplates = require('@bot_messenger/config/message_templates');
 const facebookAuth = require('@bot_messenger/config/facebook_auth');
 
 // Send Message 
-sender.sendMessage = function(recipientId, messageText, templateName) {
+sender.sendMessage = function(recipientId, messageText) {
   console.log('\  Sending a message back to Facebook...');
 
   // Intialize the messageData object that FB will recieve
   var messageData = {
      recipient: {
         id: recipientId
-    }
-  }
-
-  // Switch the {message: text: ... } component depending on which template we're using
-  if (templateName) {
-  switch (templateName) {
-    case 'structured':
-      // if the text is 'structured', return the Structured Message template
-      messageData["message"] = messageTemplates.structuredMessage();
-      break;
-    case 'echo':
-      messageData["message"] = messageTemplates.echoMessage(messageText);
-      break;      
-    default:
-      console.log("Saw nothing; default echo.")
-      messageData["message"] = messageTemplates.echoMessage(messageText);
+    },
+    message:  {
+      text: messageText
     }
   }
     callSendAPI(messageData);
   };
+
+// Send Templates
+sender.sendStructuredMessage = function(recipientId) {
+  console.log('\nWe heard \'generic\', get the Structured Message template!');
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "generic",
+          elements: [{
+            title: "rift",
+            subtitle: "Next-generation virtual reality",
+            item_url: "https://www.oculus.com/en-us/rift/",
+            image_url: "http://messengerdemo.parseapp.com/img/rift.png",
+            buttons: [{
+              type: "web_url",
+              url: "https://www.oculus.com/en-us/rift/",
+              title: "Open Web URL"
+            }, {
+              type: "postback",
+              title: "Call Postback",
+              payload: "Payload for first bubble",
+            }],
+          }, {
+            title: "touch",
+            subtitle: "Your Hands, Now in VR",
+            item_url: "https://www.oculus.com/en-us/touch/",
+            image_url: "http://messengerdemo.parseapp.com/img/touch.png",
+            buttons: [{
+              type: "web_url",
+              url: "https://www.oculus.com/en-us/touch/",
+              title: "Open Web URL"
+            }, {
+              type: "postback",
+              title: "Call Postback",
+              payload: "Payload for second bubble",
+            }]
+          }]
+        }
+      }
+    }
+  };
+  callSendAPI(messageData);
+}
+
+
+
+/** This function demonstrates the Quick Reply capability (!!) which provides the users buttons to respond and returns a defined payload */
+// Reference: https://developers.facebook.com/docs/messenger-platform/send-api-reference/quick-replies
+sender.sendQuickReply = function(recipientId) {
+  console.log('\nWe heard \'quick reply\', get the Quick Reply template!');
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      text: "Pick a color:",
+      quick_replies: [
+        {
+          content_type: "text",
+          title: "Red",
+          payload: "answered_q1", // Recieves this payload back as the new 'message, so maybe just grab this and toss it into FB as part of the 'incoming' loop?
+          // TODO: Maybe explore Postbacks for Quick Replies, if necesssary
+          image_url: "http://petersfantastichats.com/img/red.png" // Even takes a cute little image for friendliness
+          // TODO: Emojis?!
+        },
+        {
+          content_type: "text",
+          title: "Green",
+          payload: "answered_q1",
+          image_url: "http://petersfantastichats.com/img/green.png"
+        }
+      ]
+    }
+  };
+  callSendAPI(messageData);
+}
 
 
 // Facebook Send API 

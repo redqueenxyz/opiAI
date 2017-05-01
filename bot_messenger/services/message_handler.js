@@ -5,6 +5,7 @@ var message_handler = module.exports = {};
 
 // Local Dependencies
 sender = require('@bot_messenger/routes/facebook_sender')
+surveyer = require('@bot_messenger/services/survey_handler')
 
 // Message Handler
 // The primary handler; looks for a string in a message and responds as necessary 
@@ -35,16 +36,20 @@ message_handler.receivedMessage = function(event) {
     // If we receive a text message, check to see if it matches a keyword
     // if so, send it to a given template, else defaultt o sendtextMessage() which just echoes the text we received.
     switch (messageText) {
-      case 'generic':
+      case 'structured':
         // if the text is 'generic', run the Structured Message example
-        sender.sendMessage(senderID, messageText, "structured");
+        sender.sendStructuredMessage(senderID);
+        break;
+      case 'survey':
+        // if the text is 'generic', run the Structured Message example
+        surveyer.surveyChecker(senderID, messageText); // FIXME: Temporarily hijacking message checker; final version should use postbacks
         break;
       default:
         // else, run the general Echo example
-        sender.sendMessage(senderID, messageText, "echo");
+        sender.sendMessage(senderID, messageText);
     }
   } else if (messageAttachments) {
     // If there's an attachment, run the general sendTextMessage() function, but with the defined text 'message with attachment recieved'.
-    sender.echoMessage(senderID, "Message with attachment received");
+    sender.sendMessage(senderID, "Message with attachment received");
   }
 }
