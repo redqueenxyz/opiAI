@@ -3,7 +3,7 @@ var reciever = require('express').Router();
 var bodyParser = require('body-parser')
 
 // Local Dependencies
-var recievers = require('@bot_messenger/services/message_recievers')
+message_handler = require('@bot_messenger/services/message_handler')
 
 // Parsing
 reciever.use(bodyParser.json());
@@ -26,7 +26,6 @@ reciever.post('/', function (req, res) {
       var pageID = entry.id;
       var timeOfEvent = entry.time;
 
-
       // More pretty printing
       console.log('    The page is ' + pageID + '.') // TODO: Pass this to Firebase
       console.log('    The time is ' + Date(timeOfEvent).toString("MMM dd") + '.'); // TODO: Pass this to Firebase
@@ -38,12 +37,12 @@ reciever.post('/', function (req, res) {
 
           // If it has a message component, run recievedMessage()
           console.log('\nIt has a message object, what\'s in it?')
-          recievers.receivedMessage(event);
-
+          message_handler.receivedMessage(event);
+          
         } else if (event.postback) {
           // if it has a postback component, run recievedPostback()
           console.log('It has a postback object, how should we handle it?')
-          recievers.receivedPostback(event);
+          message_handler.receivedPostback(event);
         } else {
           console.log("It has neither a message nor a postback; we have received an unknown event: ", event);
         }
@@ -53,7 +52,5 @@ reciever.post('/', function (req, res) {
     res.sendStatus(200);
   }
 });
-
-
 
 module.exports = reciever; // export this as 'routes'

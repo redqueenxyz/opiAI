@@ -3,23 +3,35 @@ var sender = require('express').Router(); //TODO: Does this need to be a router?
 var request = require('request')
 
 // Local Dependencies
-var senders = require('@bot_messenger/services/message_senders')
+var messageTemplates = require('@bot_messenger/services/message_templates');
 
 // Auth
 const facebookAuth = require('@bot_messenger/config/facebook_auth');
 
-// Setup
-sender.sendTextMessage = function(recipientId, messageText) {
-  console.log('\nWe heard nothing special, get the Echo template!');
+// Send Message 
+sender.sendMessage = function(recipientId, messageText, templateName) {
+  console.log('\  Sending a message back to Facebook...');
+
   var messageData = {
-    recipient: {
-      id: recipientId
-    },
-    message: {
-      text: senders.echoMessage(messageText)
+     recipient: {
+        id: recipientId
     }
   }
 
+  if (templateName) {
+  switch (templateName) {
+    case 'structured':
+      // if the text is 'structured', return the Structured Message template
+      messageData["message"] = messageTemplates.structuredMessage();
+      break;
+    case 'echo':
+      messageData["message"] = messageTemplates.echoMessage(messageText);
+      break;      
+    default:
+      console.log("Saw nothing; default echo.")
+      messageData["message"] = messageTemplates.echoMessage(messageText);
+    }
+  }
     callSendAPI(messageData);
   };
 
@@ -48,6 +60,7 @@ function callSendAPI(messageData) {
 
     } else {
       console.error("Failed to send new message; check your errors!");
+      console.log(messageData)
       //console.error(response); // Dumps the whole response; very messy console
       console.error(error); // Should still get the error though
     }
