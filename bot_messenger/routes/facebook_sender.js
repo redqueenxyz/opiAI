@@ -3,21 +3,21 @@ var sender = require('express').Router(); //TODO: Does this need to be a router?
 var request = require('request')
 
 // Local Dependencies
-var messageTemplates = require('@bot_messenger/services/message_templates');
-
-// Auth
+var messageTemplates = require('@bot_messenger/config/message_templates');
 const facebookAuth = require('@bot_messenger/config/facebook_auth');
 
 // Send Message 
 sender.sendMessage = function(recipientId, messageText, templateName) {
   console.log('\  Sending a message back to Facebook...');
 
+  // Intialize the messageData object that FB will recieve
   var messageData = {
      recipient: {
         id: recipientId
     }
   }
 
+  // Switch the {message: text: ... } component depending on which template we're using
   if (templateName) {
   switch (templateName) {
     case 'structured':

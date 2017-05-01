@@ -9,7 +9,7 @@ var bot = express()
 
 // database ====================================================================
 
-var database = require('@bot_messenger/services/database')
+var database = require('@bot_messenger/services/database_handler')
 
 // routing =====================================================================
 
