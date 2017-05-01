@@ -1,29 +1,29 @@
 // Manages Firebase DB retrieval and return
 
-// var firebase_admin = require("firebase-admin");
-var admin = require("firebase-admin");
+// Export
+var firebase = module.exports = {};
 
 // Admin
+var firebaseAdmin = require("firebase-admin");
+
 // Necessary for the Firebase SDK, and gives everyone with this .json the read/write TODO: Fix Bolt rules for Firebase later
 
 var serviceAccount = require("@bot_messenger/config/firebase_admin.json");
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+firebaseAdmin.initializeApp({
+  credential: firebaseAdmin.credential.cert(serviceAccount),
   databaseURL: "https://feedbackio-ddb4e.firebaseio.com"
 });   
 
 // Real-time Database
 // Accessed through the Firebase Admin endpoint
-var db = admin.database();
+firebase.db = firebaseAdmin.database();
 
 // Database Sending Helpers
 // Further documentation available at: https://firebase.google.com/docs/database/web/read-and-write
 
 // FIXME: This shit below works! Build it out. 
-// db.ref("surveys/survey_1").once("value", function(snapshot) {
-//   console.log(snapshot.val());
-// });
+
 
 
 // Database Retrieval Helpers
@@ -61,4 +61,3 @@ var db = admin.database();
 
 
 /// Retrieving
-var database = module.exports = {};
