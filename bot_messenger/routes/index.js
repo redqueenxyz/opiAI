@@ -6,7 +6,6 @@ var pretty = require('express-prettify');
 // Parsing
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
-router.use(pretty({ query: 'pretty' }));
 
 // Homepage 
 router.get('/', (req, res) => {
@@ -15,7 +14,10 @@ router.get('/', (req, res) => {
 
 // Routes
 router.use('/webhook', require('./webhook_auth'))
-router.use('/webhook', require('./webhook_subscribe'))
-router.use('/webhook', require('./message_recieve'))
+router.use('/webhook', require('./webhook_subscribe')) // Subscriber uses request not express; needs no route technically
+router.use('/webhook', require('./facebook_reciever'))
+router.use('/webhook', require('./facebook_sender')) // Sender uses request not express; needs no route technically
+
+
 
 module.exports = router; // export this index as 'lib/routes'

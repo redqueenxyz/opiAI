@@ -4,6 +4,8 @@
 // ./bot_messenger/config > @bot_messenger/config
 // ./bot_messenger/routes > @bot_messenger/routes
 
+console.log('Linking bot_messenger into node_modules...')
+
 var slinker = require('slinker'),
     path = require('path');
  
@@ -13,9 +15,9 @@ slinker.link({
     symlinkPrefix: '@',
     nodeModulesPath: path.join(__dirname, 'node_modules'),
     onComplete: function() {
-        console.log('Yay, my modules are linked!');
+        console.log('Modules succesfully linked!');
     },
     onError: function(error) {
-        console.log('Oh no, my modules aren\'t linked!');
+        console.log('Modules failed to link. Check post_install settings.');
     }
 });

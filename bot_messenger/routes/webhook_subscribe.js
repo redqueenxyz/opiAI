@@ -5,8 +5,12 @@
 // `https://someurl.com/webhook` > Put that in developers.facebook.com > feedbackAI > Webhooks > Application > Edit Subscription > Callback url
 // This script should run after webhook_auth, and will ensure the proper permissions are set on Facebook for messaging through the page 
 
+// FIXME: Make sure to double check the callback url under Webhooks for all elements (pages, permissions, etc.); may still error out. 
+// Documentation: https://developers.facebook.com/docs/graph-api/webhooks/
+
+
 // Webhook Router
-var router = require('express').Router();
+var subscriber = require('express').Router();
 
 // Package Dependencies
 var request = require('request')
@@ -16,56 +20,58 @@ const facebookAuth = require('@bot_messenger/config/facebook_auth')
 const facebookApp = require('@bot_messenger/config/facebook_app')
 
 /** This function retrieves the app token from facebook; technically don't need this to run. */
-function getAppToken() {
-  request({
-    uri: 'https://graph.facebook.com/v2.8/oauth/access_token',
-    qs : {
-      client_id: facebookApp.appID,
-      client_secret: facebookApp.appSecret,
-      grant_type: 'client_credentials'
-    }
-  }, function (error, response, body) {
-      console.log(response.body)
-    });
-  }
+// function getAppToken() {
+//   request({
+//     uri: 'https://graph.facebook.com/v2.8/oauth/access_token',
+//     qs : {
+//       client_id: facebookApp.appID,
+//       client_secret: facebookApp.appSecret,
+//       grant_type: 'client_credentials'
+//     }
+//   }, function (error, response, body) {
+//       console.log(response.body)
+//     });
+//   }
 
-/** This function reads our current subscriptions. TODO: Parse the JSON response so it's easier to read. */
-function readSubscriptions() {
-  console.log('\nSetting appropriate subscriptions for Facebook Messenger integration...');
+/** This function reads our current subscriptions. TODO: Works, but may need to parse the JSON response so it's easier to read. */
+// function readSubscriptions() {
+//   console.log('\nSetting appropriate subscriptions for Facebook Messenger integration...');
 
-  request(
-    {
-    method: 'GET',
-    uri: 'https://graph.facebook.com/v2.9/'.concat(facebookApp.appID).concat('/subscriptions'), // The API endpoint to POST to
-    qs: { 
-      access_token: facebookApp.accessToken
-    },
+//   request(
+//     {
+//     method: 'GET',
+//     uri: 'https://graph.facebook.com/v2.9/'.concat(facebookApp.appID).concat('/subscriptions'), // The API endpoint to POST to
+//     qs: { 
+//       access_token: facebookApp.accessToken
+//     },
 
-  }, function (error, response, body) {
-      if (error) {
-        console.log('We had an error!')
-        // console.log(error) 
-      } else if (response.statusCode == 400) {
-        console.log('Hmm')
-        console.log(facebookApp.accessToken)
-        //console.log(response)
-      } else {
-        console.log('Success?')
-        console.log(response.statusCode)
-        console.log(body)
-      } 
-  });
-}
+//   }, function (error, response, body) {
+//       if (error) {
+//         console.log('We had an error!')
+//         // console.log(error) 
+//       } else if (response.statusCode == 400) {
+//         console.log('Hmm')
+//         console.log(facebookApp.accessToken)
+//         //console.log(response)
+//       } else {
+//         console.log('Success?')
+//         console.log(response.statusCode)
+//         console.log(body)
+//       } 
+//   });
+// }
 
 /** This function publishes our desired subscriptions (only one at the moment.) */
 function publishSubscriptions() {
-  // console.log('\nSetting appropriate subscriptions for Facebook Messenger integration...');
+  console.log('\nSetting appropriate subscriptions for Facebook Messenger integration...');
   request(
     {
     method: 'POST',
-    uri: 'https://graph.facebook.com/v2.9/'.concat(facebookApp.appID).concat('/subscriptions'), // The API endpoint to POST to
+    uri: 'https://graph.facebook.com/v2.8/'.concat(facebookApp.appID).concat('/subscriptions'), // The API endpoint to POST to
     qs: { 
       object: 'permissions',
+      callback_url: 'https://c305034c.ngrok.io/webhook',
+      verify_token: facebookAuth.verifyToken,
       fields: ['pages_messaging'],
       access_token: facebookApp.accessToken
     },
@@ -87,4 +93,4 @@ function publishSubscriptions() {
 
 publishSubscriptions()
 
-module.exports = router; 
+module.exports = subscriber; 

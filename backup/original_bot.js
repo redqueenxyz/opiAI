@@ -27,7 +27,6 @@ const express = require('express');
 const bodyParser = require('body-parser'); // handle POST requests
 const request = require('request');
 const path = require('path');
-const date = require('datejs');
 
 
 // Routing via Express JS
@@ -38,40 +37,6 @@ app.use(bodyParser.urlencoded({  // support encoded bodies
   extended: true
 }));
 
-
-/**************/
-/// Database
-/**************/
-
-// Firebase
-var firebaseAdmin = require("firebase-admin");
-var firebase = require("firebase");
-
-// Auth
-var firebaseAccount = require("./auth.json");
-
-firebaseAdmin.initializeApp({
-  credential: firebaseAdmin.credential.cert(firebaseAccount),
-  databaseURL: "https://feedbackio-ddb4e.firebaseio.com"
-});
-
-// DB
-var config = {
-  apiKey: "AIzaSyBv-kr-kh531Tz6weM5-xxAauGEK9QTSik",
-  authDomain: "feedbackio-ddb4e.firebaseapp.com",
-  databaseURL: "https://feedbackio-ddb4e.firebaseio.com",
-  storageBucket: "feedbackio-ddb4e.appspot.com",
-  messagingSenderId: "436778363649"
-};
-
-firebase.initializeApp(config); //FIXME: Setup Firebase rules for auth only access
-
-function saveToFirebase(senderId, payload) {
-  var userAnswers = firebase.database().ref("userAnswers/" + senderId);
-  userAnswers.set({
-    answer: payload
-  })
-}
 
 
 

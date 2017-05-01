@@ -20,11 +20,10 @@ var db = admin.database();
 // Database Sending Helpers
 // Further documentation available at: https://firebase.google.com/docs/database/web/read-and-write
 
-var ref = db.ref("clients/client_one");
-
-ref.once("value", function(snapshot) {
-  console.log(snapshot.val());
-});
+// FIXME: This shit below works! Build it out. 
+// db.ref("surveys/survey_1").once("value", function(snapshot) {
+//   console.log(snapshot.val());
+// });
 
 
 // Database Retrieval Helpers

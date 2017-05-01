@@ -1,23 +1,22 @@
 // Webhook Router
-var router = require('express').Router();
+var validator = require('express').Router();
 
 // Imports
 const facebookAuth = require('@bot_messenger/config/facebook_auth');
 // console.log(facebookAuth);
 
 // Facebook Authorization
-router.get('/', function (req, res) {
+validator.get('/', function (req, res) {
   console.log('\nAuthorizing bot with Facebook...');
   if (
     req.query['hub.mode'] === 'subscribe' &&
     req.query['hub.verify_token'] === facebookAuth.verifyToken) {
-    console.log("Validating webhook");
     res.status(200).send(req.query['hub.challenge']);
-
+    console.log("Webhook validated!");
   } else {
     console.error("Failed validation. Make sure the validation tokens match.");
     res.sendStatus(403);
   }
 });
 
-module.exports = router; // export this as 'routes'
+module.exports = validator;
