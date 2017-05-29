@@ -66,20 +66,20 @@ function publishSubscriptions() {
   console.log('\nSetting appropriate subscriptions for Facebook Messenger integration...');
   request(
     {
-    method: 'POST',
-    uri: 'https://graph.facebook.com/v2.8/'.concat(facebookApp.appID).concat('/subscriptions'), // The API endpoint to POST to
-    qs: { 
-      object: 'permissions',
-      callback_url: 'https://c305034c.ngrok.io/webhook',
-      verify_token: facebookAuth.verifyToken,
-      fields: ['pages_messaging'],
-      access_token: facebookApp.accessToken
-    },
+      method: 'POST',
+      uri: 'https://graph.facebook.com/v2.8/'.concat(facebookApp.appID).concat('/subscriptions'), // The API endpoint to POST to
+      qs: {
+        object: 'permissions',
+        callback_url: facebookApp.callbackUrl,
+        verify_token: facebookAuth.verifyToken,
+        fields: ['pages_messaging'],
+        access_token: facebookApp.accessToken
+      },
 
-  }, function (error, response, body) {
+    }, function (error, response, body) {
       if (error) {
         console.log('We ran into error!')
-        console.log(error) 
+        console.log(error)
       } else if (response.statusCode == 400) {
         console.log('We made a bad request.')
         console.log(body)
@@ -87,8 +87,8 @@ function publishSubscriptions() {
         // If we've made it here, we're fine. 
         // console.log('Successfully subscribed.')
         // console.log(body)
-      } 
-  });
+      }
+    });
 }
 
 publishSubscriptions()

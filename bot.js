@@ -5,15 +5,15 @@
 var express = require('express')
 
 // initialize ==================================================================
-var bot = express()     
+var bot = express()
 
 // database ====================================================================
 
-var database = require('@bot_messenger/services/database_handler')
+var database = require('./bot_messenger/services/database_handler')
 
 // routing =====================================================================
 
-bot.use(require('@bot_messenger/routes'))
+bot.use(require('./bot_messenger/routes'))
 
 // serving =====================================================================
 

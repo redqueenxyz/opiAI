@@ -1,10 +1,10 @@
 // This script handles recieved postbacks, and hands off to either the facebook_sender or the survey_handler as necessary 
 
 // Local Dependencies
-sender = require('@bot_messenger/routes/facebook_sender')
+sender = require('../routes/facebook_sender')
 
 /** This function runs when we recieve a postback, and decides how to handle it  */
-receivedPostback = function(event) {
+receivedPostback = function (event) {
   // TODO: Explore postbacks and see if they are helpful
   // Skipping the logic here for now; we'll come back if we need Postback functionality
 

@@ -1,7 +1,6 @@
 // Main Router
 const router = require('express').Router(); // create a new instance of Router
 var bodyParser = require('body-parser')
-var pretty = require('express-prettify');
 
 // Parsing
 router.use(bodyParser.json());
