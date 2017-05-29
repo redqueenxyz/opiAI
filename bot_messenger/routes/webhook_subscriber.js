@@ -91,9 +91,8 @@ function publishSubscriptions() {
       }
     });
 }
-// Let the bot load before we start asking for permissions from Facebook
-sleep.sleep(1); // sleep for 5 seconds
 
-publishSubscriptions()
+// Give the bot 5 seconds before we start asking for permissions from Facebook
+setTimeout(publishSubscriptions, 5000);
 
 module.exports = subscriber; 
