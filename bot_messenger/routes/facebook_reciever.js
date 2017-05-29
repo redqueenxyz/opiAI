@@ -3,7 +3,7 @@ var reciever = require('express').Router();
 var bodyParser = require('body-parser')
 
 // Local Dependencies
-message_handler = require('@bot_messenger/services/message_handler')
+message_handler = require('../services/message_handler')
 
 // Parsing
 reciever.use(bodyParser.json());
@@ -38,7 +38,7 @@ reciever.post('/', function (req, res) {
           // If it has a message component, run recievedMessage()
           console.log('\nIt has a message object, what\'s in it?')
           message_handler.receivedMessage(event);
-          
+
         } else if (event.postback) {
           // if it has a postback component, run recievedPostback()
           console.log('It has a postback object, how should we handle it?')

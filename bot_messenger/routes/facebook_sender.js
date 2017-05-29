@@ -3,41 +3,41 @@ var sender = require('express').Router(); //TODO: Does this need to be a router?
 var request = require('request')
 
 // Local Dependencies
-const facebookAuth = require('@bot_messenger/config/facebook_auth');
+const facebookAuth = require('../config/facebook_auth');
 
 // Send Any Message
-sender.sendMessage = function(recipientId, messageObject) {
+sender.sendMessage = function (recipientId, messageObject) {
   console.log('\  Sending a message back to Facebook...');
 
   // Intialize the messageData object that FB will recieve
   var messageData = {
-     recipient: {
-        id: recipientId
+    recipient: {
+      id: recipientId
     },
-    message:  messageObject
+    message: messageObject
   }
-    callSendAPI(messageData);
-  };
+  callSendAPI(messageData);
+};
 
 
 // Send Text Message 
-sender.sendTextMessage = function(recipientId, messageText) {
+sender.sendTextMessage = function (recipientId, messageText) {
   console.log('\  Sending a text message back to Facebook...');
 
   // Intialize the messageData object that FB will recieve
   var messageData = {
-     recipient: {
-        id: recipientId
+    recipient: {
+      id: recipientId
     },
-    message:  {
+    message: {
       text: messageText
     }
   }
-    callSendAPI(messageData);
-  };
+  callSendAPI(messageData);
+};
 
 // Send Templates
-sender.sendStructuredMessage = function(recipientId) {
+sender.sendStructuredMessage = function (recipientId) {
   console.log('\nWe heard \'generic\', get the Structured Message template!');
   var messageData = {
     recipient: {
@@ -88,7 +88,7 @@ sender.sendStructuredMessage = function(recipientId) {
 
 /** This function demonstrates the Quick Reply capability (!!) which provides the users buttons to respond and returns a defined payload */
 // Reference: https://developers.facebook.com/docs/messenger-platform/send-api-reference/quick-replies
-sender.sendQuickReply = function(recipientId) {
+sender.sendQuickReply = function (recipientId) {
   console.log('\nWe heard \'quick reply\', get the Quick Reply template!');
   var messageData = {
     recipient: {

@@ -4,12 +4,12 @@
 var message_handler = module.exports = {};
 
 // Local Dependencies
-sender = require('@bot_messenger/routes/facebook_sender')
-surveyer = require('@bot_messenger/services/payload_handler')
+sender = require('../routes/facebook_sender')
+surveyer = require('../services/payload_handler')
 
 // Message Handler
 // The primary handler; looks for a string in a message and responds as necessary 
-message_handler.receivedMessage = function(event) {
+message_handler.receivedMessage = function (event) {
 
   console.log('\nThe message object contains:\n')
   console.log(event);
@@ -35,9 +35,9 @@ message_handler.receivedMessage = function(event) {
 
 
 
-    // TODO: Need to start saving these variables on Firebase as users, message stamps, etc. Good example here: https://firebase.google.com/docs/database/web/structure-data
+  // TODO: Need to start saving these variables on Firebase as users, message stamps, etc. Good example here: https://firebase.google.com/docs/database/web/structure-data
 
-  if (messageText && typeof(messageQuickReply) == 'undefined') {
+  if (messageText && typeof (messageQuickReply) == 'undefined') {
     // If we receive a text message, check to see if it matches a keyword
     // if so, send it to a given template, else defaultt o sendtextMessage() which just echoes the text we received.
     switch (messageText) {
@@ -53,9 +53,9 @@ message_handler.receivedMessage = function(event) {
         // else, run the general Echo example
         sender.sendTextMessage(senderID, messageText);
     }
-  }  if (messageQuickReply) {
-      console.log('Payload recieved!') 
-      surveyer.surveyChecker(senderID, messageQuickReply.payload) // QuickReply has an internal object called payload; that's what we need
+  } if (messageQuickReply) {
+    console.log('Payload recieved!')
+    surveyer.surveyChecker(senderID, messageQuickReply.payload) // QuickReply has an internal object called payload; that's what we need
   }
   else if (messageAttachments) {
     // If there's an attachment, run the general sendTextMessage() function, but with the defined text 'message with attachment recieved'.
