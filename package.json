@@ -1,12 +1,12 @@
 {
   "name": "feedbackai",
-  "version": "0.0.1",
-  "description": "## Intro",
+  "version": "0.0.2",
+  "description": "Question Messenger Bot.",
   "main": "main.js",
   "scripts": {
     "start": "nodemon bot.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "node bot_postinstall.js"
+    "test": "mocha",
+    "postinstall": "// node bot_postinstall.js"
   },
   "repository": {
     "type": "git",
@@ -21,9 +21,10 @@
   "homepage": "https://github.com/redqueenxyz/feedbackAI#readme",
   "dependencies": {
     "body-parser": "^1.17.1",
-    "express": "^4.15.2",
+    "express": "^4.15.3",
     "firebase-admin": "^4.2.1",
+    "nodemon": "^1.11.0",
     "request": "^2.81.0",
-    "slinker": "^1.1.0"
+    "sleep": "^5.1.1"
   }
 }
