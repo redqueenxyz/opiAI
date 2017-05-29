@@ -8,12 +8,12 @@ var firebaseAdmin = require("firebase-admin");
 
 // Necessary for the Firebase SDK, and gives everyone with this .json the read/write TODO: Fix Bolt rules for Firebase later
 
-var serviceAccount = require("@bot_messenger/config/firebase_admin.json");
+var serviceAccount = require("../config/firebase_admin.json");
 
 firebaseAdmin.initializeApp({
   credential: firebaseAdmin.credential.cert(serviceAccount),
   databaseURL: "https://feedbackio-ddb4e.firebaseio.com"
-});   
+});
 
 // Real-time Database
 // Accessed through the Firebase Admin endpoint

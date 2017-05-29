@@ -2,7 +2,7 @@
 var validator = require('express').Router();
 
 // Imports
-const facebookAuth = require('@bot_messenger/config/facebook_auth');
+const facebookAuth = require('../config/facebook_auth');
 // console.log(facebookAuth);
 
 // Facebook Authorization

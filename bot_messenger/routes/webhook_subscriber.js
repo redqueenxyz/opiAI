@@ -11,7 +11,6 @@
 
 // Webhook Router
 var subscriber = require('express').Router();
-var sleep = require('sleep');
 
 // Package Dependencies
 var request = require('request')
