@@ -11,13 +11,14 @@
 
 // Webhook Router
 var subscriber = require('express').Router();
+var sleep = require('sleep');
 
 // Package Dependencies
 var request = require('request')
 
 // Local Dependencies
-const facebookAuth = require('@bot_messenger/config/facebook_auth')
-const facebookApp = require('@bot_messenger/config/facebook_app')
+const facebookAuth = require('../config/facebook_auth')
+const facebookApp = require('../config/facebook_app')
 
 /** This function retrieves the app token from facebook; technically don't need this to run. */
 // function getAppToken() {
@@ -90,6 +91,8 @@ function publishSubscriptions() {
       }
     });
 }
+// Let the bot load before we start asking for permissions from Facebook
+sleep.sleep(1); // sleep for 5 seconds
 
 publishSubscriptions()
 

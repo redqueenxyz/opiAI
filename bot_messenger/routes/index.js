@@ -12,8 +12,8 @@ router.get('/', (req, res) => {
 });
 
 // Routes
-router.use('/webhook', require('./webhook_auth'))
-router.use('/webhook', require('./webhook_subscribe')) // Subscriber uses request not express; needs no route technically
+router.use('/webhook', require('./webhook_auther'))
+router.use('/webhook', require('./webhook_subscriber')) // Subscriber uses request not express; needs no route technically
 router.use('/webhook', require('./facebook_reciever'))
 router.use('/webhook', require('./facebook_sender')) // Sender uses request not express; needs no route technically
 
