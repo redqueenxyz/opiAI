@@ -4,7 +4,8 @@
   "description": "Question Messenger Bot.",
   "main": "main.js",
   "scripts": {
-    "start": "nodemon bot.js",
+    "start": "nodemon bot.js // pm2 start -f  bot.js -i max — name=\"feedbackAI\"",
+    "restart": "pm2 restart all",
     "test": "mocha"
   },
   "repository": {
