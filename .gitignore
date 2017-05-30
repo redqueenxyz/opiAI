@@ -2,6 +2,5 @@
 node_modules/
 test/
 tags
-bot_messenger/config/firebase_admin.json 
 bot_messenger/config/do_id
 bot_messenger/config/do_id.pub
