@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon bot.js // pm2 start -f  bot.js -i max — name=\"feedbackAI\"",
     "restart": "pm2 restart all",
-    "test": "mocha"
+    "test": "./node_modules/.bin/mocha --reporter spec"
   },
   "repository": {
     "type": "git",
@@ -21,6 +21,7 @@
   "homepage": "https://github.com/redqueenxyz/feedbackAI#readme",
   "dependencies": {
     "body-parser": "^1.17.1",
+    "chai": "^4.0.0",
     "express": "^4.15.3",
     "firebase-admin": "^4.2.1",
     "mocha": "^3.4.2",
