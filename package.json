@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon bot.js // pm2 start -f  bot.js -i max — name=\"feedbackAI\"",
     "restart": "pm2 restart all",
-    "test": "./node_modules/.bin/mocha --reporter spec"
+    "test": "npm test"
   },
   "repository": {
     "type": "git",
