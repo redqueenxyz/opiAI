@@ -23,6 +23,7 @@
     "body-parser": "^1.17.1",
     "express": "^4.15.3",
     "firebase-admin": "^4.2.1",
+    "mocha": "^3.4.2",
     "nodemon": "^1.11.0",
     "request": "^2.81.0"
   }
