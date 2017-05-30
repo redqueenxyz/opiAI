@@ -12,7 +12,7 @@ COPY package.json /usr/src/bot/
 
 # Install the modules we need 
 WORKDIR /usr/src/bot
-RUN npm install
+RUN npm install &&     npm cache clean
 
 # Expose the Port we're using
 EXPOSE 3000
