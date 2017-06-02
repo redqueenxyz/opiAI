@@ -7,12 +7,14 @@ RUN mkdir -p /usr/src/bot
 # Copy the source code there
 COPY . /usr/src/bot
 
-# Install app dependencies
+# Copy the bot dependencies too
 COPY package.json /usr/src/bot/
 
-# Install the modules we need 
+# Go there
 WORKDIR /usr/src/bot
-RUN npm install &&     npm cache clean
+
+# Install the modules we need 
+RUN npm install && npm cache clean
 
 # Expose the Port we're using
 EXPOSE 3000
