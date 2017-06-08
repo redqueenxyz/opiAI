@@ -1,5 +1,7 @@
 #!/usr/bin/env node
+
 // feedbackAI
+// A bot that listens to feedback
 
 // setup =======================================================================
 var express = require('express')
@@ -16,7 +18,8 @@ var database = require('./bot_messenger/services/database_handler')
 bot.use(require('./bot_messenger/routes'))
 
 // serving =====================================================================
+const port = process.env.PORT || 8000;
 
-bot.listen(3000, () => {
-  console.log('Bot listening on port 3000')
+bot.listen(port, () => {
+  console.log('Bot listening on port', port)
 });
