@@ -112,7 +112,7 @@ sender.sendQuickReply = function (recipientId) {
           image_url: "http://petersfantastichats.com/img/green.png"
         }
       ]
-    }
+    } 
   };
   callSendAPI(messageData);
 }
@@ -143,7 +143,7 @@ function callSendAPI(messageData) {
     } else {
       console.error("Failed to send new message; check your errors!");
       console.log(messageData)
-      console.error(response); // Dumps the whole response; very messy console
+      // console.error(response); // Dumps the whole response; very messy console
       console.error(error); // Should still get the error though
     }
   });
