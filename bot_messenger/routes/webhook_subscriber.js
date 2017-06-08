@@ -1,13 +1,5 @@
-// For the bot to work, the webhook must be calibrated
-// Current workflow:
-// `npm start` > starts bot.js at the main folder
-// `ngrok http 3000` > serves localhost:3000 at public url
-// `https://someurl.com/webhook` > Put that in developers.facebook.com > feedbackAI > Webhooks > Application > Edit Subscription > Callback url
-// This script should run after webhook_auth, and will ensure the proper permissions are set on Facebook for messaging through the page 
-
-// FIXME: Make sure to double check the callback url under Webhooks for all elements (pages, permissions, etc.); may still error out. 
-// Documentation: https://developers.facebook.com/docs/graph-api/webhooks/
-
+// This script handles the verification of correct subscritions. 
+// FIXME: webhook_subscriber.js switched off until proper testing and integration. 
 
 // Webhook Router
 var subscriber = require('express').Router();
@@ -72,7 +64,7 @@ function publishSubscriptions() {
         object: 'permissions',
         callback_url: facebookApp.callbackUrl,
         verify_token: facebookAuth.verifyToken,
-        fields: ['pages_messaging'],
+        fields: ['pages_messaging', 'pages_messaging_subscriptions'],
         access_token: facebookApp.accessToken
       },
 
