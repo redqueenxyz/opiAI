@@ -1,12 +1,17 @@
 {
   "name": "feedbackai",
   "version": "0.0.2",
-  "description": "Question Messenger Bot.",
-  "main": "main.js",
+  "description": "Feedback Messenger Bot.",
+  "engines": {
+    "node": ">=4.3.2"
+  },  
   "scripts": {
+    "deploy": "gcloud app deploy && gcloud app logs tail -s default",
+    "build": "docker build -t feedbackai .",
     "start": "nodemon bot.js // pm2 start -f  bot.js -i max — name=\"feedbackAI\"",
-    "restart": "pm2 restart all",
-    "test": "mocha --reporter spec tests/*.js"
+    "restart": "// pm2 restart all",
+    "test": "mocha --reporter spec tests/*.js",
+    "poststart": ""
   },
   "repository": {
     "type": "git",
@@ -29,6 +34,7 @@
     "request": "^2.81.0"
   },
   "devDependencies": {
+    "@google-cloud/nodejs-repo-tools": "1.3.1",
     "mocha-junit-reporter": "^1.13.0"
   }
 }
