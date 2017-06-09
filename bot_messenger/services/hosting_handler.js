@@ -1,7 +1,7 @@
 // Manages Google Cloud Platform interaction 
 
 // Config
-var gcpAccount = require("../config/gcp.json");
+var gcpAccount = require("../config/gcp");
 
 // StackDriver
 require('@google-cloud/debug-agent').start({

@@ -4,7 +4,7 @@
 var message_handler = module.exports = {};
 
 // Local Dependencies
-sender = require('../routes/object_sender.js')
+sender = require('../routes/object_sender')
 surveyer = require('../services/payload_handler')
 
 // Message Handler
