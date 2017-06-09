@@ -8,7 +8,7 @@
   "scripts": {
     "deploy": "gcloud app deploy && gcloud app logs tail -s default",
     "build": "docker build -t feedbackai .",
-    "start": "nodemon bot.js",
+    "start": "nodemon --inspect bot.js // pm2 start -f  bot.js -i max — name=\"feedbackAI\"",
     "restart": "// pm2 restart all",
     "test": "mocha --reporter spec tests/*.js",
     "poststart": ""
