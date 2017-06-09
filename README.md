@@ -43,4 +43,5 @@ This is a working application of the [excellent guide I found here](https://medi
 
 :laughing:
 
-[![BCH compliance](https://bettercodehub.com/edge/badge/redqueenxyz/feedbackAI?branch=master)](https://bettercodehub.com/)
+[![Build Status](https://travis-ci.org/redqueenxyz/feedbackAI.svg?branch=master)](https://travis-ci.org/redqueenxyz/feedbackAI)
+[![Docker Automated buil](https://img.shields.io/docker/automated/jrottenberg/ffmpeg.svg)]()
