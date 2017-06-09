@@ -8,8 +8,7 @@ var subscriber = require('express').Router();
 var request = require('request')
 
 // Local Dependencies
-const facebookAuth = require('../config/facebook_auth')
-const facebookApp = require('../config/facebook_app')
+const facebookApp = require('../config/facebook')
 
 /** This function retrieves the app token from facebook; technically don't need this to run. */
 // function getAppToken() {

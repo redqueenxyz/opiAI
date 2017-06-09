@@ -21,8 +21,7 @@
 var validator = require('express').Router();
 
 // Imports
-const facebookAuth = require('../config/facebook_auth');
-// console.log(facebookAuth);
+const facebook = require('../config/facebook')
 
 // Facebook Authorization
 validator.get('/', function (req, res) {

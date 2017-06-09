@@ -43,7 +43,6 @@ surveyer.surveyChecker = function (recipientId, payloadText) {
 
 // TODO: Save each payload response, increment the survey's status, and then loop until through
 surveyer.surveyLooper = function (recipientId, payloadText) {
-
   if (payloadText == "answered_q1") {
     firebase.db.ref("surveys/survey_1/q2").once("value", function (snapshot) {
       sender.sendMessage(recipientId, snapshot.val())
@@ -70,5 +69,4 @@ surveyer.surveyLooper = function (recipientId, payloadText) {
 }
 
 // surveyer.surveyChecker()
-
 module.exports = surveyer; // export this as 'routes'

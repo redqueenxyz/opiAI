@@ -1,4 +1,0 @@
-module.exports = {
-  pageAccessToken: "EAAKOoRO0eWgBAKPEr1tAe0Fu8ZBkPuKUIip5sQ1sjYEzPNi7YAbJAK47RxIfcdKigkZCJwMvuJe6dY0WUrhL6nhOVs1CPT4ib3oj1nL2qI2zEn6j0CSvPnhMsWhUAkTH1N4RjurFOnVyHlpF0S5L05EsNAkHIwAskwt1MCjQZDZD",
-  verifyToken: "fuckyouappengine",
-};

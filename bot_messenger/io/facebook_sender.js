@@ -1,9 +1,8 @@
 // Package Dependencies
-var sender = require('express').Router(); //TODO: Does this need to be a router? Text with exports. 
 var request = require('request')
 
 // Local Dependencies
-const facebookAuth = require('../config/facebook_auth');
+const facebook = require('../config/facebook');
 
 // Send Any Message
 sender.sendMessage = function (recipientId, messageObject) {
@@ -149,4 +148,3 @@ function callSendAPI(messageData) {
   });
 }
 
-module.exports = sender;
