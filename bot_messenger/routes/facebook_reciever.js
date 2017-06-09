@@ -4,6 +4,7 @@ var bodyParser = require('body-parser')
 
 // Local Dependencies
 message_handler = require('../services/message_handler')
+postback_handler = require('../services/postback_handler')
 
 // Parsing
 reciever.use(bodyParser.json());
@@ -42,7 +43,7 @@ reciever.post('/', function (req, res) {
         } else if (event.postback) {
           // if it has a postback component, run recievedPostback()
           console.log('It has a postback object, how should we handle it?')
-          message_handler.receivedPostback(event);
+          postback_handler.receivedPostback(event);
         } else {
           console.log("It has neither a message nor a postback; we have received an unknown event: ", event);
         }
