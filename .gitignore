@@ -1,6 +1,4 @@
 .DS_Store
 node_modules/
-test/
 tags
-bot_messenger/config/do_id
-bot_messenger/config/do_id.pub
+bot_messenger/config/*.*
