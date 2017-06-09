@@ -3,6 +3,9 @@
 // feedbackAI
 // A bot that listens to feedback
 
+// dependencies ================================================================
+require('@google-cloud/debug-agent').start({ allowExpressions: true }); // GCP Stackdriver
+
 // setup =======================================================================
 var express = require('express')
 
