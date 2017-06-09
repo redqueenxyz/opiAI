@@ -1,3 +1,5 @@
+// Recieves objects from Facebook
+
 // Package Dependencies
 var reciever = require('express').Router();
 var bodyParser = require('body-parser')

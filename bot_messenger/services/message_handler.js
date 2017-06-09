@@ -4,7 +4,7 @@
 var message_handler = module.exports = {};
 
 // Local Dependencies
-sender = require('../routes/facebook_sender')
+sender = require('../routes/object_sender.js')
 surveyer = require('../services/payload_handler')
 
 // Message Handler

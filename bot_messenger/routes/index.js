@@ -13,8 +13,9 @@ router.get('/', (req, res) => {
 
 // Routes
 router.use('/webhook', require('./webhook_auther'))
-router.use('/webhook', require('./facebook_reciever'))
-router.use('/webhook', require('./facebook_sender')) // Sender uses request not express; needs no route technically
+router.use('/webhook', require('./object_reciever'))
+
+// router.use('/webhook', require('./object_sender')) // Sender uses request not express; needs no route technically
 // router.use('/webhook', require('./webhook_subscriber')) // Subscriber uses request not express; needs no route technically
 
 module.exports = router; // export this index as 'lib/routes'

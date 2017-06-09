@@ -3,17 +3,17 @@
 // feedbackAI
 // A bot that listens to feedback
 
-// dependencies ================================================================
-require('@google-cloud/debug-agent').start({ allowExpressions: true }); // GCP Stackdriver
+// hosting =====================================================================
+var host = require('./bot_messenger/services/hosting_handler')
+
+// database ====================================================================
+var database = require('./bot_messenger/services/database_handler')
 
 // setup =======================================================================
 var express = require('express')
 
 // initialize ==================================================================
 var bot = express()
-
-// database ====================================================================
-var database = require('./bot_messenger/services/database_handler')
 
 // routing =====================================================================
 bot.use(require('./bot_messenger/routes'))

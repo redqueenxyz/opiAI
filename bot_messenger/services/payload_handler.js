@@ -25,7 +25,7 @@ var surveyer = module.exports = {};
 
 // // Local Dependencies
 var firebase = require('../services/database_handler')
-var sender = require('../routes/facebook_sender')
+var sender = require('../routes/object_sender')
 
 // TODO: For random messages, run the surveyChecker and push them into a survey if they haven't done one
 surveyer.surveyChecker = function (recipientId, payloadText) {
