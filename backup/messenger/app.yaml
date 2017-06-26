@@ -1,7 +1,0 @@
-# Google App Engine parameters; suffice for now. 
-
-env: flex
-runtime: nodejs
-
-skip_files:
-  - ^(.*/)?.*/node_modules/.*$
