@@ -2,3 +2,4 @@
 node_modules/
 tags
 bot_messenger/config/*.*
+*.icloud
