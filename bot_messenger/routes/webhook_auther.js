@@ -28,7 +28,7 @@ validator.get('/', function (req, res) {
   console.log('\nAuthorizing bot with Facebook...');
   if (
     req.query['hub.mode'] === 'subscribe' &&
-    req.query['hub.verify_token'] === facebookAuth.verifyToken) {
+    req.query['hub.verify_token'] === facebook.verifyToken) {
     res.status(200).send(req.query['hub.challenge']);
     console.log("Webhook validated!");
   } else {

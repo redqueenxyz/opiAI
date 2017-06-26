@@ -3,37 +3,36 @@ var exports = module.exports = {};
 
 // Package Dependencies
 var request = require('request')
+var logger = require('winston')
 
 // Local Dependencies
 var facebook = require('../config/facebook');
 
 // Facebook Send API 
 /** This function interacts with the Facebook Send Api, so it is called with every message template, and handles actually submitting the final POST request to the Send API / Facebook Messenger */
-exports.callSendAPI = function(messageData) {
-  console.log('\nMessage has been processed, attempting to send a response back to Facebook Send API...');
+exports.callSendAPI = function (messageData) {
+
+  // Log
+  logger.info(" Sending Object: ", { messageData })
+
   request({
     uri: 'https://graph.facebook.com/v2.8/me/messages', // The API endpoint to POST to
-    qs: { access_token: facebookAuth.pageAccessToken },
-    // TODO: Maybe find a less hacky way to pass the PAGE_TOKEN to the API? Using boolean or here
+    qs: { access_token: facebook.pageAccessToken },
     method: 'POST',
     json: messageData // actual message to send to the Send API 
 
   }, function (error, response, body) {
     if (!error && response.statusCode == 200) {
-      console.log(messageData)
 
       // If there's NO error or the response is good (200), then print the message
-      var recipientId = body.recipient_id;
-      var messageId = body.message_id;
-
-      console.log("\nSuccessfully sent message with id %s to recipient %s: \"%s\" !",
-        messageId, recipientId, messageData.message.text);
+      logger.warn(" Sending Successful! ", {
+        status: response.statusCode
+      })
 
     } else {
-      console.error("Failed to send new message; check your errors!");
-      console.log(messageData)
-      // console.error(response); // Dumps the whole response; very messy console
-      console.error(error); // Should still get the error though
+      logger.warn(" Sending Error... ", {
+        error: error
+      })
     }
   });
 }
@@ -51,13 +50,12 @@ exports.sendMessage = function (recipientId, messageObject) {
     },
     message: messageObject
   }
-  callSendAPI(messageData);
+  exports.callSendAPI(messageData);
 };
 
 
 // Send Text Message 
 exports.sendTextMessage = function (recipientId, messageText) {
-  console.log('\  Sending a text message back to Facebook...');
 
   // Intialize the messageData object that FB will recieve
   var messageData = {
@@ -68,7 +66,7 @@ exports.sendTextMessage = function (recipientId, messageText) {
       text: messageText
     }
   }
-  callSendAPI(messageData);
+  exports.callSendAPI(messageData);
 };
 
 // Send Templates
@@ -116,7 +114,7 @@ exports.sendStructuredMessage = function (recipientId) {
       }
     }
   };
-  callSendAPI(messageData);
+  exports.callSendAPI(messageData);
 }
 
 
@@ -146,9 +144,9 @@ exports.sendQuickReply = function (recipientId) {
           image_url: "http://petersfantastichats.com/img/green.png"
         }
       ]
-    } 
+    }
   };
-  callSendAPI(messageData);
+  exports.callSendAPI(messageData);
 }
 
 

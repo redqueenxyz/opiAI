@@ -4,12 +4,13 @@
 var firebase = module.exports = {};
 
 // Admin
+// Necessary for the Firebase SDK, and gives everyone with this .json the read/write 
+// TODO: Setup Firebase Bolt rules for read/write access
+
 var firebaseAdmin = require("firebase-admin");
-
-// Necessary for the Firebase SDK, and gives everyone with this .json the read/write TODO: Fix Bolt rules for Firebase later
-
 var serviceAccount = require("../config/firebase");
 
+// Intialize 
 firebaseAdmin.initializeApp({
   credential: firebaseAdmin.credential.cert(serviceAccount),
   databaseURL: "https://feedbackio-ddb4e.firebaseio.com"
