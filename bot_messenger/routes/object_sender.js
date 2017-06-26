@@ -13,7 +13,7 @@ var facebook = require('../config/facebook');
 exports.callSendAPI = function (messageData) {
 
   // Log
-  logger.info(" Sending Object: ", { messageData })
+  logger.info("...Preparing Object: ", { messageData })
 
   request({
     uri: 'https://graph.facebook.com/v2.8/me/messages', // The API endpoint to POST to
@@ -118,7 +118,7 @@ exports.sendStructuredMessage = function (recipientId) {
 }
 
 
-/** This function demonstrates the Quick Reply capability (!!) which provides the users buttons to respond and returns a defined payload */
+/** This function demonstrates the Quick Reply capability which provides the users buttons to respond and returns a defined payload */
 // Reference: https://developers.facebook.com/docs/messenger-platform/send-api-reference/quick-replies
 exports.sendQuickReply = function (recipientId) {
   console.log('\nWe heard \'quick reply\', get the Quick Reply template!');

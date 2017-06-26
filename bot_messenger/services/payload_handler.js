@@ -11,7 +11,6 @@ payload_handler.recievedPayload = function (event) {
 
   console.log('\nThe payload handler worked kinda!\n')
 
-
  // TODO: These are also stored in logging_handler and object_reciever; need to fix these 
   var senderID = event.sender.id;
   var recipientID = event.recipient.id;

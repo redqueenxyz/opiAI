@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // feedbackAI
-// A bot that listens to feedback
+// A bot that listens to feedback.
 
 // hosting =====================================================================
 var host = require('./bot_messenger/services/hosting_handler')
@@ -9,13 +9,13 @@ var host = require('./bot_messenger/services/hosting_handler')
 // logging =====================================================================
 var logger = require('winston');
 
-// database ====================================================================
+// saving ======================================================================
 var database = require('./bot_messenger/services/database_handler')
 
-// setup =======================================================================
+// serving ======================================================================
 var express = require('express')
 
-// initialize ==================================================================
+// initializing =================================================================
 var bot = express()
 
 // routing =====================================================================
