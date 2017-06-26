@@ -7,7 +7,7 @@
 var host = require('./bot_messenger/services/hosting_handler')
 
 // logging =====================================================================
-var logger = require('./bot_messenger/services/logging_handler');
+var logger = require('winston');
 
 // database ====================================================================
 var database = require('./bot_messenger/services/database_handler')
@@ -21,7 +21,7 @@ var bot = express()
 // routing =====================================================================
 bot.use(require('./bot_messenger/routes'))
 
-// serving =====================================================================
-bot.listen(8000, () => {
-   logger.info('Bot listening on', {port: 8000})
+// listening ====================================================================
+bot.listen(port=8000, () => {
+   logger.info('Bot alive at port %d.', port)
 });
