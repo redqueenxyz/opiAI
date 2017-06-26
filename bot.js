@@ -6,6 +6,9 @@
 // hosting =====================================================================
 var host = require('./bot_messenger/services/hosting_handler')
 
+// logging =====================================================================
+var logger = require('./bot_messenger/services/logging_handler');
+
 // database ====================================================================
 var database = require('./bot_messenger/services/database_handler')
 
@@ -19,8 +22,6 @@ var bot = express()
 bot.use(require('./bot_messenger/routes'))
 
 // serving =====================================================================
-const port = process.env.PORT || 8000;
-
-bot.listen(port, () => {
-  console.log('Bot listening on port', port)
+bot.listen(8000, () => {
+   logger.info('Bot listening on', {port: 8000})
 });
