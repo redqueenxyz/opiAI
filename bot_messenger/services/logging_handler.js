@@ -28,11 +28,12 @@ winston.addColors({
 });
 
 winston.remove(winston.transports.Console)
+
 winston.add(winston.transports.Console, {
   level: 'trace',
   prettyPrint: true,
   colorize: true,
   silent: false,
-  timestamp: false
+  timestamp: true
 });
 

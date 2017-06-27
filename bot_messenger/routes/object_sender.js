@@ -40,9 +40,7 @@ exports.callSendAPI = function (messageData) {
 
 // TODO: Move these message templates.
 // Send Any Message
-exports.sendMessage = function (recipientId, messageObject) {
-  console.log('\  Sending a message back to Facebook...');
-
+exports.sendMessage = function (recipientId, messageObject) {  
   // Intialize the messageData object that FB will recieve
   var messageData = {
     recipient: {
