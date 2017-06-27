@@ -30,7 +30,17 @@ message_handler.receivedMessage = function (event) {
       } else if (message.text == 'test_survey') {
             survey_handler.surveyChecker(senderID);
       } else {
-            object_sender.sendTextMessage(senderID, "😓");
-            survey_handler.surveyChecker(senderID);
+
+            var emojis = [
+                '😀', '😂', '😇', '😍', '😘',
+                '😛', '🤑', '🤗', '🤓', '😎',
+                '😤', '😡', '😵', '😳', '😨',
+                '😴', '🤔', '🤥', '😬', '🤐',
+                '🤢', '🤧', '😷', '🤒', '🤕'
+            ];
+
+            randomNumber = parseInt(24 * Math.random()); 
+
+            object_sender.sendTextMessage(senderID, emojis[randomNumber]);
       }
 }

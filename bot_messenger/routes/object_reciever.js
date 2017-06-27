@@ -21,11 +21,11 @@ reciever.post('/', function (req, res) {
   var data = req.body;
 
   // Log
-  logger.info("...Object recieved: ", {data})
-  
+  logger.info("...Object recieved: ", { data })
+
   if (data.object === 'page') {
-  // Log
-  logger.verbose("...Identifying object...")
+    // Log
+    logger.verbose("...Identifying object...")
 
     // Iterate over each event in the object
     data.entry.forEach(function (entry) {
@@ -42,22 +42,29 @@ reciever.post('/', function (req, res) {
         var messageId = message.mid;
         var messageText = message.text;
 
-        if (event.message && !event.postback && !event.payload) {
-          // If it has a message component, run recievedMessage()
-          logger.warn("...Message Recieved: ",{event})
-          message_handler.receivedMessage(event);
+        // Potentially Undefined
+        var messagePostback = (message.postback || false);
+        var messagePayload = (message.quick_reply ? message.quick_reply.payload : false); // if a is true ? assign var is b, else var is false
 
-        } else if (event.postback) {
-          logger.warn("...Postback Recieved: ",{event})
+
+
+        console.log(messagePayload)
+
+        if (messagePostback) {
+          logger.warn("...Postback Recieved: ", { event })
           postback_handler.receivedPostback(event);
 
-        } else if (event.payload) {
-          logger.warn("...Payload Recieved: ",{event})
+        } if (messagePayload) {
+          logger.warn("...Payload Recieved: ", { event })
           payload_handler.recievedPayload(event);
 
-          
+        } else if (event.message && !message.postback && !message.payload) {
+          // If it has a message component, run recievedMessage()
+          logger.warn("...Message Recieved: ", { event })
+          message_handler.receivedMessage(event);
+
         } else {
-          logger.info("...Unknown Object Recieved:",{event})
+          logger.info("...Unknown Object Recieved:", { event })
         }
       });
     });

@@ -4,7 +4,7 @@
 var survey_handler = module.exports = {};
 
 // Package Dependencies
-var firebase = require('../services/database_handler')
+var database = require('../services/database_handler')
 var logger = require('winston')
 
 // Local ependencies
@@ -15,31 +15,78 @@ survey_handler.surveyChecker = function (senderID) {
 
   // Firebase Checker
   // Lookup the Firebase for a User ID entry
-  //  if no entry, offer a survey
+  //  if no entry, create user
   // if survey in progress, provide that one
   //  if it has a payload, it's come from an id, so save that survey id
 
-  console.log("SenderId checked.")
-
-  return firebase.database().ref('/users/' + userId).once('value').then(function(snapshot) {
-  var senderID = snapshot.val().senderID;
-});
+  database.db.ref('/users/' + senderID).once('value').then(function (snapshot) {
+    console.log(snapshot.val())
+    if (snapshot.val()) {
+      survey_handler.surveyStarter(senderID, "survey_1")
+    } else {
+      survey_handler.saveUser(senderID, "firstNameHolder")
+      survey_handler.surveyStarter(senderID, "survey_1")
+      // Make a user, then start them on a survey? 
+    }
+  });
 }
 
-//   if firebase.db.ref("users/") // + userID == false): 
-//   // then send him q1: 
-//     firebase.db.ref("surveys/survey_1/q1").once("value", function (snapshot) {
-//       sender.sendMessage(recipientId, snapshot.val())
-//     });
-// }
 
 /**Saves users in Firebase */
-survey_handler.saveUser = function (userId, firstName) {
-  firebase.database().ref('users/' + userId).set({
-    userID: userId,
+survey_handler.saveUser = function (senderID, firstName) {
+  database.db.ref('users/' + senderID).set({
     firstName: firstName
   });
 }
+
+survey_handler.surveyStarter = function (senderID, surveyID) {
+  // Give first question
+  database.db.ref("surveys/" + surveyID + "/q1").once("value", function (snapshot) {
+    sender.sendMessage(senderID, snapshot.val())
+  });
+
+  // save user info
+  database.db.ref('users/' + senderID + '/currentSurvey' ).set(surveyID);
+  database.db.ref('users/' + senderID + '/lastQuestionSeen' ).set(1);
+}
+
+
+
+survey_handler.answerSaver = function (senderID, surveyID, questionNumber, answer) {  
+  database.db.ref('users/' + senderID + '/newAnswers' ).push({
+  answer: answer,
+  question: questionNumber,
+  survey: surveyID
+  })
+}
+
+
+survey_handler.surveyLooper = function (recipientId, payloadText) {
+  if (payloadText == "answered_q1") {
+    firebase.db.ref("surveys/survey_1/q2").once("value", function (snapshot) {
+      sender.sendMessage(recipientId, snapshot.val())
+    });
+  } else if (payloadText == "answered_q2") {
+    firebase.db.ref("surveys/survey_1/q3").once("value", function (snapshot) {
+      sender.sendMessage(recipientId, snapshot.val())
+    });
+  } else if (payloadText == "answered_q3") {
+    firebase.db.ref("surveys/survey_1/q4").once("value", function (snapshot) {
+      sender.sendMessage(recipientId, snapshot.val())
+    });
+  } else if (payloadText == "answered_q4") {
+    firebase.db.ref("surveys/survey_1/q5").once("value", function (snapshot) {
+      sender.sendMessage(recipientId, snapshot.val())
+    });
+  } else if (payloadText == "answered_q5") {
+    sender.sendTextMessage(recipientId, "Survey done!")
+  } else {
+    firebase.db.ref("surveys/survey_1/q1").once("value", function (snapshot) {
+      sender.sendMessage(recipientId, snapshot.val())
+    });
+  }
+}
+
 
 // var usersRef = firebase.db.ref("users/")
 
@@ -90,30 +137,5 @@ survey_handler.saveUser = function (userId, firstName) {
 
 
 // // TODO: Save each payload response, increment the survey's status, and then loop until through
-survey_handler.surveyLooper = function (recipientId, payloadText) {
-  if (payloadText == "answered_q1") {
-    firebase.db.ref("surveys/survey_1/q2").once("value", function (snapshot) {
-      sender.sendMessage(recipientId, snapshot.val())
-    });
-  } else if (payloadText == "answered_q2") {
-    firebase.db.ref("surveys/survey_1/q3").once("value", function (snapshot) {
-      sender.sendMessage(recipientId, snapshot.val())
-    });
-  } else if (payloadText == "answered_q3") {
-    firebase.db.ref("surveys/survey_1/q4").once("value", function (snapshot) {
-      sender.sendMessage(recipientId, snapshot.val())
-    });
-  } else if (payloadText == "answered_q4") {
-    firebase.db.ref("surveys/survey_1/q5").once("value", function (snapshot) {
-      sender.sendMessage(recipientId, snapshot.val())
-    });
-  } else if (payloadText == "answered_q5") {
-    sender.sendTextMessage(recipientId, "Survey done!")
-  } else {
-    firebase.db.ref("surveys/survey_1/q1").once("value", function (snapshot) {
-      sender.sendMessage(recipientId, snapshot.val())
-    });
-  }
-}
 
 // // surveyer.surveyChecker()
