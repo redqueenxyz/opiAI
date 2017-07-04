@@ -1,6 +1,6 @@
 {
   "name": "feedbackai",
-  "version": "v0.1.0-alpha",
+  "version": "0.1.0-alpha",
   "description": "Feedback Messenger Bot.",
   "engines": {
     "node": ">=4.3.2"
