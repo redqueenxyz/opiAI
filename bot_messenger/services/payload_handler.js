@@ -4,22 +4,21 @@
 var payload_handler = module.exports = {};
 
 // Dependencies
-var firebase = require('../services/database_handler')
-var sender = require('../routes/object_sender')
 var survey_handler = require('../services/survey_handler')
 
 payload_handler.recievedPayload = function (event) {
 
- // TODO: These are also stored in logging_handler and object_reciever; need to fix these 
-  var senderID = event.sender.id;
-  var recipientID = event.recipient.id;
-  var timeOfMessage = event.timestamp;
+  console.log("In the payload handler.")
+  
+  var userID = event.sender.id;
   var message = event.message;
+  var messageText = message.text;  
+  var messagePayload = message.quick_reply.payload;
 
-  var messageId = message.mid;
-  var messageText = message.text;
-  var messagePayload = message.payload;
+  // Save their answer
+  survey_handler.surveyAnswerSaver(userID, messagePayload, messageText)
 
-  // TODO: Save answers, then load next question
-  survey_handler.answerSaver(senderID, "survey_1", 1, messageText)
+  // Check and send them into the next question
+  survey_handler.userFinder(userID)
+  
 }
