@@ -34,7 +34,7 @@ reciever.post('/', function (req, res) {
       entry.messaging.forEach(function (event) {
 
         // Event parameters
-        var senderID = event.sender.id;
+        var userID = event.sender.id;
         var recipientID = event.recipient.id;
         var message = event.message;
 
@@ -45,10 +45,6 @@ reciever.post('/', function (req, res) {
         // Potentially Undefined
         var messagePostback = (message.postback || false);
         var messagePayload = (message.quick_reply ? message.quick_reply.payload : false); // if a is true ? assign var is b, else var is false
-
-
-
-        console.log(messagePayload)
 
         if (messagePostback) {
           logger.warn("...Postback Recieved: ", { event })
