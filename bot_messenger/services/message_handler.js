@@ -17,7 +17,7 @@ message_handler.receivedMessage = function (event) {
       logger.info("Deciding Response to Message Object...")
 
       // Event parameters
-      var senderID = event.sender.id;
+      var userID = event.sender.id;
       var recipientID = event.recipient.id;
       var message = event.message;
 
@@ -26,21 +26,24 @@ message_handler.receivedMessage = function (event) {
       var messageText = message.text;
 
       if (message.text == 'test_structured') {
-            object_sender.sendStructuredMessage(senderID);
-      } else if (message.text == 'test_survey') {
-            survey_handler.surveyChecker(senderID);
-      } else {
+            // Structured Message Test
+            object_sender.sendStructuredMessage(userID);
+      } else if (message.text == 'test_survey') {   
+            // Survey Test
+            survey_handler.surveyStarter(userID, "survey_0")
+      } else {            
+      survey_handler.userFinder(userID)
 
-            var emojis = [
-                '😀', '😂', '😇', '😍', '😘',
-                '😛', '🤑', '🤗', '🤓', '😎',
-                '😤', '😡', '😵', '😳', '😨',
-                '😴', '🤔', '🤥', '😬', '🤐',
-                '🤢', '🤧', '😷', '🤒', '🤕'
-            ];
+      // Lol
+      var emojis = [
+          '😀', '😂', '😇', '😍', '😘',
+          '😛', '🤑', '🤗', '😎',
+          '😤', '😡', '😵', '😳', '😨',
+          '😴', '😬'
+      ];
 
-            randomNumber = parseInt(24 * Math.random()); 
+      randomNumber = parseInt(emojis.length * Math.random()); 
 
-            object_sender.sendTextMessage(senderID, emojis[randomNumber]);
+      object_sender.sendTextMessage(userID, emojis[randomNumber]);
       }
 }
