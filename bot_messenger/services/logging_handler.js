@@ -1,39 +1,50 @@
 // Manages Winston Logger
-var winston = require('winston');
+'use strict';
 
-winston.setLevels({
-  trace: 9,
-  input: 8,
-  verbose: 7,
-  prompt: 6,
-  debug: 5,
-  info: 4,
-  data: 3,
-  help: 2,
-  warn: 1,
-  error: 0
+// Google Cloud Debug Agent
+if (process.env.NODE_ENV === 'production') {
+  require('@google-cloud/trace-agent').start();
+  require('@google-cloud/debug-agent').start();
+}
+
+// Google Logging via Winston
+const winston = require('winston');
+const expressWinston = require('express-winston');
+const stackdriverTransport = require('@google-cloud/logging-winston');
+
+
+// Logger to capture all requests and output them to the console.
+const requestLogger = expressWinston.logger({
+  transports: [
+    new stackdriverTransport(),
+    new winston.transports.Console({
+      json: false,
+      colorize: true
+    })
+  ],
+  expressFormat: true,
+  meta: false
 });
 
-winston.addColors({
-  trace: 'magenta',
-  input: 'grey',
-  verbose: 'cyan',
-  prompt: 'grey',
-  debug: 'blue',
-  info: 'green',
-  data: 'grey',
-  help: 'cyan',
-  warn: 'yellow',
-  error: 'red'
+// Logger to capture any top-level errors and output json diagnostic info.
+const errorLogger = expressWinston.errorLogger({
+  transports: [
+    new stackdriverTransport(),
+    new winston.transports.Console({
+      json: true,
+      colorize: true
+    })
+  ]
 });
 
-winston.remove(winston.transports.Console)
-
-winston.add(winston.transports.Console, {
-  level: 'trace',
-  prettyPrint: true,
-  colorize: true,
-  silent: false,
-  timestamp: true
-});
-
+module.exports = {
+  requestLogger: requestLogger,
+  errorLogger: errorLogger,
+  error: winston.error,
+  warn: winston.warn,
+  info: winston.info,
+  log: winston.log,
+  verbose: winston.verbose,
+  debug: winston.debug,
+  silly: winston.silly
+};

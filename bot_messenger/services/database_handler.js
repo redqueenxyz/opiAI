@@ -1,23 +1,22 @@
 // Manages Firebase DB retrieval and return
 
 // Export
-var database = module.exports = {};
+// var database = module.exports = {};
 
 // Admin
-// Necessary for the Firebase SDK, and gives everyone with this .json the read/write 
-// TODO: Setup Firebase Bolt rules for read/write access
-var firebaseAdmin = require("firebase-admin");
-var serviceAccount = require("../config/firebase");
+// For Firebase SDK
+// FIXME: Setup Firebase Bolt rules for read/write access
+
+var firebase = require("firebase-admin");
+var firebaseConfig = require("../config/firebase");
 
 // Intialize 
-firebaseAdmin.initializeApp({
-  credential: firebaseAdmin.credential.cert(serviceAccount),
-  databaseURL: "https://feedbackai-eaaa9.firebaseio.com"
+firebase.initializeApp({
+  credential: firebase.credential.cert(firebaseConfig),
+  databaseURL: "https://opiai-174214.firebaseio.com/" 
 });
 
-// Real-time Database
-// Accessed through the Firebase Admin endpoint
-database.db = firebaseAdmin.database();
+
 
 
 
