@@ -12,6 +12,7 @@ const bot = express()
 // logging =====================================================================
 const logger = require('./services/logging_handler');
 bot.use(logger.requestLogger);
+bot.use(logger.errorLogger);
 
 // saving ======================================================================
 const database = require('./services/database_handler')
@@ -20,8 +21,8 @@ const database = require('./services/database_handler')
 bot.use(require('./routes'))
 
 // listening ====================================================================
-const PORT = process.env.port || 8000
+const PORT = process.env.port || 8080
 
 bot.listen(PORT, () => {
-   logger.info('Bot alive at %d.', PORT)
+    logger.info('Bot alive at %d.', PORT)
 });
