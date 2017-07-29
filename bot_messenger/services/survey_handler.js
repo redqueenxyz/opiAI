@@ -5,7 +5,6 @@ const survey = module.exports = {};
 
 // Package Dependencies
 const firebase = require('firebase-admin');
-
 const database = firebase.database();
 const logger = require('winston');
 
@@ -199,18 +198,17 @@ survey.surveyLooper = function(userID, surveyID) {
 survey.surveyAnswerSaver = function(userID, questionPayload, answer) {
   // Get the current Survey for the given user
   database.ref('users/' + userID + '/currentSurvey/').once('value', (snapshot) => {
-    surveyID = Object.keys(snapshot.val());
+    const surveyID = Object.keys(snapshot.val());
 
     // Save the users answer using payload text and the new survey ID
     logger.info('Saving User %d response to Question %d on Survey \'%s\': %s...', userID, questionPayload, surveyID, answer);
-    database.ref('responses/' + surveyID + '/' + userID + '/' + questionPayload).set({
-      answer,
-    });
-
-    // Increment that users current Survey state
-    logger.info('Increment User %d\'s current Survey State to Question %d on Survey \'%s\'...', userID, questionPayload++, surveyID);
-    database.ref('users/' + userID + '/currentSurvey/' + surveyID).update({
-      currentQuestion: questionPayload++,
-    });
+    database.ref('responses/' + surveyID + '/' + userID + '/' + questionPayload)
+      .set({answer})
+      .then(() => {
+        logger.info('Increment User %d current Survey State to Question %d on Survey %s...', userID, questionPayload++, surveyID);
+        database.ref('users/' + userID + '/currentSurvey/' + surveyID).update({
+          currentQuestion: questionPayload++,
+        });
+      });
   });
 };
