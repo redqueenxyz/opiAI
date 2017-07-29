@@ -1,4 +1,4 @@
-// Manages Winston Logger
+// Manages logging and plugs into GCloud logging
 'use strict';
 
 // Google Cloud Debug Agent
@@ -11,18 +11,17 @@ const winston = require('winston');
 const expressWinston = require('express-winston');
 const stackdriverTransport = require('@google-cloud/logging-winston');
 
-
 // Logger to capture all requests and output them to the console.
 const requestLogger = expressWinston.logger({
   transports: [
     new stackdriverTransport(),
     new winston.transports.Console({
       json: false,
-      colorize: true
-    })
+      colorize: true,
+    }),
   ],
   expressFormat: true,
-  meta: false
+  meta: false,
 });
 
 // Logger to capture any top-level errors and output json diagnostic info.
@@ -31,9 +30,9 @@ const errorLogger = expressWinston.errorLogger({
     new stackdriverTransport(),
     new winston.transports.Console({
       json: true,
-      colorize: true
-    })
-  ]
+      colorize: true,
+    }),
+  ],
 });
 
 module.exports = {
@@ -45,5 +44,5 @@ module.exports = {
   log: winston.log,
   verbose: winston.verbose,
   debug: winston.debug,
-  silly: winston.silly
+  silly: winston.silly,
 };
