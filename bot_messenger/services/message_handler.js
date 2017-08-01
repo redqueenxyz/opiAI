@@ -42,6 +42,6 @@ message_handler.receivedMessage = function(event) {
 
             randomNumber = parseInt(emojis.length * Math.random());
 
-            sender.sendTextMessage(userID, emojis[randomNumber]);
+            // sender.sendTextMessage(userID, emojis[randomNumber]);
       }
 };
