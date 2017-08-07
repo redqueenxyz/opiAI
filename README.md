@@ -1,14 +1,14 @@
 # opiAI
 Opi is an alpha-stage survey bot acccessible through Facebook Messenger, and hosted on Google Cloud and Firebase, built with NodeJS. [Feel free to go say hi!](https://www.messenger.com/t/opiAI) 
 
-[![](Opi.png)](m.me/opiAI)
+[![](Opi.png)](https://m.me/opiAI)
 
 ## Goal
-The end goal with Opi was to simply build a comfortable front end to acquire iteratively faster qualititative data from human users on facebook. 
+The end goal with Opi was to simply build a comfortable digital experience to acquire qualititative data from human users on Facebook. 
 
 ![](opi.gif)
 
-We hope to build a responsive, engaging Messenger bot experience that will encourage users to provide valuable feedback from Facebook users, in order to democratize data, discover semantic/qualitiative relationships between users and products, acquire fan feedback, and (eventually) train true artifical intelligence agents with an emphasis on conversation.
+We hope to build a responsive, engaging Messenger bot experience that will encourage users to provide their opinions, in order to democratize data, discover semantic/qualitiative relationships between users and brands, acquire first-party fan feedback, and (eventually) train artifical intelligence agents focused on conversation.
 
 This (rudimentry) demo can currently ask you how you feel about the [Tesla M3](https://www.tesla.com/en_CA/model3), but we hope to get it do more real soon.
 
