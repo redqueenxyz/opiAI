@@ -1,6 +1,5 @@
 .DS_Store
 node_modules/
-.eslintrc
 tags
-.json
-.icloud
+*.json
+*.icloud
