@@ -16,9 +16,9 @@ const sender = require('../routes/object_sender');
  * @param {string} firstName - User's First Name
  * FIXME: Placeholder
  */
-survey.saveUser = function (userID, firstName) {
+survey.saveUser = function(userID, firstName) {
   logger.info('Saving User %d in the Database...', userID);
-  database.ref('users/' + userID).set({
+  return database.ref('users/' + userID).set({
     firstName,
     availableSurveys: {},
     currentSurvey: {},
@@ -28,7 +28,7 @@ survey.saveUser = function (userID, firstName) {
 /** Checking if the user exists in the database
  * @param {string} userID - Facebook User ID
  */
-survey.userFinder = function (userID) {
+survey.userFinder = function(userID) {
   logger.info('Checking if we\'ve met User %d before...', userID);
 
   // Check if the userID exists
@@ -42,20 +42,28 @@ survey.userFinder = function (userID) {
       // surveyer.surveyAssigner(userID, "survey_1")
     } else {
       logger.info('Have not met this user!', userID);
-      survey.saveUser(userID, 'firstNameHolder');
+      survey.saveUser(userID, 'firstNameHolder')
+        .then(() => {
+          logger.info('Assigning User %d the starter survey: [survey_0]...', userID);
+          survey.surveyAssigner(userID, 'survey_0', true)
+            .then(() => {
+              // TODO: Use promises to send the first survey question after assigning users a survey_0.
+              logger.info('Sending User %d the Starting prompt message...', userID);
+              sender.surveyChecker(userID);
+            })
+            .on((error) => {
+              logger.error('Assigning [survey_0] to User %d failed.', userID);
+            });
+        });
 
-      logger.info('Sending User %d the Starting prompt message...', userID);
-      sender.sendTextMessage(userID, 'Welcome to the FeedbackAI Beta! Ready to get started?');
 
       // FIXME: This means the user has to message us again to start the first survey; better chaining?
-      logger.info('Assigning User %d the starter survey: [survey_0]...', userID);
-      survey.surveyAssigner(userID, 'survey_0', true);
     }
   });
 };
 
 /** Assigns a user an available survey */
-survey.surveyAssigner = function (userID, surveyID, current) {
+survey.surveyAssigner = function(userID, surveyID, current) {
   logger.info('Assiging User %d Survey %s...', userID, surveyID);
 
   // Lookup the survey
@@ -63,7 +71,7 @@ survey.surveyAssigner = function (userID, surveyID, current) {
     const totalQuestions = survey.child('/questions/').numChildren(); // Array indices start at 0
 
     // Register it as an available survey for the user
-    database.ref('users/' + userID + '/availableSurveys/' + surveyID).set({
+    return database.ref('users/' + userID + '/availableSurveys/' + surveyID).set({
       postback: surveyID,
       completed: false,
       started: false,
@@ -74,7 +82,7 @@ survey.surveyAssigner = function (userID, surveyID, current) {
 };
 
 /** Starts user on a survey if he has a Current Survey, or sets him on one from Available if none exist */
-survey.surveyChecker = function (userID) {
+survey.surveyChecker = function(userID) {
   logger.info('Checking if User %d has any available surveys...', userID);
 
   // If he has a current Survey that's not intialized, set it up and send him into the Looper
@@ -154,7 +162,7 @@ survey.surveyChecker = function (userID) {
 };
 
 /** Sends a user a given survey question */
-survey.surveyQuestionSender = function (userID, surveyID, questionNumber) {
+survey.surveyQuestionSender = function(userID, surveyID, questionNumber) {
   logger.info('Starting User %d on Survey: \'%s\'...', userID, surveyID);
 
   //  Get the Question
@@ -165,7 +173,7 @@ survey.surveyQuestionSender = function (userID, surveyID, questionNumber) {
 };
 
 /** Loops users through their current survey until they are done */
-survey.surveyLooper = function (userID, surveyID) {
+survey.surveyLooper = function(userID, surveyID) {
   database.ref('users/' + userID + '/currentSurvey/' + surveyID).once('value', (snapshot) => {
     const finalQuestion = snapshot.child('finalQuestion').val();
     const currentQuestion = snapshot.child('currentQuestion').val();
@@ -195,7 +203,7 @@ survey.surveyLooper = function (userID, surveyID) {
 };
 
 /** Saves question answers in Firebase, and increment user State */
-survey.surveyAnswerSaver = function (userID, questionPayload, answer) {
+survey.surveyAnswerSaver = function(userID, questionPayload, answer) {
   // Get the current Survey for the given user
   database.ref('users/' + userID + '/currentSurvey/').once('value', (snapshot) => {
     const surveyID = Object.keys(snapshot.val());
@@ -203,7 +211,7 @@ survey.surveyAnswerSaver = function (userID, questionPayload, answer) {
     // Save the users answer using payload text and the new survey ID
     logger.info('Saving User %d response to Question %d on Survey \'%s\': %s...', userID, questionPayload, surveyID, answer);
     database.ref('responses/' + surveyID + '/' + userID + '/' + questionPayload)
-      .set({ answer })
+      .set({answer})
       .then(() => {
         logger.info('Increment User %d current Survey State to Question %d on Survey %s...', userID, questionPayload++, surveyID);
         database.ref('users/' + userID + '/currentSurvey/' + surveyID).update({
