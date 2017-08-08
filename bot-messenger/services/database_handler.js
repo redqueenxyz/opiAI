@@ -5,8 +5,6 @@
 
 // Admin
 // For Firebase SDK
-// FIXME: Setup Firebase Bolt rules for read/write access
-
 let firebase = require('firebase-admin');
 let firebaseConfig = require('../config/firebase');
 
