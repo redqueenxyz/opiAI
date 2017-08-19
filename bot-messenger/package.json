@@ -1,6 +1,6 @@
 {
-  "name": "feedbackai",
-  "version": "2.0.0",
+  "name": "opiAI",
+  "version": "2.0.2",
   "description": "A Feedback Messenger Bot.",
   "engines": {
     "node": ">=4.3.2"

@@ -1,5 +1,4 @@
 // Sends messages back to Facebook
-let exports = module.exports = {};
 
 // Package Dependencies
 let request = require('request');
