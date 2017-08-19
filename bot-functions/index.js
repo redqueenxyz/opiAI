@@ -34,3 +34,8 @@ exports.getUserData = functions.database.ref('users/{userID}')
         console.error('Error querying Facebook!');
       });
   });
+
+exports.makeChart = functions.database.ref('responses/{surveyID}').onUpdate((event) => {
+  const surveyID = event.params.userID;
+  console.log(surveyID);
+});
