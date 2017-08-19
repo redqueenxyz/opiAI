@@ -1,4 +1,5 @@
 // Sends messages back to Facebook
+let exports = module.exports = {};
 
 // Package Dependencies
 let request = require('request');
@@ -153,7 +154,7 @@ exports.sendQuickHello = function(recipientId) {
         {
           content_type: 'text',
           title: '😊',
-          payload: 'answered_q1', // Recieves this payload back as the new 'message, so maybe just grab this and toss it into FB as part of the 'incoming' loop?
+          payload: 'intro', // Recieves this payload back as the new 'message, so maybe just grab this and toss it into FB as part of the 'incoming' loop?
           // TODO: Maybe explore Postbacks for Quick Replies, if necesssary
           image_url: 'http://petersfantastichats.com/img/red.png', // Even takes a cute little image for friendliness
           // TODO: Emojis?!

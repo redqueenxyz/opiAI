@@ -157,7 +157,7 @@ survey.surveyChecker = function(userID) {
       // Promise rejected
     }).catch(() => {
       logger.info('User %d has no available surveys...', userID);
-      sender.sendTextMessage(userID, 'I don\'t have any surveys for you. Come back later!');
+      sender.sendTextMessage(userID, 'I don\'t have any more questions for you. Come back later!');
     });
 };
 
