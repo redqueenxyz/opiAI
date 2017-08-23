@@ -16,9 +16,9 @@ const sender = require('../routes/object_sender');
  * @param {string} firstName - User's First Name
  * FIXME: Placeholder
  */
-survey.saveUser = function(userID, firstName) {
+survey.saveUser = async (userID, firstName) => {
   logger.info('Saving User %d in the Database...', userID);
-  return database.ref('users/' + userID).set({
+  database.ref('users/' + userID).set({
     firstName,
     availableSurveys: {},
     currentSurvey: {},
@@ -28,61 +28,55 @@ survey.saveUser = function(userID, firstName) {
 /** Checking if the user exists in the database
  * @param {string} userID - Facebook User ID
  */
-survey.userFinder = function(userID) {
+survey.userFinder = async (userID) => {
   logger.info('Checking if we\'ve met User %d before...', userID);
-
+  const userEntry = await database.ref('users/' + userID).once('value');
+  const userExists = userEntry.exists();
   // Check if the userID exists
-  database.ref('users/' + userID).once('value', (snapshot) => {
-    if (snapshot.exists()) {
-      logger.info('We\'ve met User %d before!', userID);
-      survey.surveyChecker(userID);
-
-      // FIXME: Quick test of surveyAssigner loop; can assign any surveys in the UserFinder
-      // TODO: Turn this into a test?
-      // surveyer.surveyAssigner(userID, "survey_1")
-    } else {
-      logger.info('Have not met this user!', userID);
-      survey.saveUser(userID, 'firstNameHolder')
-        .then(() => {
-          logger.info('Assigning User %d the starter survey: [survey_0]...', userID);
-          survey.surveyAssigner(userID, 'survey_0', true)
-            .then(() => {
-              // TODO: Use promises to send the first survey question after assigning users a survey_0.
-              logger.info('Sending User %d the Starting prompt message...', userID);
-              sender.surveyChecker(userID);
-            })
-            .on((error) => {
-              logger.error('Assigning [survey_0] to User %d failed.', userID);
-            });
-        });
-
-
-      // FIXME: This means the user has to message us again to start the first survey; better chaining?
-    }
-  });
+  if (userExists) {
+    logger.info('We\'ve met User %d before!', userID);
+    survey.surveyChecker(userID);
+  } else {
+    logger.info('Have not met this user!', userID);
+    survey.saveUser(userID, 'firstNameHolder')
+      .then(() => {
+        logger.info('Assigning User %d the starter survey: [survey_0]...', userID);
+        survey.surveyAssigner(userID, 'survey_0', true)
+          .then(() => {
+            logger.info('Sending User %d the Starting prompt message...', userID);
+            survey.surveyChecker(userID);
+          })
+          .catch((error) => {
+            logger.error('Prompting [survey_0] to User %d failed.', userID);
+          });
+      })
+      .catch((error) => {
+        logger.error('Assigning [survey_0] to User %d failed.', userID);
+      });
+  }
 };
 
 /** Assigns a user an available survey */
-survey.surveyAssigner = function(userID, surveyID, current) {
+survey.surveyAssigner = async (userID, surveyID, current) => {
   logger.info('Assiging User %d Survey %s...', userID, surveyID);
 
-  // Lookup the survey
-  database.ref('surveys/' + surveyID).once('value', (survey) => {
-    const totalQuestions = survey.child('/questions/').numChildren(); // Array indices start at 0
+  // Lookup surveys
+  const survey = await database.ref('surveys/' + surveyID).once('value');
 
-    // Register it as an available survey for the user
-    return database.ref('users/' + userID + '/availableSurveys/' + surveyID).set({
+  // Register it as an available survey for the user
+  return database.ref('users/' + userID + '/availableSurveys/' + surveyID)
+    .set({
       postback: surveyID,
       completed: false,
       started: false,
       current: current || false,
-      totalQuestions,
+      totalQuestions: survey.child('questions').numChildren(),
     });
-  });
 };
 
+
 /** Starts user on a survey if he has a Current Survey, or sets him on one from Available if none exist */
-survey.surveyChecker = function(userID) {
+survey.surveyChecker = async (userID) => {
   logger.info('Checking if User %d has any available surveys...', userID);
 
   // If he has a current Survey that's not intialized, set it up and send him into the Looper
