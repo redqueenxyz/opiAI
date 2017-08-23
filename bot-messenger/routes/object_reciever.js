@@ -6,9 +6,9 @@ let bodyParser = require('body-parser');
 let logger = require('winston');
 
 // Local Dependencies
-message_handler = require('../services/message_handler');
-postback_handler = require('../services/postback_handler');
-payload_handler = require('../services/payload_handler');
+let message_handler = require('../services/message_handler');
+let postback_handler = require('../services/postback_handler');
+let payload_handler = require('../services/payload_handler');
 
 // Parsing
 reciever.use(bodyParser.json());

@@ -1,4 +1,5 @@
 // Sends messages back to Facebook
+const object_sender = module.exports = {};
 
 // Package Dependencies
 let request = require('request');
@@ -9,7 +10,7 @@ let facebook = require('../config/facebook');
 
 // Facebook Send API 
 /** This function interacts with the Facebook Send Api, so it is called with every message template, and handles actually submitting the final POST request to the Send API / Facebook Messenger */
-exports.callSendAPI = function(messageData) {
+object_sender.callSendAPI = function(messageData) {
   // Log
   logger.info('...Preparing Object: ', {messageData});
 
@@ -36,7 +37,7 @@ exports.callSendAPI = function(messageData) {
 
 // TODO: Move these message templates.
 // Send Any Message
-exports.sendMessage = function(recipientId, messageObject) {
+object_sender.sendMessage = function(recipientId, messageObject) {
   // Intialize the messageData object that FB will recieve
   let messageData = {
     recipient: {
@@ -44,12 +45,12 @@ exports.sendMessage = function(recipientId, messageObject) {
     },
     message: messageObject,
   };
-  exports.callSendAPI(messageData);
+  object_sender.callSendAPI(messageData);
 };
 
 
 // Send Text Message 
-exports.sendTextMessage = function(recipientId, messageText) {
+object_sender.sendTextMessage = function(recipientId, messageText) {
   // Intialize the messageData object that FB will recieve
   let messageData = {
     recipient: {
@@ -59,11 +60,11 @@ exports.sendTextMessage = function(recipientId, messageText) {
       text: messageText,
     },
   };
-  exports.callSendAPI(messageData);
+  object_sender.callSendAPI(messageData);
 };
 
 // Send Templates
-exports.sendStructuredMessage = function(recipientId) {
+object_sender.sendStructuredMessage = function(recipientId) {
   console.log('\nWe heard \'generic\', get the Structured Message template!');
   let messageData = {
     recipient: {
@@ -107,13 +108,13 @@ exports.sendStructuredMessage = function(recipientId) {
       },
     },
   };
-  exports.callSendAPI(messageData);
+  object_sender.callSendAPI(messageData);
 };
 
 
 /** This function demonstrates the Quick Reply capability which provides the users buttons to respond and returns a defined payload */
 // Reference: https://developers.facebook.com/docs/messenger-platform/send-api-reference/quick-replies
-exports.sendQuickReply = function(recipientId, question1) {
+object_sender.sendQuickReply = function(recipientId, question1) {
   console.log('\nWe heard \'quick reply\', get the Quick Reply template!');
   let messageData = {
     recipient: {
@@ -139,10 +140,10 @@ exports.sendQuickReply = function(recipientId, question1) {
       ],
     },
   };
-  exports.callSendAPI(messageData);
+  object_sender.callSendAPI(messageData);
 };
 
-exports.sendQuickHello = function(recipientId) {
+object_sender.sendQuickHello = function(recipientId) {
   let messageData = {
     recipient: {
       id: recipientId,
@@ -167,7 +168,7 @@ exports.sendQuickHello = function(recipientId) {
       ],
     },
   };
-  exports.callSendAPI(messageData);
+  object_sender.callSendAPI(messageData);
 };
 
 
