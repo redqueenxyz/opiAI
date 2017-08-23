@@ -11,5 +11,5 @@ let firebaseConfig = require('../config/firebase');
 // Intialize 
 firebase.initializeApp({
   credential: firebase.credential.cert(firebaseConfig),
-  databaseURL: 'https://opiai-174214.firebaseio.com/',
+  databaseURL: 'https://opiai-177321.firebaseio.com/',
 });
