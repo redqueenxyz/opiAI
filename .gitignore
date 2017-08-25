@@ -65,6 +65,7 @@ typings/
 ## macOS
 # General
 *.DS_Store
+*.icloud
 .AppleDouble
 .LSOverride
 
