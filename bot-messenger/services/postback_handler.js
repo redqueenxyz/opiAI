@@ -1,20 +1,28 @@
-// This script handles recieved postbacks, and decides if people get a survey
+// This script handles recieved postbacks, and decides what to do with them
+
+// Export 
+module.exports = {};
+
+// Package Dependencies
+let logger = require('winston');
 
 // Local Dependencies
-const surveyer = require('../services/survey_handler');
+let {userFinder, surveyAssigner} = require('../services/survey_handler');
 
 
-// This function runs when object_reciever.js a postback, and decides how to handle it 
-receivedPostback = function(event) {
-  let userID = event.sender.id;
-  let recipientID = event.recipient.id;
-  let timeOfPostback = event.timestamp;
+// When object_reciever.js a postback, decides how to handle it 
+module.exports.receivedPostback = async (event) => {
+  logger.info('Deciding Response to Postback Object...');
 
-  let postbackText = event.postback.payload;
+  const userID = event.sender.id;
+  const recipientID = event.recipient.id;
+  const timeOfPostback = event.timestamp;
+
+  const postbackText = event.postback.payload;
 
   // Check and send them into the next question
-  surveyer.userFinder(userID);
+  userFinder(userID);
 
   // Assign them their survey
-  surveyer.surveyer.surveyAssigner(userID, postbackText);
+  surveyAssigner(userID, postbackText, true);
 };
