@@ -24,23 +24,20 @@ reciever.post('/', function(req, res) {
 
   if (data.object === 'page') {
     // Log
-    logger.verbose('...Identifying object...');
+    logger.info('...Identifying object...');
 
     // Iterate over each event in the object
-    data.entry.forEach(function(entry) {
-      entry.messaging.forEach(function(event) {
+    data.entry.forEach((entry) => {
+      entry.messaging.forEach((event) => {
         // Event parameters
         let userID = event.sender.id;
         let recipientID = event.recipient.id;
-        let message = event.message;
 
-        // Message parameters
-        let messageId = message.mid;
-        let messageText = message.text;
-
+        console.log(event);
         // Potentially Undefined
-        let messagePostback = (message.postback || false);
-        let messagePayload = (message.quick_reply ? message.quick_reply.payload : false); // if a is true ? assign var is b, else var is false
+        let message = (event.message || false);
+        let messagePostback = (event.postback ? event.postback.payload : false);
+        let messagePayload = (message.quick_reply ? message.quick_reply.payload : false); // if a is true ? assign b, else var is false
 
         if (messagePostback) {
           logger.warn('...Postback Recieved: ', {event});
@@ -48,7 +45,7 @@ reciever.post('/', function(req, res) {
         } if (messagePayload) {
           logger.warn('...Payload Recieved: ', {event});
           payload_handler.recievedPayload(event);
-        } else if (event.message && !message.postback && !message.payload) {
+        } else if (message && !message.postback && !message.payload) {
           // If it has a message component, run recievedMessage()
           logger.warn('...Message Recieved: ', {event});
           message_handler.receivedMessage(event);

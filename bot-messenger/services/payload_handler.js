@@ -3,11 +3,14 @@
 // Export
 let payload_handler = module.exports = {};
 
+// Package Dependencies
+let logger = require('winston');
+
 // Dependencies
 let surveyer = require('../services/survey_handler');
 
 payload_handler.recievedPayload = function(event) {
-  console.log('In the payload handler.');
+  logger.info('Deciding Response to Payload Object...');
 
   let userID = event.sender.id;
   let message = event.message;
