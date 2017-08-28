@@ -12,15 +12,15 @@ let payload_handler = require('../services/payload_handler');
 
 // Parsing
 reciever.use(bodyParser.json());
-reciever.use(bodyParser.urlencoded({extended: true}));
+reciever.use(bodyParser.urlencoded({ extended: true }));
 
 // Recieving Messages 
-reciever.post('/', function(req, res) {
+reciever.post('/', function (req, res) {
   // Encapsulate
   let data = req.body;
 
   // Log
-  logger.info('...Object recieved: ', {data});
+  logger.info('...Object recieved: ', { data });
 
   if (data.object === 'page') {
     // Log
@@ -39,17 +39,17 @@ reciever.post('/', function(req, res) {
         let messagePayload = (message.quick_reply ? message.quick_reply.payload : false); // if a is true ? assign b, else var is false
 
         if (messagePostback) {
-          logger.warn('...Postback Recieved: ', {event});
+          logger.warn('...Postback Recieved: ', { event });
           postback_handler.receivedPostback(event);
         } if (messagePayload) {
-          logger.warn('...Payload Recieved: ', {event});
+          logger.warn('...Payload Recieved: ', { event });
           payload_handler.recievedPayload(event);
         } else if (message && !message.postback && !message.payload) {
           // If it has a message component, run recievedMessage()
-          logger.warn('...Message Recieved: ', {event});
+          logger.warn('...Message Recieved: ', { event });
           message_handler.receivedMessage(event);
         } else {
-          logger.info('...Unknown Object Recieved:', {event});
+          logger.info('...Unknown Object Recieved:', { event });
         }
       });
     });

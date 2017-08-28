@@ -9,7 +9,7 @@ let logger = require('winston');
 // Dependencies
 let surveyer = require('../services/survey_handler');
 
-payload_handler.recievedPayload = function(event) {
+payload_handler.recievedPayload = async (event) => {
   logger.info('Deciding Response to Payload Object...');
 
   let userID = event.sender.id;

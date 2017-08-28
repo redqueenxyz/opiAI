@@ -7,7 +7,7 @@ module.exports = {};
 let logger = require('winston');
 
 // Local Dependencies
-let {userFinder, surveyAssigner} = require('../services/survey_handler');
+let { userFinder, surveyAssigner } = require('../services/survey_handler');
 
 
 // When object_reciever.js a postback, decides how to handle it 
@@ -24,5 +24,5 @@ module.exports.receivedPostback = async (event) => {
   userFinder(userID);
 
   // Assign them their survey
-  surveyAssigner(userID, postbackText, true);
+  surveyAssigner(userID, postbackText);
 };

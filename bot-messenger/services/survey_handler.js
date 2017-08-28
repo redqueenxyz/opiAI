@@ -40,177 +40,201 @@ survey.userFinder = async (userID) => {
     logger.info('Have not met this user!', userID);
     survey.saveUser(userID, 'firstNameHolder')
       .then(() => {
-        logger.info('Assigning User %d the starter survey: [survey_0]...', userID);
+        logger.info('Assigning User %d the Starter Survey...', userID);
         survey.surveyAssigner(userID, 'survey_0', true)
           .then(() => {
-            logger.info('Sending User %d the Starting prompt message...', userID);
+            logger.info('Sending User %d the Starting Survey question...', userID);
             survey.surveyChecker(userID);
           })
           .catch((error) => {
-            logger.error('Prompting [survey_0] to User %d failed.', userID);
+            logger.error('Prompting Starting Survey to User %d failed.', userID);
           });
       })
       .catch((error) => {
-        logger.error('Assigning [survey_0] to User %d failed.', userID);
+        logger.error('Assigning Starting Survey to User %d failed.', userID);
       });
   }
 };
 
 /** Assigns a user an available survey */
-survey.surveyAssigner = async (userID, surveyID, current) => {
+survey.surveyAssigner = async (userID, surveyID, current = false) => {
   logger.info('Assiging User %d Survey %s...', userID, surveyID);
 
-  // Lookup surveys
-  const survey = await database.ref('surveys/' + surveyID).once('value');
+  // Lookup survey info
+  const surveyRef = await database.ref('surveys/' + surveyID).once('value');
+  const survey = surveyRef.val()
+  const surveyQuestions = surveyRef.child('questions').numChildren()
+
 
   // Register it as an available survey for the user
-  return database.ref('users/' + userID + '/availableSurveys/' + surveyID)
+
+  database.ref('users/' + userID + '/availableSurveys/' + surveyID)
     .set({
       postback: surveyID,
       completed: false,
       started: false,
-      current: current || false,
-      totalQuestions: survey.child('questions').numChildren(),
+      current: current,
+      currentQuestion: 0,
+      finalQuestion: surveyQuestions - 1,
+      totalQuestions: surveyQuestions
+    })
+    .catch((error) => {
+      logger.error('Failed to assign User %d Survey %s', userID, surveyID);
     });
-};
-
+}
 
 /** Starts user on a survey if he has a Current Survey, or sets him on one from Available if none exist */
 survey.surveyChecker = async (userID) => {
-  logger.info('Checking if User %d has any available surveys...', userID);
+  logger.info('Checking if User %d has Available Surveys...', userID);
 
-  // If he has a current Survey that's not intialized, set it up and send him into the Looper
-  database.ref('users/' + userID + '/availableSurveys').orderByChild('current').equalTo(true).once('value').then(
-    // Promise is accepted
-    (snapshot) => {
-      // Get the current Survey key
-      const currentSurvey = snapshot.val();
-      const currentSurveyKey = Object.keys(currentSurvey)[0];
+  const { currentSurvey, currentSurveyID } = await survey.getCurrentSurvey(userID);
+  const { availableSurveys, availableSurveyIDs } = await survey.getAvailableSurveys(userID);
 
-      // Get the current Survey state
-      const startedCurrentSurvey = snapshot.child(currentSurveyKey).child('started').val();
-      const completedCurrentSurvey = snapshot.child(currentSurveyKey).child('completed').val();
+  if (currentSurvey) {
+    // Get the current Survey state
+    const startedCurrentSurvey = currentSurvey[currentSurveyID].started
+    const completedCurrentSurvey = currentSurvey[currentSurveyID].completed
 
-      if (currentSurvey && !startedCurrentSurvey) {
-        // This means the survey was assigned as active, but not started (usually survey_0)
-        logger.info('User %d has an "active" survey: %s! Setting it as the current survey...', userID, currentSurveyKey);
+    if (currentSurvey && !startedCurrentSurvey) {
+      // This means the survey was assigned as active, but not started (usually survey_0)
+      logger.info('User %d has a current survey: %s, but has not started. Starting now and updating state...', userID, currentSurveyID);
 
-        // Initialize the current Survey State state
-        database.ref('users/' + userID + '/currentSurvey/' + currentSurveyKey).set({
-          finalQuestion: snapshot.child(currentSurveyKey + '/totalQuestions').val() - 1,
-          currentQuestion: 0,
+      // Initialize the current Survey State state
+      database.ref('users/' + userID + '/availableSurveys/' + currentSurveyID).update({
+        started: true
+      })
+        .then(() => {
+          // After that state is updated, now start the user on that Survey
+          survey.surveyLooper(userID);
         })
-          .then(() => {
-            // After that state is updated, now start the user on that Survey
-            survey.surveyLooper(userID, currentSurveyKey);
+        .catch(error => {
+          logger.error('Error in surveyAssigner for User %d & survey: %s!', userID, currentSurveyID);
+        })
 
-            // Update that survey state to started.
-            logger.info('Setting User %d\'s Survey %s to "started" state...', userID, currentSurveyKey);
-            database.ref('users/' + userID + '/availableSurveys/' + currentSurveyKey).update({
-              started: true,
-            });
-          });
-      } else if (currentSurvey && startedCurrentSurvey) {
-        // This means he's already in a survey, and needs to continue looping
-        logger.info('User %d is currently on Survey %s! Handing off to looper...', userID, currentSurveyKey);
-        survey.surveyLooper(userID, currentSurveyKey);
-      } else if (!currentSurvey) {
-        // If he has no current surveys, let's assign him one
-        database.ref('users/' + userID + '/availableSurveys').orderByChild('completed').equalTo(false)
-          .once('value',
+    } else if (currentSurvey && startedCurrentSurvey) {
+      // This means he's already in a survey, and needs to continue looping
+      logger.info('User %d is currently on Survey %s! Handing off to looper...', userID, currentSurveyID);
+      survey.surveyLooper(userID);
+    }
+    // If they has a current available Survey that's not intialized, set it up and send him into the Looper
+  } else if (!currentSurvey) {
 
-          // If the lookup works and the Promise is accepted, run here
-          (snapshot) => {
-            const availableSurveys = snapshot.val();
+    if (availableSurveys) {
 
-            logger.info('User %d has surveys available!', userID);
+      logger.info('User %d has no current Surveys! Assigning him one at random...', userID);
+      const randomSurveyKey = availableSurveyIDs[Math.floor(Math.random() * availableSurveyIDs.length)];
 
-            // Get available Keys and number of available surveys
-            const availableSurveyCount = snapshot.numChildren();
-            const availableSurveyKeys = Object.keys(availableSurveys);
+      logger.info('Setting User %d\'s current Survey to: %s...', userID, randomSurveyKey);
+      database.ref('users/' + userID + '/availableSurveys/' + randomSurveyKey).update({
+        current: true,
+      })
+        .then(() => {
+          survey.surveyChecker(userID)
+        });
+    } else if (!availableSurveys) {
+      logger.info('User %d\'s has no Current or Available Surveys!', userID);
+      sender.sendTextMessage(userID, "I don\'t have any more questions for you! Please come back later.");
+    }
 
-            // Grab a random available survey
-            const randomSurveyKey = availableSurveyKeys[Math.floor(Math.random() * availableSurveyCount)];
+  }
+}
 
-            // Set that that survey as the current Survey
-            logger.info('Setting User %d\'s current Survey to: %s...', randomSurveyKey);
-            database.ref('users/' + userID + '/availableSurveys/' + randomSurveyKey).update({
-              current: true,
-            });
+/** Sends a user a given survey question */
+survey.surveyQuestionSender = async (userID, surveyID, questionNumber) => {
+  logger.info('Sending User %d Question %d on Survey: \'%s\'...', userID, questionNumber, surveyID);
 
-            // Inform the user
-            logger.info('Sending User %d the Start Survey prompt...', userID);
-            sender.sendTextMessage(userID, 'Looks like I do have a survey for you. Would you like to begin? ');
-          }).catch(
-          // Promise rejected (more likely to hit the higher level catch below than the one here)
-          () => {
-            logger.info('User %d has completed all available surveys...', userID);
-            sender.sendTextMessage(userID, 'Good job, you\'ve answered all my questions!');
-          });
-      }
-      // Promise rejected
-    }).catch(() => {
-      logger.info('User %d has no available surveys...', userID);
-      sender.sendTextMessage(userID, 'I don\'t have any more questions for you. Come back later!');
+  //  Get the Question
+  database.ref('surveys/' + surveyID + '/questions').once('value')
+    .then((snapshot) => {
+      // Send it to the User
+      sender.sendMessage(userID, snapshot.val()[questionNumber]);
     });
 };
 
-/** Sends a user a given survey question */
-survey.surveyQuestionSender = function(userID, surveyID, questionNumber) {
-  logger.info('Starting User %d on Survey: \'%s\'...', userID, surveyID);
+survey.getCurrentSurvey = async (userID) => {
+  logger.info('Checking if User %d has Current Survey...', userID);
+  try {
+    const currentSurveyRef = await database.ref('users/' + userID + '/availableSurveys').orderByChild('current').equalTo(true).once('value');
+    const currentSurvey = currentSurveyRef.val() == null ? false : currentSurveyRef.val();
+    const currentSurveyID = currentSurveyRef.val() == null ? [] : Object.keys(currentSurvey)[0];
+    return { currentSurvey, currentSurveyID }
 
-  //  Get the Question
-  database.ref('surveys/' + surveyID + '/questions').once('value', (snapshot) => {
-    // Send it to the User
-    sender.sendMessage(userID, snapshot.val()[questionNumber]);
-  });
-};
+  } catch (error) {
+    logger.error('Error checking if User %d has Current Survey!', userID);
+  }
+
+}
+
+
+survey.getAvailableSurveys = async (userID) => {
+  logger.info('Checking if User %d has Available Surveys...', userID);
+  try {
+    const availableSurveysRef = await database.ref('users/' + userID + '/availableSurveys').orderByChild('completed').equalTo(false).once('value')
+    const availableSurveys = availableSurveysRef.val() == null ? false : availableSurveysRef.val()
+    const availableSurveyIDs = availableSurveysRef.val() == null ? [] : Object.keys(availableSurveys)
+
+    return { availableSurveys, availableSurveyIDs }
+
+  } catch (error) {
+    logger.error('Error checking if User %d has Available Surveys!', userID);
+  }
+
+}
 
 /** Loops users through their current survey until they are done */
-survey.surveyLooper = function(userID, surveyID) {
-  database.ref('users/' + userID + '/currentSurvey/' + surveyID).once('value', (snapshot) => {
-    const finalQuestion = snapshot.child('finalQuestion').val();
-    const currentQuestion = snapshot.child('currentQuestion').val();
+survey.surveyLooper = async (userID) => {
 
-    if (currentQuestion <= finalQuestion) {
-      // Send them the current question for the current Survey
-      logger.info('Sending User %d Question %d for Survey %s...', userID, currentQuestion, surveyID);
-      survey.surveyQuestionSender(userID, surveyID, currentQuestion);
-    } else {
-      // If the current question is greater than the number of questions available, survey done!
-      logger.info('User %d has completed Survey %s!', userID, surveyID);
+  // Get the current Survey
+  let { currentSurvey, currentSurveyID } = await survey.getCurrentSurvey(userID)
+  logger.info('Looping User %d through Current Survey: %s...', userID, currentSurveyID);
 
-      // Send user an ending Prompt
-      sender.sendTextMessage(userID, 'Thanks for sharing your opinion with us!');
 
-      // Update the available Survey state to complete, and make it inactive
-      database.ref('users/' + userID + '/availableSurveys/' + surveyID).update({
-        completed: true,
-        current: false,
-      });
+  // Get current Survey State
+  const startedCurrentSurvey = currentSurvey[currentSurveyID]["started"];
+  const completedCurrentSurvey = currentSurvey[currentSurveyID]["completed"];
+  const currentQuestion = currentSurvey[currentSurveyID]["currentQuestion"];
+  const nextQuestion = currentQuestion + 1
+  const finalQuestion = currentSurvey[currentSurveyID]["finalQuestion"];
 
-      // Remove the current Survey entry
-      logger.info('Removing User %d\'s Current Survey: %s. ', userID, surveyID);
-      database.ref('users/' + userID + '/currentSurvey/' + surveyID).remove();
-    }
-  });
-};
+  if (currentQuestion <= finalQuestion) {
+    // Send them the current question for the current Survey
+    logger.info('Sending User %d Next Question for Survey %s...', userID, currentQuestion, currentSurveyID);
+    survey.surveyQuestionSender(userID, currentSurveyID, currentQuestion)
+
+  } else {
+    // If the current question is greater than the number of questions available, survey done!
+    logger.info('User %d has completed Survey %s!', userID, currentSurveyID);
+
+    // Update the available Survey state to complete, and make it inactive
+    database.ref('users/' + userID + '/availableSurveys/' + currentSurveyID).update({
+      completed: true,
+      current: false,
+    })
+      .then(() => {
+        logger.info('Checking if User %d has any other surveys....', userID);
+        survey.surveyChecker(userID)
+      })
+      .catch(error => {
+        logger.error('Error checking if User %d has any other surveys....', userID);
+      })
+  }
+}
 
 /** Saves question answers in Firebase, and increment user State */
-survey.surveyAnswerSaver = function(userID, questionPayload, answer) {
-  // Get the current Survey for the given user
-  database.ref('users/' + userID + '/currentSurvey/').once('value', (snapshot) => {
-    const surveyID = Object.keys(snapshot.val());
+survey.surveyAnswerSaver = async (userID, questionPayload, answer) => {
+  // Get current Survey
+  const { currentSurvey, currentSurveyID } = await survey.getCurrentSurvey(userID);
+  const nextQuestion = parseInt(questionPayload) + 1
 
-    // Save the users answer using payload text and the new survey ID
-    logger.info('Saving User %d response to Question %d on Survey \'%s\': %s...', userID, questionPayload, surveyID, answer);
-    database.ref('responses/' + surveyID + '/' + userID + '/' + questionPayload)
-      .set({answer})
-      .then(() => {
-        logger.info('Increment User %d current Survey State to Question %d on Survey %s...', userID, questionPayload++, surveyID);
-        database.ref('users/' + userID + '/currentSurvey/' + surveyID).update({
-          currentQuestion: questionPayload++,
+  // Save the users answer using payload text and the new survey ID
+  logger.info('Saving User %d response to Question %d on Survey \'%s\': "%s"', userID, questionPayload, currentSurveyID, answer);
+  database.ref('responses/' + currentSurveyID + '/' + userID + '/' + questionPayload)
+    .set({ answer })
+    .then(() => {
+      logger.info('Increment User %d current Survey State to Question %d on Survey %s...', userID, nextQuestion, currentSurveyID);
+      database.ref('users/' + userID + '/availableSurveys/' + currentSurveyID)
+        .update({
+          currentQuestion: nextQuestion,
         });
-      });
-  });
-};
+    })
+}
