@@ -33,7 +33,6 @@ reciever.post('/', function(req, res) {
         let userID = event.sender.id;
         let recipientID = event.recipient.id;
 
-        console.log(event);
         // Potentially Undefined
         let message = (event.message || false);
         let messagePostback = (event.postback ? event.postback.payload : false);
