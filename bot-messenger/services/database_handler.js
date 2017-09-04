@@ -6,7 +6,7 @@
 // Admin
 // For Firebase SDK
 let firebase = require('firebase-admin');
-let firebaseConfig = require('../config/firebase');
+const firebaseConfig = require('../config/firebase');
 
 // Intialize 
 firebase.initializeApp({

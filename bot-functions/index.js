@@ -27,7 +27,7 @@ exports.getUserData = functions.database.ref('users/{userID}')
             gender: data.gender,
           })
           .then(() => {
-            console.log('Successly quereed Facebook, and updated Database!');
+            console.log('Successly queried Facebook, and updated Database!');
           });
       })
       .on('error', (err) => {
