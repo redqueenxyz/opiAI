@@ -25,7 +25,7 @@ let logger = require('winston');
 
 // Facebook Authorization
 validator.get('/', function(req, res) {
-  console.log('\nAuthorizing bot with Facebook...');
+  logger.info('\n Authorizing bot with Facebook...');
   if (
     req.query['hub.mode'] === 'subscribe' &&
     req.query['hub.verify_token'] === facebook.verifyToken) {
