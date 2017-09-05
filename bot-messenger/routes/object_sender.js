@@ -10,7 +10,7 @@ let facebook = require('../config/facebook');
 
 // Facebook Send API 
 /** This function interacts with the Facebook Send Api, so it is called with every message template, and handles actually submitting the final POST request to the Send API / Facebook Messenger */
-object_sender.callSendAPI = function(messageData) {
+object_sender.callSendAPI = async (messageData) => {
   // Log
   logger.info('...Preparing Object: ', {messageData});
 
@@ -20,7 +20,7 @@ object_sender.callSendAPI = function(messageData) {
     method: 'POST',
     json: messageData, // actual message to send to the Send API 
 
-  }, function(error, response, body) {
+  }, (error, response, body) => {
     if (!error && response.statusCode == 200) {
       // If there's NO error or the response is good (200), then print the message
       logger.warn(' Sending Successful! ', {
@@ -37,7 +37,7 @@ object_sender.callSendAPI = function(messageData) {
 
 // TODO: Move these message templates.
 // Send Any Message
-object_sender.sendMessage = function(recipientId, messageObject) {
+object_sender.sendMessage = async (recipientId, messageObject) => {
   // Intialize the messageData object that FB will recieve
   let messageData = {
     recipient: {
@@ -50,7 +50,7 @@ object_sender.sendMessage = function(recipientId, messageObject) {
 
 
 // Send Text Message 
-object_sender.sendTextMessage = function(recipientId, messageText) {
+object_sender.sendTextMessage = async (recipientId, messageText) => {
   // Intialize the messageData object that FB will recieve
   let messageData = {
     recipient: {
@@ -64,7 +64,7 @@ object_sender.sendTextMessage = function(recipientId, messageText) {
 };
 
 // Send Templates
-object_sender.sendStructuredMessage = function(recipientId) {
+object_sender.sendStructuredMessage = async (recipientId) => {
   console.log('\nWe heard \'generic\', get the Structured Message template!');
   let messageData = {
     recipient: {
@@ -143,7 +143,7 @@ object_sender.sendQuickReply = function(recipientId, question1) {
   object_sender.callSendAPI(messageData);
 };
 
-object_sender.sendQuickHello = function(recipientId) {
+object_sender.sendQuickHello = async (recipientId) => {
   let messageData = {
     recipient: {
       id: recipientId,
