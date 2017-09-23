@@ -1,18 +1,19 @@
 {
   "name": "opiai",
-  "version": "1.0.2",
+  "version": "2.0.2",
   "description": "A Feedback Messenger Bot.",
   "engines": {
-    "node": ">=4.3.2"
+    "node": ">=8.0.0"
   },
   "scripts": {
     "deploy": "gcloud app deploy",
     "build": "// docker build -t feedbackai .",
     "start": "nodemon bot.js",
     "debug": "nodemon --inspect-brk bot.js",
-    "lint": "eslint ."
+    "lint": "eslint .",
     "restart": "// pm2 restart all",
     "test": "// mocha --reporter spec tests/*.js",
+    "log": "gcloud app logs tail -s default",
     "poststart": ""
   },
   "repository": {
@@ -29,16 +30,16 @@
   "dependencies": {
     "@google-cloud/debug-agent": "^2.0.0",
     "@google-cloud/logging-winston": "^0.5.0",
-    "@google-cloud/trace-agent": "^2.1.2",
+    "@google-cloud/trace-agent": "^2.2.0",
     "body-parser": "^1.17.1",
+    "dotenv": "^4.0.0",
     "express": "^4.15.3",
     "express-winston": "^2.4.0",
     "firebase-admin": "^4.2.1",
     "lodash": "^4.17.4",
     "nodemon": "^1.11.0",
     "request": "^2.81.0",
-    "winston": "^2.3.1",
-    "dotenv": "^4.0.0"
+    "winston": "^2.3.1"
   },
   "devDependencies": {
     "@google-cloud/nodejs-repo-tools": "1.3.1",
