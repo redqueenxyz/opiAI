@@ -10,6 +10,7 @@
     "build": "// docker build -t feedbackai .",
     "start": "nodemon bot.js",
     "debug": "nodemon --inspect-brk bot.js",
+    "lint": "eslint ."
     "restart": "// pm2 restart all",
     "test": "// mocha --reporter spec tests/*.js",
     "poststart": ""

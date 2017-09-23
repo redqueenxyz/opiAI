@@ -2,10 +2,8 @@
 'use strict';
 
 // Google Cloud Debug Agent
-if (process.env.NODE_ENV === 'production') {
-  require('@google-cloud/debug-agent').start();
-  require('@google-cloud/trace-agent').start();
-}
+let debug_agent = require('@google-cloud/debug-agent').start();
+let trace_agent = require('@google-cloud/trace-agent').start();
 
 // Google Logging via Winston
 const winston = require('winston');
