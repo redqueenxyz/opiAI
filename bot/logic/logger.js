@@ -2,8 +2,8 @@
 'use strict';
 
 // Google Cloud Debug Agent
-let debug_agent = require('@google-cloud/debug-agent').start();
-let trace_agent = require('@google-cloud/trace-agent').start();
+// let debug_agent = require('@google-cloud/debug-agent').start();
+// let trace_agent = require('@google-cloud/trace-agent').start();
 
 // Google Logging via Winston
 const winston = require('winston');
