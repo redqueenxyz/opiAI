@@ -1,17 +1,14 @@
 // Runs users through surveys
 
-// Export
-
 // Package Dependencies
-const firebase = require('firebase-admin');
-const database = firebase.database();
-const logger = require('winston');
+import { database } from 'firebase-admin'
+import * as logger from 'winston'
 
 // Local Dependencies
-import sender from 'sender'
+import { sendMessage, sendTextMessage } from './sender'
 
 /** Saves new users in Firebase 
- * @param {string} userID - Facebook User ID
+ * @param {string} userID - Facebook user ID
  */
 export async function saveUser(userID: string) {
   logger.info('Saving User %d in the Database...', userID);

@@ -6,11 +6,11 @@ import * as functions from 'firebase-functions'
 import * as logger from 'winston'
 
 // Local Dependencies
-import { userFinder, surveyAssigner, surveyAnswerSaver } from 'asker'
-import { auther } from 'auther'
+import { userFinder, surveyAssigner, surveyAnswerSaver } from './asker'
+import { auther } from './auther'
 
 // Recieving Messages 
-let reciever = functions.https.onRequest(async (req, res) => {
+export default function reciever(req: Request, res: Response) {
   // Encapsulate
   const data = req.body;
 
@@ -89,7 +89,9 @@ let reciever = functions.https.onRequest(async (req, res) => {
     // Send 200 after processing; must send back a 200 within 20 seconds, otherwise times out and FB keeps retrying
     res.status(200).send()
   }
-});
+
+  auther(req, res)
+};
 
 // Export Router
 export { reciever }
