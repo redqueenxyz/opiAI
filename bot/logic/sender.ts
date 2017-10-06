@@ -1,22 +1,18 @@
 // Sends messages back to Facebook
-const object_sender = module.exports = {};
 
-// Package Dependencies
-let request = require('request');
-let logger = require('winston');
-
-// Local Dependencies
-let facebook = require('../config/facebook');
+// Dependencies
+import * as request from 'request'
+import * as logger from 'winston'
 
 // Facebook Send API 
 /** This function interacts with the Facebook Send Api, so it is called with every message template, and handles actually submitting the final POST request to the Send API / Facebook Messenger */
-object_sender.callSendAPI = async (messageData) => {
+export async function callSendAPI(messageData: JSON) {
   // Log
-  logger.info('...Preparing Object: ', {messageData});
+  logger.info('...Preparing Object: ', { messageData });
 
   request({
     uri: 'https://graph.facebook.com/v2.8/me/messages', // The API endpoint to POST to
-    qs: {access_token: facebook.pageAccessToken},
+    qs: { access_token: facebook.pageAccessToken },
     method: 'POST',
     json: messageData, // actual message to send to the Send API 
 
@@ -114,7 +110,7 @@ object_sender.sendStructuredMessage = async (recipientId) => {
 
 /** This function demonstrates the Quick Reply capability which provides the users buttons to respond and returns a defined payload */
 // Reference: https://developers.facebook.com/docs/messenger-platform/send-api-reference/quick-replies
-object_sender.sendQuickReply = function(recipientId, question1) {
+object_sender.sendQuickReply = function (recipientId, question1) {
   console.log('\nWe heard \'quick reply\', get the Quick Reply template!');
   let messageData = {
     recipient: {

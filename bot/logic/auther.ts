@@ -23,8 +23,7 @@ let validator = require('express').Router();
 const facebook = require('../config/facebook');
 let logger = require('winston');
 
-// Facebook Authorization
-validator.get('/', function(req, res) {
+let validator = functions.https.onRequest(async (req: Request, res: Response) => {
   logger.info('\n Authorizing bot with Facebook...');
   if (
     req.query['hub.mode'] === 'subscribe' &&
