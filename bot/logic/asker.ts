@@ -1,7 +1,6 @@
 // Runs users through surveys
 
 // Export
-const survey = module.exports = {};
 
 // Package Dependencies
 const firebase = require('firebase-admin');
@@ -9,12 +8,12 @@ const database = firebase.database();
 const logger = require('winston');
 
 // Local Dependencies
-const sender = require('../routes/object_sender');
+import sender from 'sender'
 
 /** Saves new users in Firebase 
  * @param {string} userID - Facebook User ID
  */
-survey.saveUser = async (userID) => {
+export async function saveUser(userID: string) {
   logger.info('Saving User %d in the Database...', userID);
   database.ref('users/' + userID).set({
     availableSurveys: {},
@@ -24,23 +23,23 @@ survey.saveUser = async (userID) => {
 /** Checking if the user exists in the database
  * @param {string} userID - Facebook User ID
  */
-survey.userFinder = async (userID) => {
+export async function userFinder(userID: string) {
   logger.info('Checking if we\'ve met User %d before...', userID);
   const userEntry = await database.ref('users/' + userID).once('value');
   const userExists = userEntry.exists();
   // Check if the userID exists
   if (userExists) {
     logger.info('We\'ve met User %d before!', userID);
-    survey.surveyChecker(userID);
+    surveyChecker(userID);
   } else {
     logger.info('Have not met this user!', userID);
-    survey.saveUser(userID, 'firstNameHolder')
+    saveUser(userID)
       .then(() => {
-        logger.info('Assigning User %d Starter Survey...', userID);
-        survey.surveyAssigner(userID, 'survey_0', true)
+        logger.info('Assigning User %d Starter ..', userID);
+        surveyAssigner(userID, 'survey_0', true)
           .then(() => {
-            logger.info('Sending User %d Starter Survey...', userID);
-            survey.surveyChecker(userID);
+            logger.info('Sending User %d Starter ..', userID);
+            surveyChecker(userID);
           })
           .catch((error) => {
             logger.error('Error prompting Starter Survey to User %d', userID);
@@ -57,7 +56,7 @@ survey.userFinder = async (userID) => {
  * @param {string} surveyID - The Survey ID in the DB
  * @param {boolean} current - Make Current Survey? (True for Starter Survey)
  */
-survey.surveyAssigner = async (userID, surveyID, current = false) => {
+export async function surveyAssigner(userID: string, surveyID: string, current: boolean = false) {
   logger.info('Assiging User %d Survey %s...', userID, surveyID);
 
   // Lookup survey info
@@ -86,10 +85,10 @@ survey.surveyAssigner = async (userID, surveyID, current = false) => {
 /** Starts or Assigns User a Current Survey
 * @param {string} userID - Facebook User ID
 */
-survey.surveyChecker = async (userID) => {
+export async function surveyChecker(userID) {
   logger.info('Checking if User %d has Available Surveys...', userID);
 
-  const {currentSurvey, currentSurveyID} = await survey.getCurrentSurvey(userID);
+  const { currentSurvey, currentSurveyID } = await getCurrentSurvey(userID);
 
   if (currentSurvey) {
     // Get the current Survey state
@@ -106,7 +105,7 @@ survey.surveyChecker = async (userID) => {
       })
         .then(() => {
           // After that state is updated, now start the user on that Survey
-          survey.surveyLooper(userID);
+          surveyLooper(userID);
         })
         .catch((error) => {
           logger.error('Error in surveyAssigner for User %d & survey: %s!', userID, currentSurveyID);
@@ -114,12 +113,12 @@ survey.surveyChecker = async (userID) => {
     } else if (currentSurvey && startedCurrentSurvey) {
       // This means he's already in a survey, and needs to continue looping
       logger.info('User %d is currently on Survey %s! Handing off to looper...', userID, currentSurveyID);
-      survey.surveyLooper(userID);
+      surveyLooper(userID);
     }
     // If they has a current available Survey that's not intialized, set it up and send him into the Looper
   } else if (!currentSurvey) {
     // No Current, check Available
-    const {availableSurveys, availableSurveyIDs} = await survey.getAvailableSurveys(userID);
+    const { availableSurveys, availableSurveyIDs } = await getAvailableSurveys(userID);
 
     if (availableSurveys) {
       logger.info('User %d has no current Surveys! Assigning him one at random...', userID);
@@ -130,71 +129,69 @@ survey.surveyChecker = async (userID) => {
         current: true,
       })
         .then(() => {
-          survey.surveyChecker(userID);
+          surveyChecker(userID);
         });
     } else if (!availableSurveys) {
       logger.info('User %d\'s has no Current or Available Surveys!', userID);
-      sender.sendTextMessage(userID, 'I don\'t have any more questions for you! Please come back later.');
+      sendTextMessage(userID, 'I don\'t have any more questions for you! Please come back later.');
     }
   }
 };
 
 /** Sends a user a given survey question */
-survey.surveyQuestionSender = async (userID, surveyID, questionNumber) => {
+export async function surveyQuestionSender(userID, surveyID, questionNumber) {
   logger.info('Sending User %d Question %d on Survey: \'%s\'...', userID, questionNumber, surveyID);
 
   //  Get the Question
   database.ref('surveys/' + surveyID + '/questions').once('value')
     .then((snapshot) => {
       // Send it to the User
-      sender.sendMessage(userID, snapshot.val()[questionNumber]);
+      sendMessage(userID, snapshot.val()[questionNumber]);
     });
 };
 
-survey.getCurrentSurvey = async (userID) => {
+export async function getCurrentSurvey(userID) {
   logger.info('Checking if User %d has Current Survey...', userID);
   try {
     const currentSurveyRef = await database.ref('users/' + userID + '/availableSurveys').orderByChild('current').equalTo(true).once('value');
     const currentSurvey = currentSurveyRef.val() == null ? false : currentSurveyRef.val();
     const currentSurveyID = currentSurveyRef.val() == null ? [] : Object.keys(currentSurvey)[0];
-    return {currentSurvey, currentSurveyID};
+    return { currentSurvey, currentSurveyID };
   } catch (error) {
     logger.error('Error checking if User %d has Current Survey!', userID);
   }
 };
 
 
-survey.getAvailableSurveys = async (userID) => {
+export async function getAvailableSurveys(userID) {
   logger.info('Checking if User %d has Available Surveys...', userID);
   try {
     const availableSurveysRef = await database.ref('users/' + userID + '/availableSurveys').orderByChild('completed').equalTo(false).once('value');
     const availableSurveys = availableSurveysRef.val() == null ? false : availableSurveysRef.val();
     const availableSurveyIDs = availableSurveysRef.val() == null ? [] : Object.keys(availableSurveys);
 
-    return {availableSurveys, availableSurveyIDs};
+    return { availableSurveys, availableSurveyIDs };
   } catch (error) {
     logger.error('Error checking if User %d has Available Surveys!', userID);
   }
 };
 
 /** Loops users through their current survey until they are done */
-survey.surveyLooper = async (userID) => {
+export async function surveyLooper(userID) {
   // Get the current Survey
-  let {currentSurvey, currentSurveyID} = await survey.getCurrentSurvey(userID);
+  let { currentSurvey, currentSurveyID } = await getCurrentSurvey(userID);
   logger.info('Looping User %d through Current Survey: %s...', userID, currentSurveyID);
-
 
   // Get current Survey State
   const startedCurrentSurvey = currentSurvey[currentSurveyID]['started'];
   const completedCurrentSurvey = currentSurvey[currentSurveyID]['completed'];
   const currentQuestion = currentSurvey[currentSurveyID]['currentQuestion'];
-  const nextQuestion = currentQuestion + 1;
   const finalQuestion = currentSurvey[currentSurveyID]['finalQuestion'];
 
   if (currentQuestion <= finalQuestion) {
     // Send them the current question for the current Survey
     logger.info('Sending User %d Next Question for Survey %s...', userID, currentQuestion, currentSurveyID);
-    survey.surveyQuestionSender(userID, currentSurveyID, currentQuestion);
+    surveyQuestionSender(userID, currentSurveyID, currentQuestion);
   } else {
     // If the current question is greater than the number of questions available, survey done!
     logger.info('User %d has completed Survey %s!', userID, currentSurveyID);
@@ -206,7 +203,7 @@ survey.surveyLooper = async (userID) => {
     })
       .then(() => {
         logger.info('Checking if User %d has any other surveys....', userID);
-        survey.surveyChecker(userID);
+        surveyChecker(userID);
       })
       .catch((error) => {
         logger.error('Error checking if User %d has any other surveys....', userID);
@@ -214,16 +211,17 @@ survey.surveyLooper = async (userID) => {
   }
 };
 
+
 /** Saves Answers in Firebase, and increment user State */
-survey.surveyAnswerSaver = async (userID, questionPayload, answer) => {
+export async function surveyAnswerSaver(userID, questionPayload, answer) {
   // Get current Survey
-  const {currentSurvey, currentSurveyID} = await survey.getCurrentSurvey(userID);
+  const { currentSurvey, currentSurveyID } = await getCurrentSurvey(userID);
   const nextQuestion = parseInt(questionPayload) + 1;
 
   // Save the users answer using payload text and the new survey ID
   logger.info('Saving User %d response to Question %d on Survey \'%s\': "%s"', userID, questionPayload, currentSurveyID, answer);
   database.ref('responses/' + currentSurveyID + '/' + userID + '/' + questionPayload)
-    .set({answer})
+    .set({ answer })
     .then(() => {
       logger.info('Increment User %d current Survey State to Question %d on Survey %s...', userID, nextQuestion, currentSurveyID);
       database.ref('users/' + userID + '/availableSurveys/' + currentSurveyID)

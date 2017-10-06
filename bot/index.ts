@@ -5,29 +5,23 @@ import * as admin from 'firebase-admin'
 // Intialize
 admin.initializeApp(functions.config().firebase)
 
-// // intialize firebase
-// admin.initializeapp(functions.config().firebase);
+bot.use('/webhook', require('./auther'));
+bot.use('/webhook', require('./reciever'));
 
-// pass /webhook to reciever 
-
-// /** 
-//  * Serves the bot!
-//  */
-
-// functions.https.onRequest(bot);
+// TODO: ** glob pattern all to webhook endpoint, use auther and reciever
 
 
-// // opiAI
-// // A bot that collections opinions.
+// opiAI
+// A bot that collections opinions.
 
-// // setting ===========================================================
-// require('dotenv').config();
+// setting ===========================================================
+require('dotenv').config();
 
-// // initializing =======================================================
-// const express = require('express');
+// serving ============================================================
+admin.initializeApp(functions.config().firebase)
 
-// // routing ============================================================
-// const bot = express();
+// initializing =======================================================
+const bot = require('express')();
 
 // // routing ===========================================================
 // bot.use('/webhook', require('./auther'));

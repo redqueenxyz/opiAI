@@ -1,29 +1,11 @@
 // Authorizes the bot with Facebook
 
-// / Locally-Hosted Setup
-// Originally, we had to host the bot locally and pipe it through a hosted proxy (via ngrok) to allow it to connect via HTTPS to Facebook. 
+// Dependencies
+import * as admin from 'firebase-admin'
+import * as functions from 'firebase-functions'
+import * as logger from 'winston'
 
-// npm start: starts bot.js at the main folder
-// ngrok http 3000: serves localhost:3000 at public_url
-// `https://public_url.com/webhook`: Goes in developers.facebook.com > feedbackAI > Webhooks > Application > Edit Subscription > Callback url
-// `https://public_url.com/webhook`: Goes in developers.facebook.com > feedbackAI > Webhooks > Page > Edit Subscription > Callback url
-// `messages, messaging_postbacks`: Required messaging gpermissions in developers.facebook.com, also requires subscription to Feedbck page 
-
-// / Cloud-Hosted Setup
-// We have containerized and move our bot onto GAE, using a custom runtime and Google Compute Engine (hello bills!)
-// docker build -t feedbackai: Build and tag the feedbackai bot.
-// gcloud app deploy: Deploys bot to a project url; requires the gcloud SDK to be setup and intalled 
-// gcloud app logs tail -s default: Dumps all the logs to the CLI from Google; great for monitoring it. 
-
-
-// Webhook Router
-let validator = require('express').Router();
-
-// Imports
-const facebook = require('../config/facebook');
-let logger = require('winston');
-
-let validator = functions.https.onRequest(async (req: Request, res: Response) => {
+export async function auther(req: Request, res: Response) {
   logger.info('\n Authorizing bot with Facebook...');
   if (
     req.query['hub.mode'] === 'subscribe' &&
@@ -32,8 +14,6 @@ let validator = functions.https.onRequest(async (req: Request, res: Response) =>
     logger.info('Webhook validated!');
   } else {
     logger.error('Failed validation. Make sure the validation tokens match.');
-    res.sendStatus(403);
+    res.status(403).send
   }
-});
-
-module.exports = validator;
+};

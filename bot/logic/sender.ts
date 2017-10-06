@@ -1,6 +1,7 @@
 // Sends messages back to Facebook
 
 // Dependencies
+import { } from 'dotenv/config'
 import * as request from 'request'
 import * as logger from 'winston'
 
@@ -12,7 +13,7 @@ export async function callSendAPI(messageData: JSON) {
 
   request({
     uri: 'https://graph.facebook.com/v2.8/me/messages', // The API endpoint to POST to
-    qs: { access_token: facebook.pageAccessToken },
+    qs: { access_token: process.env.PAGETOKEN },
     method: 'POST',
     json: messageData, // actual message to send to the Send API 
 
@@ -33,7 +34,7 @@ export async function callSendAPI(messageData: JSON) {
 
 // TODO: Move these message templates.
 // Send Any Message
-object_sender.sendMessage = async (recipientId, messageObject) => {
+export async function sendMessage(recipientId, messageObject) {
   // Intialize the messageData object that FB will recieve
   let messageData = {
     recipient: {
@@ -41,12 +42,12 @@ object_sender.sendMessage = async (recipientId, messageObject) => {
     },
     message: messageObject,
   };
-  object_sender.callSendAPI(messageData);
+  exports.callSendAPI(messageData);
 };
 
 
 // Send Text Message 
-object_sender.sendTextMessage = async (recipientId, messageText) => {
+export async function sendTextMessage(recipientId, messageText) {
   // Intialize the messageData object that FB will recieve
   let messageData = {
     recipient: {
@@ -56,11 +57,11 @@ object_sender.sendTextMessage = async (recipientId, messageText) => {
       text: messageText,
     },
   };
-  object_sender.callSendAPI(messageData);
+  callSendAPI(messageData);
 };
 
 // Send Templates
-object_sender.sendStructuredMessage = async (recipientId) => {
+export async function sendStructuredMessage(recipientId) {
   console.log('\nWe heard \'generic\', get the Structured Message template!');
   let messageData = {
     recipient: {
@@ -104,67 +105,5 @@ object_sender.sendStructuredMessage = async (recipientId) => {
       },
     },
   };
-  object_sender.callSendAPI(messageData);
+  exports.callSendAPI(messageData);
 };
-
-
-/** This function demonstrates the Quick Reply capability which provides the users buttons to respond and returns a defined payload */
-// Reference: https://developers.facebook.com/docs/messenger-platform/send-api-reference/quick-replies
-object_sender.sendQuickReply = function (recipientId, question1) {
-  console.log('\nWe heard \'quick reply\', get the Quick Reply template!');
-  let messageData = {
-    recipient: {
-      id: recipientId,
-    },
-    message: {
-      text: 'Pick a color:',
-      quick_replies: [
-        {
-          content_type: 'text',
-          title: 'Red',
-          payload: 'answered_q1', // Recieves this payload back as the new 'message, so maybe just grab this and toss it into FB as part of the 'incoming' loop?
-          // TODO: Maybe explore Postbacks for Quick Replies, if necesssary
-          image_url: 'http://petersfantastichats.com/img/red.png', // Even takes a cute little image for friendliness
-          // TODO: Emojis?!
-        },
-        {
-          content_type: 'text',
-          title: 'Green',
-          payload: 'answered_q1',
-          image_url: 'http://petersfantastichats.com/img/green.png',
-        },
-      ],
-    },
-  };
-  object_sender.callSendAPI(messageData);
-};
-
-object_sender.sendQuickHello = async (recipientId) => {
-  let messageData = {
-    recipient: {
-      id: recipientId,
-    },
-    message: {
-      text: 'Hello, I\'m Opi! Ready to get started?',
-      quick_replies: [
-        {
-          content_type: 'text',
-          title: '😊',
-          payload: 'intro', // Recieves this payload back as the new 'message, so maybe just grab this and toss it into FB as part of the 'incoming' loop?
-          // TODO: Maybe explore Postbacks for Quick Replies, if necesssary
-          image_url: 'http://petersfantastichats.com/img/red.png', // Even takes a cute little image for friendliness
-          // TODO: Emojis?!
-        },
-        {
-          content_type: 'text',
-          title: 'Green',
-          payload: 'answered_q1',
-          image_url: 'http://petersfantastichats.com/img/green.png',
-        },
-      ],
-    },
-  };
-  object_sender.callSendAPI(messageData);
-};
-
-

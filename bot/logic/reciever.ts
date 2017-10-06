@@ -7,6 +7,7 @@ import * as logger from 'winston'
 
 // Local Dependencies
 import { userFinder, surveyAssigner, surveyAnswerSaver } from 'asker'
+import { auther } from 'auther'
 
 // Recieving Messages 
 let reciever = functions.https.onRequest(async (req, res) => {
