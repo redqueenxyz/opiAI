@@ -1,6 +1,4 @@
 'use strict';
-import message_handler from 'messenger';
-const barFunction = require('./bar');
 
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');

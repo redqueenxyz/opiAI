@@ -13,7 +13,13 @@ const express = require('express');
 const bot = express();
 
 // routing ===========================================================
-bot.use('./routes');
+bot.use('/webhook', require('./auther'));
+bot.use('/webhook', require('./reciever'));
+
+// serving ============================================================
+bot.get('/', (req, res) => {
+    res.status(200).json({message: 'Connected!'});
+});
 
 // exporting ==========================================================
 export default bot;
