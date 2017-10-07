@@ -9,7 +9,7 @@ import * as logger from 'winston'
 /** This function interacts with the Facebook Send Api, so it is called with every message template, and handles actually submitting the final POST request to the Send API / Facebook Messenger */
 async function callSendAPI(messageData: JSON) {
   // Log
-  logger.info('...Preparing Object: ', { messageData });
+  console.log('...Preparing Object: ', { messageData });
 
   request({
     uri: 'https://graph.facebook.com/v2.8/me/messages', // The API endpoint to POST to
@@ -20,11 +20,11 @@ async function callSendAPI(messageData: JSON) {
   }, (error, response, body) => {
     if (!error && response.statusCode == 200) {
       // If there's NO error or the response is good (200), then print the message
-      logger.warn(' Sending Successful! ', {
+      console.log(' Sending Successful! ', {
         status: response.statusCode,
       });
     } else {
-      logger.warn(' Sending Error... ', {
+      console.log(' Sending Error... ', {
         error: error,
       });
     }
@@ -33,7 +33,7 @@ async function callSendAPI(messageData: JSON) {
 
 
 // Send Any Message
-export async function sendMessage(recipientId, messageObject) {
+export async function sendMessage(recipientId: string, messageObject: JSON) {
   // Intialize the messageData object that FB will recieve
   let messageData = {
     recipient: {
@@ -46,7 +46,7 @@ export async function sendMessage(recipientId, messageObject) {
 
 
 // Send Text Message 
-export async function sendTextMessage(recipientId, messageText) {
+export async function sendTextMessage(recipientId: string, messageText: string) {
   // Intialize the messageData object that FB will recieve
   let messageData = {
     recipient: {

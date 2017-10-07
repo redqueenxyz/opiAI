@@ -37,14 +37,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var request = require("request");
-var logger = require("winston");
 // Facebook Send API 
 /** This function interacts with the Facebook Send Api, so it is called with every message template, and handles actually submitting the final POST request to the Send API / Facebook Messenger */
 function callSendAPI(messageData) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             // Log
-            logger.info('...Preparing Object: ', { messageData: messageData });
+            console.log('...Preparing Object: ', { messageData: messageData });
             request({
                 uri: 'https://graph.facebook.com/v2.8/me/messages',
                 qs: { access_token: process.env.PAGETOKEN },
@@ -53,12 +52,12 @@ function callSendAPI(messageData) {
             }, function (error, response, body) {
                 if (!error && response.statusCode == 200) {
                     // If there's NO error or the response is good (200), then print the message
-                    logger.warn(' Sending Successful! ', {
+                    console.log(' Sending Successful! ', {
                         status: response.statusCode,
                     });
                 }
                 else {
-                    logger.warn(' Sending Error... ', {
+                    console.log(' Sending Error... ', {
                         error: error,
                     });
                 }

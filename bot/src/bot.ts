@@ -2,17 +2,14 @@
 import * as functions from 'firebase-functions'
 import * as admin from 'firebase-admin'
 import * as express from "express"
-import * as cors from "cors"
+import * as logger from "winston"
 
 // Local Dependencies
-import auther from './logic/auther'
+import './env'
 import reciever from './logic/reciever'
 
 // opiAI
 // A bot that collections opinions.
-
-// setting ===========================================================
-require('dotenv').config();
 
 // serving ============================================================
 admin.initializeApp(functions.config().firebase)
@@ -21,19 +18,19 @@ admin.initializeApp(functions.config().firebase)
 const bot = express();
 
 // getting ===========================================================
-// bot.get('/webhook/', (req: Request, res: Response) => {
-//     res.send("Connected!")
-// })
-
-bot.get('/', (req: Request, res: Response) => {
+bot.get('/', (req: express.Request, res: express.Response) => {
     res.send("Alive!")
 })
-
 // using =============================================================
+bot.get('/webhook/', (req: express.Request, res: express.Response) => {
+    reciever(req, res)
+        .catch(err => {
+            console.log("Error at Webhook:", err.stack);
+            res.status(500).send('error');
+        })
+})
 
-bot.get('/webhook/', auther)
-bot.get('/webhook/', reciever)
-
+console.log('opiAI online.')
 // exporting ==========================================================
 export let opiAI = functions.https.onRequest(bot)
 
