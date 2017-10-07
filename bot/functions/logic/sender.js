@@ -46,7 +46,7 @@ function callSendAPI(messageData) {
             console.log('...Preparing Object: ', { messageData: messageData });
             request({
                 uri: 'https://graph.facebook.com/v2.8/me/messages',
-                qs: { access_token: process.env.PAGETOKEN },
+                qs: { access_token: process.env.FACEBOOK_PAGE_TOKEN },
                 method: 'POST',
                 json: messageData,
             }, function (error, response, body) {

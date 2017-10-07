@@ -7,6 +7,7 @@ import * as logger from "winston"
 // Local Dependencies
 import './env'
 import reciever from './logic/reciever'
+import auther from './logic/auther'
 
 // opiAI
 // A bot that collections opinions.
@@ -21,16 +22,34 @@ const bot = express();
 bot.get('/', (req: express.Request, res: express.Response) => {
     res.send("Alive!")
 })
-// using =============================================================
+
 bot.get('/webhook/', (req: express.Request, res: express.Response) => {
-    reciever(req, res)
+    auther(req, res)
+        .then(() => {
+            res.send(200)
+        })
         .catch(err => {
-            console.log("Error at Webhook:", err.stack);
+            logger.log("Error getting from Webhook:", err.stack);
             res.status(500).send('error');
         })
 })
 
-console.log('opiAI online.')
+// posting ===========================================================
+bot.post('/webhook/', (req: express.Request, res: express.Response) => {
+    reciever(req, res)
+        .then(() => {
+            res.send(200)
+        })
+        .catch(err => {
+            logger.log("Error posting to Webhook:", err.stack);
+            res.status(500).send('error');
+        })
+})
+
+
+// notifying ==========================================================
+console.log("Opi alive!")
+
 // exporting ==========================================================
 export let opiAI = functions.https.onRequest(bot)
 

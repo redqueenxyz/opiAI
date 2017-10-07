@@ -13,7 +13,7 @@ async function callSendAPI(messageData: JSON) {
 
   request({
     uri: 'https://graph.facebook.com/v2.8/me/messages', // The API endpoint to POST to
-    qs: { access_token: process.env.PAGETOKEN },
+    qs: { access_token: process.env.FACEBOOK_PAGE_TOKEN },
     method: 'POST',
     json: messageData, // actual message to send to the Send API 
 

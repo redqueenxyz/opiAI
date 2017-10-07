@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-function auther(req, res) {
+function authorizer(req, res) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             console.log('Authorizing bot with Facebook...');
@@ -53,5 +53,5 @@ function auther(req, res) {
         });
     });
 }
-exports.default = auther;
+exports.default = authorizer;
 ;
