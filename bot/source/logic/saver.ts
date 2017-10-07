@@ -1,14 +1,19 @@
+// Saves to and from a Database
+
+// Package Dependencies
 import * as admin from 'firebase-admin'
-import * as functions from 'firebase-functions'
 
 // Firestore Database
-const db = admin.firestore()
+export const db = admin.firestore()
 
-// `responses/` endpoint
-export const responses = db.collection("responses")
-
-// `survey/` endpoint
-export const surveys = db.collection("surveys")
-
-// `users/` endpoint
-export const users = db.collection("users")
+/** Saves new users in Database
+ * @param {string} userID - Facebook user ID
+ */
+export async function saveUser(userID: string) {
+    console.log('Saving User %d in the Database...', userID);
+    db.collection("users")
+        .doc(userID)
+        .set({
+            availableSurveys: {},
+        });
+};
