@@ -5,28 +5,16 @@ import { database } from 'firebase-admin'
 
 // Local Dependencies
 import { sendMessage, sendTextMessage } from './sender'
-import { surveys, users, responses } from './saver'
-
-/** Saves new users in Database
- * @param {string} userID - Facebook user ID
- */
-export async function saveUser(userID: string) {
-  console.log('Saving User %d in the Database...', userID);
-  users
-    .doc(userID)
-    .set({
-      availableSurveys: {},
-    });
-};
+import { users, metUser, saveUser } from './getsetter'
+import { surveys, getCurrentSurvey, getSurvey, getAvailableSurveys, startSurvey } from './getsetter'
 
 /** Checking if the user exists in the database
  * @param {string} userID - Facebook User ID
  */
-export async function userFinder(userID: string) {
+export async function whichUser(userID: string) {
   console.log('Checking if we\'ve met User %d before...', userID);
-  const userEntry = await database.ref('users/' + userID).once('value');
-  const userExists = userEntry.exists();
-  // Check if the userID exists
+  const userExists: boolean = await metUser(userID)
+
   if (userExists) {
     console.log('We\'ve met User %d before!', userID);
     surveyChecker(userID);
@@ -34,20 +22,18 @@ export async function userFinder(userID: string) {
     console.log('Have not met this user!', userID);
     saveUser(userID)
       .then(() => {
-        console.log('Assigning User %d Starter ..', userID);
+        console.log('Assigning User %d [survey_0]...', userID);
         surveyAssigner(userID, 'survey_0', true)
           .then(() => {
             console.log('Sending User %d Starter ..', userID);
-            surveyChecker(userID);
+            surveyChecker(userID)
+              .then(() => {
+                console.log('Error prompting Starter Survey to User %d', userID);
+              })
           })
-          .catch((error) => {
-            console.log('Error prompting Starter Survey to User %d', userID);
-          });
-      })
-      .catch((error) => {
-        console.log('Error assigning Starter Survey to User %d fai', userID);
       });
   }
+})
 };
 
 /** Assigns a user an available survey
@@ -59,16 +45,15 @@ export async function surveyAssigner(userID: string, surveyID: string, current: 
   console.log('Assiging User %d Survey %s...', userID, surveyID);
 
   // Lookup survey info
-  const surveyRef = await database.ref('surveys/' + surveyID).once('value');
-  // const survey = surveyRef.val();
-  const surveyQuestions = surveyRef.child('questions').numChildren();
+  const survey = await getSurvey(surveyID)
+  const surveyQuestions = survey["questions"].length;
 
-
-  // Register it as an available survey for the user
-
-  database.ref('users/' + userID + '/availableSurveys/' + surveyID)
+  // Assign Survey
+  users
+    .doc(userID)
+    .collection("availableSurveys")
+    .doc(surveyID)
     .set({
-      postback: surveyID,
       completed: false,
       started: false,
       current: current,
@@ -76,7 +61,10 @@ export async function surveyAssigner(userID: string, surveyID: string, current: 
       finalQuestion: surveyQuestions - 1,
       totalQuestions: surveyQuestions,
     })
-    .catch((error) => {
+    .then(() => {
+      console.log('Successfully assigned User %d Survey %s', userID, surveyID);
+    })
+    .catch(error => {
       console.log('Failed to assign User %d Survey %s', userID, surveyID);
     });
 };
@@ -84,57 +72,54 @@ export async function surveyAssigner(userID: string, surveyID: string, current: 
 /** Starts or Assigns User a Current Survey
 * @param {string} userID - Facebook User ID
 */
-export async function surveyChecker(userID) {
-  console.log('Checking if User %d has Available Surveys...', userID);
+export async function surveyChecker(userID: string) {
+  console.log('Checking what Survey User %d is on a Surey...', userID);
 
   const { currentSurvey, currentSurveyID } = await getCurrentSurvey(userID);
 
   if (currentSurvey) {
-    // Get the current Survey state
-    const startedCurrentSurvey = currentSurvey[currentSurveyID].started;
-    // const completedCurrentSurvey = currentSurvey[currentSurveyID].completed;
+    console.log('User %s has current survey! [%s]!', userID, currentSurveyID);
 
-    if (currentSurvey && !startedCurrentSurvey) {
+    // Get the current Survey state
+    const startedCurrentSurvey = currentSurvey.started;
+    const completedCurrentSurvey = currentSurvey.completed;
+
+    if (!startedCurrentSurvey) {
       // This means the survey was assigned as active, but not started (usually survey_0)
-      console.log('User %d has a current survey: %s, but has not started. Starting now and updating state...', userID, currentSurveyID);
+      console.log('User %d has a current survey [%s], but has not started. Starting now and updating state...', userID, currentSurveyID);
 
       // Initialize the current Survey State state
-      database.ref('users/' + userID + '/availableSurveys/' + currentSurveyID).update({
-        started: true,
-      })
+      startSurvey(currentSurveyID)
         .then(() => {
           // After that state is updated, now start the user on that Survey
           surveyLooper(userID);
         })
-        .catch((error) => {
-          console.log('Error in surveyAssigner for User %d & survey: %s!', userID, currentSurveyID);
-        });
-    } else if (currentSurvey && startedCurrentSurvey) {
+    } else if (!completedCurrentSurvey) {
       // This means he's already in a survey, and needs to continue looping
-      console.log('User %d is currently on Survey %s! Handing off to looper...', userID, currentSurveyID);
+      console.log('User %d is currently on Survey [%s]! Handing off to looper...', userID, currentSurveyID);
       surveyLooper(userID);
     }
-    // If they has a current available Survey that's not intialized, set it up and send him into the Looper
-  } else if (!currentSurvey) {
+  } else {
     // No Current, check Available
+    console.log(' User %d has no Current Survey...', userID);
     const { availableSurveys, availableSurveyIDs } = await getAvailableSurveys(userID);
-
-    if (availableSurveys) {
-      console.log('User %d has no current Surveys! Assigning him one at random...', userID);
-      const randomSurveyKey = availableSurveyIDs[Math.floor(Math.random() * availableSurveyIDs.length)];
-
-      console.log('Setting User %d\'s current Survey to: %s...', userID, randomSurveyKey);
-      database.ref('users/' + userID + '/availableSurveys/' + randomSurveyKey).update({
-        current: true,
-      })
-        .then(() => {
-          surveyChecker(userID);
-        });
-    } else if (!availableSurveys) {
-      console.log('User %d\'s has no Current or Available Surveys!', userID);
-      sendTextMessage(userID, 'I don\'t have any more questions for you! Please come back later.');
-    }
   }
+  //   if (availableSurveys) {
+  //     console.log('User %d has no current Surveys! Assigning him one at random...', userID);
+  //     const randomSurveyKey = availableSurveyIDs[Math.floor(Math.random() * availableSurveyIDs.length)];
+
+  //     console.log('Setting User %d\'s current Survey to: %s...', userID, randomSurveyKey);
+  //     database.ref('users/' + userID + '/availableSurveys/' + randomSurveyKey).update({
+  //       current: true,
+  //     })
+  //       .then(() => {
+  //         surveyChecker(userID);
+  //       });
+  //   } else if (!availableSurveys) {
+  //     console.log('User %d\'s has no Current or Available Surveys!', userID);
+  //     sendTextMessage(userID, 'I don\'t have any more questions for you! Please come back later.');
+  //   }
+  // }
 };
 
 /** Sends a user a given survey question */
@@ -147,32 +132,6 @@ export async function surveyQuestionSender(userID, surveyID, questionNumber) {
       // Send it to the User
       sendMessage(userID, snapshot.val()[questionNumber]);
     });
-};
-
-export async function getCurrentSurvey(userID) {
-  console.log('Checking if User %d has Current Survey...', userID);
-  try {
-    const currentSurveyRef = await database.ref('users/' + userID + '/availableSurveys').orderByChild('current').equalTo(true).once('value');
-    const currentSurvey = currentSurveyRef.val() == null ? false : currentSurveyRef.val();
-    const currentSurveyID = currentSurveyRef.val() == null ? [] : Object.keys(currentSurvey)[0];
-    return { currentSurvey, currentSurveyID };
-  } catch (error) {
-    console.log('Error checking if User %d has Current Survey!', userID);
-  }
-};
-
-
-export async function getAvailableSurveys(userID) {
-  console.log('Checking if User %d has Available Surveys...', userID);
-  try {
-    const availableSurveysRef = await database.ref('users/' + userID + '/availableSurveys').orderByChild('completed').equalTo(false).once('value');
-    const availableSurveys = availableSurveysRef.val() == null ? false : availableSurveysRef.val();
-    const availableSurveyIDs = availableSurveysRef.val() == null ? [] : Object.keys(availableSurveys);
-
-    return { availableSurveys, availableSurveyIDs };
-  } catch (error) {
-    console.log('Error checking if User %d has Available Surveys!', userID);
-  }
 };
 
 /** Loops users through their current survey until they are done */
