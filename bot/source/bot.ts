@@ -16,17 +16,17 @@ const bot = express();
 
 // getting ===========================================================
 bot.get('/', (req: express.Request, res: express.Response) => {
-    res.send("Alive!")
+    res.sendStatus("Alive!")
 })
 
 bot.get('/webhook/', (req: express.Request, res: express.Response) => {
     auther(req, res)
         .then(() => {
-            res.send(200)
+            res.sendStatus(200)
         })
         .catch(err => {
             console.log("Error getting from Webhook:", err.stack);
-            res.status(500).send('error');
+            res.statusStatus(500)
         })
 })
 
@@ -34,7 +34,7 @@ bot.get('/webhook/', (req: express.Request, res: express.Response) => {
 bot.post('/webhook/', (req: express.Request, res: express.Response) => {
     reciever(req, res)
         .then(() => {
-            res.send(200)
+            res.sendStatus(200)
         })
         .catch(err => {
             console.log("Error posting to Webhook:", err.stack);
