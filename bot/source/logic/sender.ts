@@ -3,7 +3,6 @@
 // Dependencies
 import { } from 'dotenv/config'
 import * as request from 'request'
-import * as logger from 'winston'
 
 // Facebook Send API 
 /** This function interacts with the Facebook Send Api, so it is called with every message template, and handles actually submitting the final POST request to the Send API / Facebook Messenger */

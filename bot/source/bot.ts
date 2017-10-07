@@ -25,7 +25,7 @@ bot.get('/webhook/', (req: express.Request, res: express.Response) => {
             res.send(200)
         })
         .catch(err => {
-            logger.log("Error getting from Webhook:", err.stack);
+            console.log("Error getting from Webhook:", err.stack);
             res.status(500).send('error');
         })
 })
@@ -37,7 +37,7 @@ bot.post('/webhook/', (req: express.Request, res: express.Response) => {
             res.send(200)
         })
         .catch(err => {
-            logger.log("Error posting to Webhook:", err.stack);
+            console.log("Error posting to Webhook:", err.stack);
             res.status(500).send('error');
         })
 })
