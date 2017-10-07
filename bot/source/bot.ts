@@ -2,7 +2,6 @@
 import * as functions from 'firebase-functions'
 import * as admin from 'firebase-admin'
 import * as express from "express"
-import * as logger from "winston"
 
 // Local Dependencies
 import './env'
@@ -11,9 +10,6 @@ import auther from './logic/auther'
 
 // opiAI
 // A bot that collections opinions.
-
-// serving ============================================================
-admin.initializeApp(functions.config().firebase)
 
 // initializing =======================================================
 const bot = express();
@@ -45,6 +41,55 @@ bot.post('/webhook/', (req: express.Request, res: express.Response) => {
             res.status(500).send('error');
         })
 })
+
+// saving =============================================================
+var db = admin.firestore();
+
+var docRef = db.collection('surveys').doc('survey_0').set({
+    "postback": "survey_0",
+    "questions": [{
+        "quick_replies": [{
+            "content_type": "text",
+            "image_url": "",
+            "payload": 0,
+            "title": "You collect what?"
+        }, {
+            "content_type": "text",
+            "image_url": "https://i.imgur.com/Qwca6NZ.png",
+            "payload": 0,
+            "title": "Hi Opi!"
+        }],
+        "text": "Hello, my name is Opi. I collect opinions!"
+    }, {
+        "quick_replies": [{
+            "content_type": "text",
+            "image_url": "https://i.imgur.com/Qwca6NZ.png",
+            "payload": 1,
+            "title": "Yes"
+        }, {
+            "content_type": "text",
+            "image_url": "http://petersfantastichats.com/img/green.png",
+            "payload": 1,
+            "title": "Duh?"
+        }],
+        "text": "Do you know how to hit buttons?"
+    }, {
+        "quick_replies": [{
+            "content_type": "text",
+            "payload": 2,
+            "title": "😂"
+        }, {
+            "content_type": "text",
+            "payload": 2,
+            "title": "😛"
+        }],
+        "text": "Welcome to Feedback!"
+    }]
+})
+    .then(ref => {
+        console.log("saved!")
+    })
+
 
 
 // notifying ==========================================================

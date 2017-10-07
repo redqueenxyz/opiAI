@@ -2,19 +2,21 @@
 
 // Package Dependencies
 import { database } from 'firebase-admin'
-import * as logger from 'winston'
 
 // Local Dependencies
 import { sendMessage, sendTextMessage } from './sender'
+import { surveys, users, responses } from './saver'
 
-/** Saves new users in Firebase 
+/** Saves new users in Database
  * @param {string} userID - Facebook user ID
  */
 export async function saveUser(userID: string) {
   console.log('Saving User %d in the Database...', userID);
-  database.ref('users/' + userID).set({
-    availableSurveys: {},
-  });
+  users
+    .doc(userID)
+    .set({
+      availableSurveys: {},
+    });
 };
 
 /** Checking if the user exists in the database

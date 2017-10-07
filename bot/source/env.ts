@@ -1,3 +1,16 @@
+// Loads environment variables
+import * as dotenv from 'dotenv'
+import * as admin from 'firebase-admin'
+import * as functions from 'firebase-functions'
+
+// process.env
+dotenv.config()
+
+// firebase
+admin.initializeApp(functions.config().firebase)
+
+// Helper functions
+
 //
 
 // import { } from 'dotenv/config';
