@@ -16,7 +16,7 @@ const bot = express();
 
 // getting ===========================================================
 bot.get('/', (req: express.Request, res: express.Response) => {
-    res.sendStatus("Alive!")
+    res.send("Alive!")
 })
 
 bot.get('/webhook/', (req: express.Request, res: express.Response) => {
@@ -25,8 +25,8 @@ bot.get('/webhook/', (req: express.Request, res: express.Response) => {
             res.sendStatus(200)
         })
         .catch(err => {
-            console.log("Error getting from Webhook:", err.stack);
-            res.statusStatus(500)
+            console.log(`Error Getting from Webhook`, err.stack);
+            res.sendStatus(500)
         })
 })
 
@@ -37,8 +37,8 @@ bot.post('/webhook/', (req: express.Request, res: express.Response) => {
             res.sendStatus(200)
         })
         .catch(err => {
-            console.log("Error posting to Webhook:", err.stack);
-            res.status(500).send('error');
+            console.log(`Error POSTing to Webhook`, err.stack);
+            res.sendStatus(500)
         })
 })
 
@@ -48,17 +48,13 @@ var db = admin.firestore();
 var docRef = db.collection('surveys').doc('survey_0').set({
     "postback": "survey_0",
     "questions": [{
-        "quick_replies": [{
-            "content_type": "text",
-            "image_url": "",
-            "payload": 0,
-            "title": "You collect what?"
-        }, {
-            "content_type": "text",
-            "image_url": "https://i.imgur.com/Qwca6NZ.png",
-            "payload": 0,
-            "title": "Hi Opi!"
-        }],
+        "quick_replies": [
+            {
+                "content_type": "text",
+                "image_url": "https://i.imgur.com/Qwca6NZ.png",
+                "payload": 0,
+                "title": "Hi Opi!"
+            }],
         "text": "Hello, my name is Opi. I collect opinions!"
     }, {
         "quick_replies": [{
@@ -72,7 +68,7 @@ var docRef = db.collection('surveys').doc('survey_0').set({
             "payload": 1,
             "title": "Duh?"
         }],
-        "text": "Do you know how to hit buttons?"
+        "text": "Here’s how it works: I'll ask you a question, and you hit a button! (You know how to hit buttons right?)"
     }, {
         "quick_replies": [{
             "content_type": "text",
@@ -81,9 +77,14 @@ var docRef = db.collection('surveys').doc('survey_0').set({
         }, {
             "content_type": "text",
             "payload": 2,
+            "title": "😜"
+
+        }, {
+            "content_type": "text",
+            "payload": 2,
             "title": "😛"
         }],
-        "text": "Welcome to Feedback!"
+        "text": "That's pretty much it! Welcome to the beta!"
     }]
 })
     .then(ref => {
@@ -93,7 +94,7 @@ var docRef = db.collection('surveys').doc('survey_0').set({
 
 
 // notifying ==========================================================
-console.log("Opi alive!")
+console.log(`Opi alive!`)
 
 // exporting ==========================================================
 export let opiAI = functions.https.onRequest(bot)
