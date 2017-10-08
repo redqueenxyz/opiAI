@@ -1,6 +1,7 @@
 // Package Dependencies
-import * as admin from 'firebase-admin'
 import * as express from "express"
+import * as admin from 'firebase-admin'
+import * as functions from 'firebase-functions'
 
 // Local Dependencies
 import './env'
