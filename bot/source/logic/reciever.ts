@@ -32,9 +32,6 @@ export default async function reciever(req: facebook.Request, res: facebook.Resp
         const messagePostback: string = (event.postback ? event.postback.payload : false);
         const messagePayload: string = (message.quick_reply ? message.quick_reply.payload : false); // if a is true ? assign b, else var is false
 
-        // Checks which user, their surveys, and sends them questions!
-        whichUser(userID);
-
         if (messagePostback) {
           console.log('...Postback Recieved: ', { event });
 
@@ -44,7 +41,7 @@ export default async function reciever(req: facebook.Request, res: facebook.Resp
           // Assign them their survey
           surveyAssigner(userID, postbackText);
 
-        } if (messagePayload) {
+        } else if (messagePayload) {
           console.log('...Payload Recieved: ', { event });
 
           // Grab the payload 
@@ -76,6 +73,10 @@ export default async function reciever(req: facebook.Request, res: facebook.Resp
         } else {
           console.log('...Unknown Object Recieved:', { event });
         }
+
+        // Checks which user, their surveys, and sends them questions!
+        whichUser(userID);
+
       });
     });
   }

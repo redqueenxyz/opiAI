@@ -126,7 +126,7 @@ export async function getCurrentSurvey(userID: string) {
  * @param {string} surveyID - Survey ID
  */
 export async function completeSurvey(userID: string, surveyID: string) {
-    console.log(`Setting ${userID}'s survey ${surveyID} to "completed"!`);
+    console.log(`Updating ${userID}'s survey "${surveyID}" to "completed"...`);
 
     users
         .doc(userID)
@@ -135,9 +135,6 @@ export async function completeSurvey(userID: string, surveyID: string) {
         .update({
             completed: true,
             current: false
-        })
-        .then(ref => {
-            console.log(`Updated ${userID} survey ${surveyID} to "completed"!`);
         })
         .catch(error => {
             console.log(`Error updating ${userID} survey ${surveyID} to "completed"!`, error);

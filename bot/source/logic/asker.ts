@@ -23,9 +23,6 @@ export async function whichUser(userID: string) {
     saveUser(userID)
       .then(() => {
         console.log(`Assigning ${userID} the Starter Survey...`)
-
-        surveyAssigner(userID, 'survey_1')
-
         surveyAssigner(userID, 'survey_0', true)
           .then(() => {
             console.log(`Sending ${userID} the Starter Survey..`)
@@ -85,12 +82,13 @@ export async function surveyChecker(userID: string) {
   let currentSurveyID: string = currentSurveyCheck.currentSurveyID
   let availableSurveyIDs: string[] = availableSurveyCheck.availableSurveyIDs
 
-  const completedCurrentSurvey = currentSurvey.completed;
+  let hasCurrentSurvey: number = currentSurveyID.length
+  let hasAvailableSurveys: number = availableSurveyIDs.length
 
-  if (!completedCurrentSurvey) {
+  if (hasCurrentSurvey) {
     console.log(`${userID} has Current Survey ${currentSurveyID}. Looping...`)
     surveyLooper(userID);
-  } else if (!!completedCurrentSurvey && availableSurveyIDs) {
+  } else if (!hasCurrentSurvey && hasAvailableSurveys) {
     // No current survey, check for available surveys
 
     const randomSurveyID = availableSurveyIDs[Math.floor(Math.random() * availableSurveyIDs.length)];
@@ -121,14 +119,14 @@ export async function surveyLooper(userID: string) {
   let currentSurvey: object = currentSurveyCheck.currentSurvey
   let currentSurveyID: string = currentSurveyCheck.currentSurveyID
   // Log
-  console.log(`Looping ${userID} through Current Survey ${currentSurveyID}...`);
+  console.log(`Looping ${userID} through Current Survey "${currentSurveyID}"...`);
 
   // Get the current Survey state
   const completedCurrentSurvey = currentSurvey.completed;
 
   if (!completedCurrentSurvey) {
     // This means the survey was assigned as active, but not started (usually survey_0)
-    console.log(`${userID} has Current Survey ${currentSurveyID}`)
+    console.log(`${userID} has not yet completed Current Survey "${currentSurveyID}"`)
 
     // Get current Survey State
     const currentQuestion = currentSurvey.currentQuestion
