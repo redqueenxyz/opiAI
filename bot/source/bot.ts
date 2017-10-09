@@ -4,7 +4,6 @@ import * as admin from 'firebase-admin'
 import * as functions from 'firebase-functions'
 
 // Local Dependencies
-import './env'
 import auther from './logic/auther'
 import reciever from './logic/reciever'
 
