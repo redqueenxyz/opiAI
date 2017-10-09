@@ -13,9 +13,9 @@ import { surveys, getSurvey, getSurveyQuestion, getCurrentSurvey, completeSurvey
  */
 export async function whichUser(userID: string) {
   console.log(`Checking if we\'ve met ${userID} before...`)
-  const userExists: boolean = await metUser(userID)
+  const hasMetUser: boolean = await metUser(userID)
 
-  if (userExists) {
+  if (hasMetUser) {
     console.log(`Met ${userID} before!`)
     surveyChecker(userID);
   } else {
