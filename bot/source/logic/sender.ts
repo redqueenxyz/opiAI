@@ -5,7 +5,7 @@ import * as request from 'request'
 
 // Facebook Send API 
 /** This function interacts with the Facebook Send Api, so it is called with every message template, and handles actually submitting the final POST request to the Send API / Facebook Messenger */
-async function callSendAPI(messageData: JSON) {
+async function callSendAPI(messageData: object) {
   // Log
   console.log(`...Sending Response: ${messageData}`)
 
@@ -21,14 +21,13 @@ async function callSendAPI(messageData: JSON) {
       console.log(` Sending Successful!`)
     } else {
       console.log(` Sending Error! ${error.stack} `)
-    });
-}
+    }
   });
 };
 
 
 // Send Any Message
-export async function sendMessage(recipientId: string, messageObject: JSON) {
+export async function sendMessage(recipientId: string, messageObject: object) {
   // Intialize the messageData object that FB will recieve
   let messageData = {
     recipient: {
