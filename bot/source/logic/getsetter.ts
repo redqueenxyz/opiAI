@@ -34,7 +34,7 @@ export async function saveUser(userID: string) {
     db.collection("users")
         .doc(userID)
         .set({
-            firstName: "placeholder"
+            metUser: true
         })
         .then(ref => {
             console.log(`Saved ${userID}!`);
