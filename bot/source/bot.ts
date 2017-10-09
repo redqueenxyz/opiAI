@@ -16,7 +16,7 @@ const bot = express();
 
 // getting ===========================================================
 bot.get('/', (req: express.Request, res: express.Response) => {
-    res.send("Alive!")
+    res.sendStatus(200).send("Alive!")
 })
 
 bot.get('/webhook/', (req: express.Request, res: express.Response) => {
@@ -25,7 +25,7 @@ bot.get('/webhook/', (req: express.Request, res: express.Response) => {
             res.sendStatus(200)
         })
         .catch(err => {
-            console.log(`Error Getting from Webhook`, err.stack);
+            console.log(`Error GETing from Webhook`, err.stack);
             res.sendStatus(500)
         })
 })
