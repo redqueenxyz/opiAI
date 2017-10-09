@@ -1,17 +1,16 @@
 // Sends messages back to Facebook
 
 // Dependencies
-import { } from 'dotenv/config'
 import * as request from 'request'
 
 // Facebook Send API 
 /** This function interacts with the Facebook Send Api, so it is called with every message template, and handles actually submitting the final POST request to the Send API / Facebook Messenger */
 async function callSendAPI(messageData: JSON) {
   // Log
-  console.log(`...Preparing Response:`, messageData);
+  console.log(`...Sending Response: ${messageData}`)
 
   request({
-    uri: 'https://graph.facebook.com/v2.8/me/messages', // The API endpoint to POST to
+    uri: 'https://graph.facebook.com/v2.10/me/messages', // The API endpoint to POST to
     qs: { access_token: process.env.FACEBOOK_PAGE_TOKEN },
     method: 'POST',
     json: messageData, // actual message to send to the Send API 
@@ -21,10 +20,9 @@ async function callSendAPI(messageData: JSON) {
       // If there's NO error or the response is good (200), then print the message
       console.log(` Sending Successful!`)
     } else {
-      console.log(` Sending Error! ${error} `, {
-        error: error,
-      });
-    }
+      console.log(` Sending Error! ${error.stack} `)
+    });
+}
   });
 };
 
