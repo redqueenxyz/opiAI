@@ -63,7 +63,7 @@ export async function surveyAssigner(userID: string, surveyID: string, current: 
       console.log(`Successfully assigned ${userID} Survey ${surveyID}`)
     })
     .catch(error => {
-      console.log(`Failed to assign ${userID} Survey ${surveyID}`)
+        console.log(`Failed to assign ${userID} Survey ${surveyID}: ${error}`)
     });
 };
 
