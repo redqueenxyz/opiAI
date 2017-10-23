@@ -32,111 +32,30 @@ export let userUpdater = functions.firestore
 
 
 
-export let reachEstimate = functions
-    .https
+export let reachEstimate = functions.https
     .onRequest((req: express.Request, res: express.Response) => {
-        // console.log((req.query.foo))
+        // const genderID: number = req.query.genders || 0
+        const category: string = req.query.category || undefined
+        const query: string = req.query.keyword || undefined
 
-        console.log(`act_${process.env.FACEBOOK_AD_ACCOUNT}/`)
+        console.log(`Looking up ${query} in ${category}`)
+        // genders [0 = all (default), = male, 2 = female]
+        // age_min (>= 13)
+        // age_max (=< 65)
+        // category (adcountry, adeducationschool, adeducationmajor, adlocale, adworkemployer, adkeyword, adzipcode, adgeolocation, audienceinterest)
+        // keyword
         facebook
             .setVersion("2.10")
-            .setAccessToken(process.env.FACEBOOK_SANDBOX_TOKEN)
-            .get(`act_${process.env.FACEBOOK_AD_ACCOUNT}/`,
+            .setAccessToken(process.env.FACEBOOK_TOKEN)
+            .get(`search?type=${category}&q=${query}`,
             // { currency: 'USD' },
             (response: express.Response, error: express.Error) => {
                 try {
+                    // TODO: https://developers.facebook.com/tools/explorer/1881894932060023?method=GET&path=search%3Ftype%3Dadgeolocation%26q%3Dcanada&version=v2.9
                     console.log(response)
-                    return res
+                    res.sendStatus(200)
                 } catch (error) {
                     console.log(`Error estimating Reach: ${error}`)
                 }
             })
     })
-        // console.log(req.body)
-        // return res.status(200).send(req.query)
-
-        // return
-
-// fields = [
-// ]
-// params = {
-//     'objective': 'PAGE_LIKES',
-//     'status': 'PAUSED',
-//     'buying_type': 'AUCTION',
-//     'name': 'My Campaign',
-// }
-// campaign = AdAccount(ad_account_id).create_campaign(
-//     fields=fields,
-//     params=params,
-// )
-// print 'campaign', campaign
-
-// campaign_id = campaign.get_id()
-// print 'campaign_id:', campaign_id, '\n'
-
-// fields = [
-// ]
-// params = {
-//     'status': 'PAUSED',
-//     'targeting': {'geo_locations':{'countries':['US']}},
-//     'daily_budget': '1000',
-//     'billing_event': 'IMPRESSIONS',
-//     'bid_amount': '20',
-//     'campaign_id': campaign_id,
-//     'optimization_goal': 'PAGE_LIKES',
-//     'promoted_object': {'page_id': page_id},
-//     'name': 'My AdSet',
-// }
-// ad_set = AdAccount(ad_account_id).create_ad_set(
-//     fields=fields,
-//     params=params,
-// )
-// print 'ad_set', ad_set
-
-// ad_set_id = ad_set.get_id()
-// print 'ad_set_id:', ad_set_id, '\n'
-
-// fields = [
-// ]
-// params = {
-//     'body': 'Like My Page',
-//     'image_url': 'http://www.facebookmarketingdevelopers.com/static/images/resource_1.jpg',
-//     'name': 'My Creative',
-//     'object_id': page_id,
-//     'title': 'My Page Like Ad',
-// }
-// creative = AdAccount(ad_account_id).create_ad_creative(
-//     fields=fields,
-//     params=params,
-// )
-// print 'creative', creative
-
-// creative_id = creative.get_id()
-// print 'creative_id:', creative_id, '\n'
-
-// fields = [
-// ]
-// params = {
-//     'status': 'PAUSED',
-//     'adset_id': ad_set_id,
-//     'name': 'My Ad',
-//     'creative': {'creative_id':creative_id},
-// }
-// ad = AdAccount(ad_account_id).create_ad(
-//     fields=fields,
-//     params=params,
-// )
-// print 'ad', ad
-
-// ad_id = ad.get_id()
-// print 'ad_id:', ad_id, '\n'
-
-// fields = [
-// ]
-// params = {
-//     'ad_format': 'DESKTOP_FEED_STANDARD',
-// }
-// print Ad(ad_id).get_previews(
-//     fields=fields,
-//     params=params,
-// )
