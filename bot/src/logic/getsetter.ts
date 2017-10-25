@@ -70,10 +70,11 @@ export async function getSurvey(surveyID: string) {
         .doc(surveyID)
         .get()
         .then(snapshot => {
+            console.log(`Retrieved ${surveyID}: ${snapshot.data()}`)
             return snapshot.data()
         })
         .catch(error => {
-            console.log(`Error retrieving ${surveyID}`);
+            console.error(`Error retrieving ${surveyID}: ${error.stack}`);
         })
 };
 
