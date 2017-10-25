@@ -25,7 +25,6 @@ bot.get('/webhook/', (req: express.Request, res: express.Response) => {
         })
         .catch(err => {
             console.error(`Error GETing from Webhook`, err.stack);
-            res.sendStatus(500)
         })
 })
 
