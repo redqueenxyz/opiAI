@@ -20,11 +20,8 @@ bot.get('/', (req: express.Request, res: express.Response) => {
 
 bot.get('/webhook/', (req: express.Request, res: express.Response) => {
     auther(req, res)
-        .then(() => {
-            res.sendStatus(200)
-        })
         .catch(err => {
-            console.error(`Error GETing from Webhook`, err.stack);
+            console.error(`Error GETing from Webhook: ${err.stack}`);
         })
 })
 
