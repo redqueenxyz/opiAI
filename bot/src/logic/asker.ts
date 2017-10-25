@@ -72,14 +72,8 @@ export async function surveyAssigner(userID: string, surveyID: string, current: 
 export async function surveyChecker(userID: string) {
   console.log(`Checking if ${userID} is on a Survey...`)
 
-  let currentSurveyCheck = await getCurrentSurvey(userID);
-  let availableSurveyCheck = await getAvailableSurveys(userID);
-
-  let currentSurvey: object = currentSurveyCheck.currentSurvey
-  let availableSurveys: object[] = availableSurveyCheck.availableSurveys
-
-  let currentSurveyID: string = currentSurveyCheck.currentSurveyID
-  let availableSurveyIDs: string[] = availableSurveyCheck.availableSurveyIDs
+  let { currentSurvey, currentSurveyID } = await getCurrentSurvey(userID);
+  let { availableSurveys, availableSurveyIDs } = await getAvailableSurveys(userID);
 
   let hasCurrentSurvey: number = currentSurveyID.length
   let hasAvailableSurveys: number = availableSurveyIDs.length
@@ -113,10 +107,8 @@ export async function surveyChecker(userID: string) {
 /** Loops users through their current survey until they are done */
 export async function surveyLooper(userID: string) {
   // Get the current Survey
-  let currentSurveyCheck = await getCurrentSurvey(userID);
+  let { currentSurvey, currentSurveyID } = await getCurrentSurvey(userID);
 
-  let currentSurvey: object = currentSurveyCheck.currentSurvey
-  let currentSurveyID: string = currentSurveyCheck.currentSurveyID
   // Log
   console.log(`Looping ${userID} through Current Survey "${currentSurveyID}"...`);
 
@@ -150,10 +142,8 @@ export async function surveyLooper(userID: string) {
 /** Sends a user a given survey question */
 export async function surveySender(userID: string, surveyID: string, currentQuestion: number) {
 
-  let currentSurveyCheck = await getCurrentSurvey(userID);
+  let { currentSurvey, currentSurveyID } = await getCurrentSurvey(userID);
 
-  let currentSurvey: object = currentSurveyCheck.currentSurvey
-  let currentSurveyID: string = currentSurveyCheck.currentSurveyID
   // Log
   console.log(`Sending User ${userID} Question ${currentQuestion} on ${currentSurveyID}...`);
 
@@ -165,10 +155,7 @@ export async function surveySender(userID: string, surveyID: string, currentQues
 /** Saves Answers in Firebase, and increment user State */
 export async function surveySaver(userID: string, questionNumber: number, answer: string) {
   // Get current Survey
-  let currentSurveyCheck = await getCurrentSurvey(userID);
-
-  let currentSurvey: object = currentSurveyCheck.currentSurvey
-  let currentSurveyID: string = currentSurveyCheck.currentSurveyID
+  let { currentSurvey, currentSurveyID } = await getCurrentSurvey(userID);
 
   // Log
   console.log(`Receieved ${userID}'s response ${answer} to ${questionNumber} on ${currentSurveyID}...`)
