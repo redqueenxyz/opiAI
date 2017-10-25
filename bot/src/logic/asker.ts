@@ -45,10 +45,9 @@ export async function surveyAssigner(userID: string, surveyID: string, current: 
 
   // Lookup survey info
   const survey = await getSurvey(surveyID)
-  const surveyQuestions = survey["questions"].length;
 
   // Assign Survey
-  users
+  return users
     .doc(userID)
     .collection("availableSurveys")
     .doc(surveyID)
@@ -56,14 +55,14 @@ export async function surveyAssigner(userID: string, surveyID: string, current: 
       completed: false,
       current: current,
       currentQuestion: 0,
-      finalQuestion: surveyQuestions - 1,
-      totalQuestions: surveyQuestions,
+      finalQuestion: survey["questions"].length - 1,
+      totalQuestions: survey["questions"]
     })
     .then(() => {
       console.log(`Successfully assigned ${userID} Survey ${surveyID}`)
     })
     .catch(error => {
-        console.log(`Failed to assign ${userID} Survey ${surveyID}: ${error}`)
+      console.log(`Failed to assign ${userID} Survey ${surveyID}: ${error}`)
     });
 };
 
