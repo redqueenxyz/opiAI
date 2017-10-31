@@ -1,0 +1,60 @@
+<!--Page for client options/main page for clients-->
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!--Materialize Styling Stuff:-->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/css/materialize.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/js/materialize.min.js"></script>
+  <!--Firebase Stuff:-->
+  <script src="https://www.gstatic.com/firebasejs/3.7.2/firebase.js"></script>
+  <!--Main script-->
+  <script src="main.js"></script>
+
+</head>
+
+<body>
+
+</body>
+
+<nav>
+  <!--Header-->
+  <div class="nav-wrapper">
+    <a href="" class="brand-logo" id="username"></a>
+    <!--Dummy <a></a>, for displaying your username-->
+    <ul id="nav-mobile" class="right hide-on-med-and-down">
+      <!--Select links-->
+      <li>
+        <a id="coins" href="getcoins.html"></a>
+      </li>
+      <!--Buy more coins/pay us $$$-->
+      <li><a href="create.html">Create Survey</a></li>
+      <!--Create survey-->
+      <li><a href="logout.html">Logout</a></li>
+      <!--Logout-->
+    </ul>
+  </div>
+</nav>
+
+<script>
+  acctype = getCookie("acctype");
+  username = getCookie("username");
+  if (username == "") {
+    alert("Please login");
+    window.location = "client_options.html";
+  }
+  else if (acctype != "client") {
+    alert("This is a client page, for creating surveys.");
+    window.location = "index.html";
+  }
+
+  document.getElementById("username").innerHTML = username; //set the <a> tag to the username, see line #23
+
+  //recieves the amount of $$$ you have, and displays it (line #25). See the db structure 4 more
+  firebase.database().ref('/client/' + username).once('value').then(function (snapshot) {
+    document.getElementById("coins").innerHTML = "Money: " + snapshot.val().budget;
+  });
+
+</script>
+
+</html>

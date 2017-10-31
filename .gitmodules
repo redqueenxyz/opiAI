@@ -1,0 +1,3 @@
+[submodule "bot_ads/facebookSDK"]
+	path = bot_ads/facebookSDK
+	url = git@github.com:facebook/facebook-python-ads-sdk.git
