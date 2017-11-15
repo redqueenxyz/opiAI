@@ -199,8 +199,6 @@ export async function getResponses(surveyID: string) {
         })
 }
 
-getResponses("survey_0")
-
 /**
  * 
  * @param surveyID 
