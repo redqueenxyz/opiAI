@@ -15,7 +15,7 @@ const bot = express();
 
 // getting ===========================================================
 bot.get('/', (req: express.Request, res: express.Response) => {
-    res.sendStatus(200).send("Alive!")
+    res.send("Hello, I\'m Opi!")
 })
 
 bot.get('/webhook/', (req: express.Request, res: express.Response) => {
