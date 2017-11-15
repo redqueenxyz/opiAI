@@ -1,0 +1,31 @@
+label {
+    display: block;
+    margin-top: 1em;
+}
+
+.upload_img {
+}
+
+input {
+    font-size: 14px;
+    padding: 5px;
+    min-width: 30%;
+    width: 200px;
+}
+
+textarea {
+    padding: 5px;
+    font-size: 14px;
+}
+
+.submit {
+    margin-top: 1em;
+    padding: 5px 20px;
+    font-size: 20px;
+    color: white;
+    background-color: #222222;
+    transition: background-color ease 0.3s;
+}
+.submit:hover {
+    background-color: #484747;
+}

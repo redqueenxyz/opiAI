@@ -1,0 +1,27 @@
+<nav class="nav">
+  <div class="nav-left">
+    <a class="nav-item" routerLink="/">
+      <img src="assets/images/opi_logo.png" alt=""/>
+    </a>
+  </div>
+
+
+  <!-- This "nav-toggle" hamburger menu is only visible on mobile -->
+  <!-- You need JavaScript to toggle the "is-active" class on "nav-menu" -->
+  <span class="nav-toggle" (click)="toggleCollapse()" [ngClass]="{'is-active': show}">
+    <span></span>
+    <span></span>
+    <span></span>
+  </span>
+
+  <!-- This "nav-menu" is hidden on mobile -->
+  <!-- Add the modifier "is-active" to display it on mobile -->
+  <div class="nav-right nav-menu" [ngClass]="{'is-active': show}">
+    <a *ngIf="!isLoggedIn" class="nav-item" routerLink="/login">Login</a>
+
+    <a *ngIf="isLoggedIn" class="nav-item" routerLink="/dashboard">Dashboard</a>
+    <a *ngIf="isLoggedIn" class="nav-item" routerLink="/create-a-survey">Create A Survey</a>
+    <a *ngIf="isLoggedIn" class="nav-item" (click)="logout()">Logout</a>
+
+  </div>
+</nav>
