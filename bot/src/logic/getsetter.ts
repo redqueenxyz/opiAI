@@ -7,7 +7,7 @@ import * as admin from 'firebase-admin'
 export const db = admin.firestore()
 
 
-/// Users
+/// Users -------------------------------------------------------------
 export const users = db.collection("users")
 
 /**
@@ -31,7 +31,7 @@ export async function metUser(userID: string) {
  */
 export async function saveUser(userID: string) {
     console.log(`Saving ${userID} in the Database...`);
-    db.collection("users")
+    return users
         .doc(userID)
         .set({
             metUser: true
@@ -57,10 +57,39 @@ export async function getUser(userID: string) {
         })
 };
 
-/// Surveys
+/// Surveys -------------------------------------------------------------
 export const surveys = db.collection("surveys")
 
-/** Gets the users current Survey
+export async function getAvailableSurveys(userID: string) {
+    console.log(`Checking if ${userID} has Available Surveys...`);
+    return users
+        .doc(userID)
+        .collection("availableSurveys")
+        .where("completed", "==", false)
+        .where("current", "==", false)
+        .get()
+        .then(query => {
+
+            let availableSurveys: object[] = []
+            let availableSurveyIDs: string[] = []
+
+            query.forEach(element => {
+                availableSurveys.push(element.data())
+                availableSurveyIDs.push(element.id)
+            })
+
+            console.log(`Retrieved ${availableSurveyIDs} for ${userID}!`)
+
+            // return an Object holding the Available Surveys and IDs
+            return { availableSurveys, availableSurveyIDs }
+        })
+        .catch(error => {
+            console.log(`Error checking if ${userID} has Available Surveys!`, error);
+        })
+};
+
+
+/** Gets a survey from Firestore
  * @param {string} userID - Facebook user ID
  */
 export async function getSurvey(surveyID: string) {
@@ -78,7 +107,7 @@ export async function getSurvey(surveyID: string) {
         })
 };
 
-/** Gets the users current Survey
+/** Gets the users current Survey Question
  * @param {string} userID - Facebook user ID
  */
 export async function getSurveyQuestion(surveyID: string, questionNumber: number) {
@@ -95,6 +124,7 @@ export async function getSurveyQuestion(surveyID: string, questionNumber: number
             console.log(`Error retrieving Question ${questionNumber} from Survey ${surveyID}`);
         })
 };
+
 /** Gets the users current Survey
  * @param {string} userID - Facebook user ID
  */
@@ -142,60 +172,92 @@ export async function completeSurvey(userID: string, surveyID: string) {
         })
 };
 
-export async function getAvailableSurveys(userID: string) {
-    console.log(`Checking if ${userID} has Available Surveys...`);
-    return users
-        .doc(userID)
-        .collection("availableSurveys")
-        .where("completed", "==", false)
-        .where("current", "==", false)
-        .get()
-        .then(query => {
 
-            let availableSurveys: object[] = []
-            let availableSurveyIDs: string[] = []
-
-            query.forEach(element => {
-                availableSurveys.push(element.data())
-                availableSurveyIDs.push(element.id)
-            })
-
-            console.log(`Retrieved ${availableSurveyIDs} for ${userID}!`)
-
-            // return an Object holding the Available Surveys and IDs
-            return { availableSurveys, availableSurveyIDs }
-        })
-        .catch(error => {
-            console.log(`Error checking if ${userID} has Available Surveys!`, error);
-        })
-};
-
-/// Responses
+/// Responses -------------------------------------------------------------
 export const responses = db.collection("responses")
 
-/** Completes the users current Survey
- * @param {string} userID - Facebook user ID
+export async function getResponses(surveyID: string) {
+    console.log(`Retrieving all responses to ${surveyID}...`);
+
+    return surveys
+        .doc(surveyID)
+        .get()
+        .then(async snapshot => {
+            let finalQuestion: Number = snapshot.data().questions.length - 1
+            let allAnswers: object[] = []
+
+            for (var question = 0; question < finalQuestion; question++) {
+                let response = await getResponse(surveyID, question)
+                allAnswers.push(response)
+            }
+
+            console.log(`Retrieved all ${surveyID} Responses: ${JSON.stringify(allAnswers)}`)
+            return allAnswers
+        })
+        .catch(error => {
+            console.error(`Error retrieving ${surveyID} answers to question ${questionID}: ${error}`)
+        })
+}
+
+getResponses("survey_0")
+
+/**
+ * 
+ * @param surveyID 
+ * @param questionNumber 
+ */
+export async function getResponse(surveyID: string, questionNumber: Number) {
+    console.log(`Retrieving users who responded to question ${questionNumber} on ${surveyID}...`);
+
+    const questionID: string = String(questionNumber)
+
+    return responses
+        .doc(surveyID)
+        .collection("questionAnswered")
+        .doc(questionID)
+        .collection("respondents")
+        .get()
+        .then(snapshot => {
+            let answers: object[] = []
+
+            snapshot.forEach(doc => {
+                answers.push({ userID: doc.id, answer: doc.data().answer })
+            });
+
+            console.log(`Retrieved ${surveyID} answers to question ${questionID}: ${JSON.stringify(answers)}`)
+            return answers
+        })
+        .catch(error => {
+            console.error(`Error retrieving ${surveyID} answers to question ${questionID}: ${error}`)
+        })
+}
+
+
+/**
+ * 
+ * @param userID 
+ * @param surveyID 
+ * @param questionNumber 
+ * @param answer 
  */
 export async function saveResponse(userID: string, surveyID: string, questionNumber: number, answer: string) {
     const questionID: string = String(questionNumber)
+
     console.log(`Saving ${userID}'s response "${answer}" to ${questionID} on ${surveyID}...`)
 
-
-    // TODO: (feat): Save questions next to answers?
-
-    responses
+    return responses
         .doc(surveyID)
-        .collection("users")
-        .doc(userID)
-        .collection("questions")
+        .collection("questionAnswered")
         .doc(questionID)
+        .collection("respondents")
+        .doc(userID)
         .set({
-            answer
+            answer: answer
         })
         .then(ref => {
             console.log(`Saved ${userID}'s response to ${questionID} on ${surveyID}`)
         })
         .catch(err => {
-            console.log(`Error saving ${userID}'s response to ${questionID} on ${surveyID}: ${err}`)
+            console.error(`Error saving ${userID}'s response to ${questionID} on ${surveyID}: ${err}`)
         })
 };
