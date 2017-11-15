@@ -140,6 +140,14 @@ export async function surveyLooper(userID: string) {
 }
 
 /** Sends a user a given survey question */
+/**
+ * 
+ * 
+ * @export
+ * @param {string} userID 
+ * @param {string} surveyID 
+ * @param {number} currentQuestion 
+ */
 export async function surveySender(userID: string, surveyID: string, currentQuestion: number) {
 
   let { currentSurvey, currentSurveyID } = await getCurrentSurvey(userID);
@@ -152,14 +160,14 @@ export async function surveySender(userID: string, surveyID: string, currentQues
   sendMessage(userID, question);
 };
 
-/** Saves Answers in Firebase, and increment user State */
+
 export async function surveySaver(userID: string, questionNumber: number, answer: string) {
   // Get current Survey
   let { currentSurvey, currentSurveyID } = await getCurrentSurvey(userID);
 
   // Log
   console.log(`Receieved ${userID}'s response ${answer} to ${questionNumber} on ${currentSurveyID}...`)
-  saveResponse(userID, currentSurveyID, questionNumber, answer)
+  return saveResponse(userID, currentSurveyID, questionNumber, answer)
     .then(() => {
       console.log(`Increment ${userID} Question state from ${questionNumber} to ${questionNumber + 1} on ${currentSurveyID}`)
 
