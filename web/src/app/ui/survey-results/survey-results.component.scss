@@ -1,3 +1,11 @@
+.stats {
+    background: #cdcdcd;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 2em;
+}
+
+
 .question {
     background-color: #4c3f5e;
     transition: background-color 0.3s ease;
@@ -56,10 +64,15 @@
         font-size: 20px;
     }
 
+    table, th, td {
+        text-align: center !important;
+        border: aliceblue solid 1px !important;
+    }
+
     .qr {
         width: 80%;
         margin: auto;
-        background: #3f3f41;
+        background: #acacac;
         padding: 10px 0px;
         margin-bottom: 10px;
         border-radius: 4px;
@@ -92,20 +105,20 @@
     width: 100%;
     height: 100%;
     background: rgba(79,81,82, 0.65);
-    color: white;
+    color: #464646;
     overflow-y: scroll;
 }
 
 .modal-main {
     width: 50%;
     margin: auto;
-    background: #6d6969;
+    background: #dadada;
     padding: 30px;
     border-radius: 5px;
     margin-top: 7%;
 
     * {
-        color: white;
+        color: 464646;
     }
 
     .button {
