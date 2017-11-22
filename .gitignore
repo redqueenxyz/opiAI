@@ -4,6 +4,16 @@
 logo/
 
 ## NodeJS
+# Firebase
+.firebaserc
+firebase.json
+.template
+.vscode
+.env
+env
+config
+.config
+
 # Logs
 logs
 *.log
@@ -93,3 +103,4 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+.icloud
