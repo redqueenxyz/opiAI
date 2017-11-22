@@ -30,11 +30,11 @@ bot.post('/webhook/', (req: express.Request, res: express.Response) => {
     reciever(req, res)
         .then(() => {
             console.log(`Successfully POSTed to Webhook`);
-            res.sendStatus(200)
+            // res.sendStatus(200)
         })
         .catch(err => {
             console.log(`Error POSTing to Webhook`, err.stack);
-            res.sendStatus(500)
+            // res.sendStatus(500)
         })
 })
 
