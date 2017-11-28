@@ -14,12 +14,12 @@ import reciever from './logic/reciever'
 const bot = express();
 
 // getting ===========================================================
-bot.get('/*', (req: express.Request, res: express.Response) => {
+bot.get('/alive', (req: express.Request, res: express.Response) => {
     console.log(`Opi alive at ${req.url}!`)
     res.sendStatus(200)
 })
 
-bot.get('/webhook/', (req: express.Request, res: express.Response) => {
+bot.get('/webhook', (req: express.Request, res: express.Response) => {
     auther(req, res)
         .catch(err => {
             console.error(`Error GETing from ${req.path}: ${err.stack}`);
@@ -28,7 +28,7 @@ bot.get('/webhook/', (req: express.Request, res: express.Response) => {
 })
 
 // posting ===========================================================
-bot.post('/webhook/', (req: express.Request, res: express.Response) => {
+bot.post('/webhook', (req: express.Request, res: express.Response) => {
     reciever(req, res)
         .then(() => {
             console.log(`Successfully POSTed to ${req.path}`);
