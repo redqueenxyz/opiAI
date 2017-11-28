@@ -15,13 +15,14 @@ const bot = express();
 
 // getting ===========================================================
 bot.get('/', (req: express.Request, res: express.Response) => {
-    res.send("Hello, I\'m Opi!")
+    res.status(200).send("Hello, I\'m Opi!")
 })
 
 bot.get('/webhook/', (req: express.Request, res: express.Response) => {
     auther(req, res)
         .catch(err => {
             console.error(`Error GETing from Webhook: ${err.stack}`);
+            res.status(500).send(":C")
         })
 })
 
@@ -30,11 +31,11 @@ bot.post('/webhook/', (req: express.Request, res: express.Response) => {
     reciever(req, res)
         .then(() => {
             console.log(`Successfully POSTed to Webhook`);
-            // res.sendStatus(200)
+            res.sendStatus(200)
         })
         .catch(err => {
             console.log(`Error POSTing to Webhook`, err.stack);
-            // res.sendStatus(500)
+            res.sendStatus(500)
         })
 })
 

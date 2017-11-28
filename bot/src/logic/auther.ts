@@ -5,7 +5,7 @@ export default async function auther(req: facebook.Request, res: facebook.Respon
     if (
         req.query['hub.mode'] === 'subscribe' &&
         req.query['hub.verify_token'] === process.env.FACEBOOK_VERIFY_TOKEN) {
-        res.status(200).send(req.query['hub.challenge']);
+        res.write(200).send(req.query['hub.challenge']);
         console.log(`Webhook validated!`);
     } else {
         console.log(`Failed validation. Make sure the validation tokens match.`);
