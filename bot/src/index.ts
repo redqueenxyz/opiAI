@@ -1,6 +1,5 @@
-// bot IO
+// bot I/O
 
-// import './maker';
 import './env';
 
 export * from './bot'
