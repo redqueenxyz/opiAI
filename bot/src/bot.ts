@@ -14,22 +14,21 @@ import reciever from './logic/reciever'
 const bot = express();
 
 // getting ===========================================================
-bot.get('*', (req: express.Request, res: express.Response) => {
-    req.url = `/${req.url}` // Prepend the slash
+bot.get('/*', (req: express.Request, res: express.Response) => {
+    console.log(`Opi alive at ${req.url}!`)
     res.sendStatus(200)
-    return bot(req, res)
 })
 
-bot.get('webhook/', (req: express.Request, res: express.Response) => {
+bot.get('/webhook/', (req: express.Request, res: express.Response) => {
     auther(req, res)
         .catch(err => {
             console.error(`Error GETing from Webhook: ${err.stack}`);
-            res.write(500)
+            res.sendStatus(500)
         })
 })
 
 // posting ===========================================================
-bot.post('webhook/', (req: express.Request, res: express.Response) => {
+bot.post('/webhook/', (req: express.Request, res: express.Response) => {
     reciever(req, res)
         .then(() => {
             console.log(`Successfully POSTed to Webhook`);
@@ -42,8 +41,6 @@ bot.post('webhook/', (req: express.Request, res: express.Response) => {
 })
 
 
-// notifying ==========================================================
-console.log(`Opi alive!`)
 
 // exporting ==========================================================
 export let opiAI = functions.https.onRequest(bot)

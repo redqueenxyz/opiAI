@@ -10,7 +10,7 @@ import { whichUser, surveyAssigner, surveySaver } from './asker'
 import { sendMessage, sendTextMessage } from './sender'
 
 // Recieving Messages 
-export default async function reciever(req: facebook.Request, res: facebook.Response) {
+export default async function reciever(req: express.Request, res: express.Response) {
   console.log('...Object recieved: ', data)
 
   // Encapsulate
