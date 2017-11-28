@@ -22,7 +22,7 @@ bot.get('/*', (req: express.Request, res: express.Response) => {
 bot.get('/webhook/', (req: express.Request, res: express.Response) => {
     auther(req, res)
         .catch(err => {
-            console.error(`Error GETing from Webhook: ${err.stack}`);
+            console.error(`Error GETing from ${req.path}: ${err.stack}`);
             res.sendStatus(500)
         })
 })
@@ -31,11 +31,11 @@ bot.get('/webhook/', (req: express.Request, res: express.Response) => {
 bot.post('/webhook/', (req: express.Request, res: express.Response) => {
     reciever(req, res)
         .then(() => {
-            console.log(`Successfully POSTed to Webhook`);
+            console.log(`Successfully POSTed to ${req.path}`);
             res.sendStatus(200)
         })
         .catch(err => {
-            console.log(`Error POSTing to Webhook`, err.stack);
+            console.error(`Error POSTing to ${req.path}`, err.stack);
             res.sendStatus(500)
         })
 })
