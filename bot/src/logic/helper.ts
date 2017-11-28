@@ -1,11 +1,10 @@
+/// Helper Functions
 
 // Package Dependencies
 import * as admin from 'firebase-admin'
 import * as functions from 'firebase-functions'
 import * as facebook from 'fbgraph'
 import * as express from 'express'
-
-/// Helper Functions
 
 /**
  * Looks up user data from Facebook on user creation
@@ -32,34 +31,37 @@ export let userUpdater = functions.firestore
     })
 
 
+export let interestFinder = functions.https
+    .onRequest((req: express.Request, res: express.Response) => {
 
 
-// export let reachEstimate = functions.https
-//     .onRequest((req: express.Request, res: express.Response) => {
-//         // const genderID: number = req.query.genders || 0
-//         const category: string = req.query.category || undefined
-//         const query: string = req.query.query || undefined
+        // Standard Targeting Spec
+        const gender: Number = req.query.gender || 0 // (0 = all (default), = male, 2 = female)
+        const age_min: Number = req.query.age_min || 13 // (>= 13)
+        const age_max: Number = req.query.age_max || 65 // (=< 65)
 
-//         console.log(`Looking up ${query} in ${category}`)
-//         // genders [0 = all (default), = male, 2 = female]
-//         // age_min (>= 13)
-//         // age_max (=< 65)
-//         // category (adcountry, adeducationschool, adeducationmajor, adlocale, adworkemployer, adkeyword, adzipcode, adgeolocation, audienceinterest)
-//         // keyword
 
-//         console.log(`search?type=${category}&q=${query}`)
+        // TODO: Fancy targeting works and yields results. Now incorporate the age_min, age_max, and gender to get reach estimates
 
-//         facebook
-//             .setVersion("2.10")
-//             .setAccessToken(process.env.FACEBOOK_PAGE_TOKEN)
-//             .get(`search?type=${category}&q=${query}`,
-//             (response: express.Response, error: express.Error) => {
-//                 try {
-//                     // TODO: https://developers.facebook.com/tools/explorer/1881894932060023?method=GET&path=search%3Ftype%3Dadgeolocation%26q%3Dcanada&version=v2.9
-//                     console.log(response)
-//                     res.sendStatus(200)
-//                 } catch (error) {
-//                     console.log(`Error estimating Reach: ${error}`)
-//                 }
-//             })
-//     })
+
+        // Fancy Targeting Spec
+        const type: String = req.query.category || undefined // (adcountry, adeducationschool, adeducationmajor, adlocale, adworkemployer, adkeyword, adzipcode, adgeolocation, audienceinterest)
+        const query: String = req.query.query || undefined // (keyword)
+
+        // TODO: Working: adgeolocation, audienceinterest
+
+        console.log(`Attempting to lookup ${query} for ${type}.`)
+
+        return facebook
+            .setVersion("2.9")
+            .setAccessToken(process.env.FACEBOOK_PAGE_TOKEN)
+            .get(`/search?type=${type}&q=${query}`, (error: express.Error, response: express.Response) => {
+                try {
+                    console.log(`Retrieved data from Facebook! ${JSON.stringify(response.data)}`)
+                    res.status(200).send(response.data)
+                } catch (error) {
+                    console.log(`Error retrieving data from Facebook! ${error.stack}`)
+                    res.sendStatus(503)
+                }
+            })
+    })
