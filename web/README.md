@@ -13,16 +13,16 @@ Productize Opi with:
 * General design face lift and optimization.
 
 ### Scope
-• Re-Implement Firebase Auth service in React.
-• Dashboard with each “Survey” (project) the user has created.
-• A form with the ability to create a survey with multiple questions with multiple
+* Re-Implement Firebase Auth service in React.
+* Dashboard with each “Survey” (project) the user has created.
+* A form with the ability to create a survey with multiple questions with multiple
 choices each.
-• Data integration with Facebook / Backend API when configuring the Facebook
+* Data integration with Facebook / Backend API when configuring the Facebook
 Ad / Targeted User Segment.
-• Stripe integration for purchasing survey ad-spend.
-• Real-time dashboard that shows results of an active / completed survey with per-
+* Stripe integration for purchasing survey ad-spend.
+* Real-time dashboard that shows results of an active / completed survey with per-
 question analytics and charts.
-• Light design facelift.
+* Light design facelift.
 
 ### Stack
 ```javascript
