@@ -1,5 +1,5 @@
 # opiAI
-## web/
+## `web/`
 
 [![](Opi.png)](https://m.me/opiAI)
 
