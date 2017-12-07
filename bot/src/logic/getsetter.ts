@@ -7,15 +7,15 @@ import * as admin from 'firebase-admin'
 export const db = admin.firestore()
 
 
-/// Users -------------------------------------------------------------
-export const users = db.collection("users")
+/// Respondents -------------------------------------------------------
+export const respondents = db.collection("respondents")
 
 /**
  * @param {string} userID - Facebook User Id
  */
 export async function metUser(userID: string) {
     console.log(`Checking if ${userID} exists in Database...`);
-    return users
+    return respondents
         .doc(userID)
         .get()
         .then(snapshot => {
@@ -26,12 +26,12 @@ export async function metUser(userID: string) {
         })
 };
 
-/** Saves new users in Database
+/** Saves new respondents in Database
  * @param {string} userID - Facebook user ID
  */
-export async function saveUser(userID: string) {
+export async function saveRespondent(userID: string) {
     console.log(`Saving ${userID} in the Database...`);
-    return users
+    return respondents
         .doc(userID)
         .set({
             metUser: true
@@ -44,9 +44,9 @@ export async function saveUser(userID: string) {
         })
 };
 
-export async function getUser(userID: string) {
+export async function getRespondent(userID: string) {
     console.log(`Getting ${userID} from the Database...`);
-    users
+    respondents
         .doc(userID)
         .get()
         .then(snapshot => {
@@ -62,7 +62,7 @@ export const surveys = db.collection("surveys")
 
 export async function getAvailableSurveys(userID: string) {
     console.log(`Checking if ${userID} has Available Surveys...`);
-    return users
+    return respondents
         .doc(userID)
         .collection("availableSurveys")
         .where("completed", "==", false)
@@ -107,7 +107,7 @@ export async function getSurvey(surveyID: string) {
         })
 };
 
-/** Gets the users current Survey Question
+/** Gets the respondents current Survey Question
  * @param {string} userID - Facebook user ID
  */
 export async function getSurveyQuestion(surveyID: string, questionNumber: number) {
@@ -125,12 +125,12 @@ export async function getSurveyQuestion(surveyID: string, questionNumber: number
         })
 };
 
-/** Gets the users current Survey
+/** Gets the respondents current Survey
  * @param {string} userID - Facebook user ID
  */
 export async function getCurrentSurvey(userID: string) {
     console.log(`Checking Current Survey for ${userID}`)
-    return users
+    return respondents
         .doc(userID)
         .collection("availableSurveys")
         .where("current", "==", true)
@@ -152,14 +152,14 @@ export async function getCurrentSurvey(userID: string) {
         })
 };
 
-/** Completes the users current Survey
+/** Completes the respondents current Survey
  * @param {string} userID - Facebook user ID
  * @param {string} surveyID - Survey ID
  */
 export async function completeSurvey(userID: string, surveyID: string) {
     console.log(`Updating ${userID}'s survey "${surveyID}" to "completed"...`);
 
-    users
+    respondents
         .doc(userID)
         .collection("availableSurveys")
         .doc(surveyID)
@@ -205,7 +205,7 @@ export async function getResponses(surveyID: string) {
  * @param questionNumber 
  */
 export async function getResponse(surveyID: string, questionNumber: Number) {
-    console.log(`Retrieving users who responded to question ${questionNumber} on ${surveyID}...`);
+    console.log(`Retrieving respondents who responded to question ${questionNumber} on ${surveyID}...`);
 
     const questionID: string = String(questionNumber)
 
