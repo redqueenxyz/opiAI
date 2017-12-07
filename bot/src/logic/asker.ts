@@ -1,11 +1,11 @@
-// Runs users through surveys
+// Runs respondents through surveys
 
 // Package Dependencies
 import { database } from 'firebase-admin'
 
 // Local Dependencies
 import { sendMessage, sendTextMessage } from './sender'
-import { users, metUser, saveUser } from './getsetter'
+import { respondents, metUser, saveUser } from './getsetter'
 import { surveys, getSurvey, getSurveyQuestion, getCurrentSurvey, completeSurvey, getAvailableSurveys, saveResponse } from './getsetter'
 
 /** Checking if the user exists in the database
@@ -47,7 +47,7 @@ export async function surveyAssigner(userID: string, surveyID: string, current: 
   const survey = await getSurvey(surveyID)
 
   // Assign Survey
-  return users
+  return respondents
     .doc(userID)
     .collection("availableSurveys")
     .doc(surveyID)
@@ -104,7 +104,7 @@ export async function surveyChecker(userID: string) {
   };
 }
 
-/** Loops users through their current survey until they are done */
+/** Loops respondents through their current survey until they are done */
 export async function surveyLooper(userID: string) {
   // Get the current Survey
   let { currentSurvey, currentSurveyID } = await getCurrentSurvey(userID);
@@ -172,7 +172,7 @@ export async function surveySaver(userID: string, questionNumber: number, answer
       console.log(`Increment ${userID} Question state from ${questionNumber} to ${questionNumber + 1} on ${currentSurveyID}`)
 
       // Increment Current Survey Question 
-      users
+      respondents
         .doc(userID)
         .collection("availableSurveys")
         .doc(currentSurveyID)
