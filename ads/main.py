@@ -10,10 +10,10 @@ from facebookads.adobjects.adpreview import AdPreview
 from facebookads.api import FacebookAdsApi
 
 # Access Details
-access_token = 'EAAKOoRO0eWgBAAlpsvZAgRTranYFHcSM15wR2tGbx85WDt99aRcpYiGPbB5ArukvOEB243UJGZAjdEra6IYkQc93sJTn5MlG1JAX6LRuVV1IwofZBZCXLCARHsNOWZC5uoVIzhac9yGQ8RcDvHPVdjbLuCR9Cnri7DoUtkjISdE1wmS6G0xhJNXBS1Mz0BarghfhYFQSQRJreUzz3jRFp'
-ad_account_id = '100902987128430'
-app_secret = '037ac938ebc7e353d0bba9ede237260b'
-page_id = '1913093955635714'
+access_token = ''
+ad_account_id = ''
+app_secret = ''
+page_id = ''
 FacebookAdsApi.init(access_token=access_token)
 
 
