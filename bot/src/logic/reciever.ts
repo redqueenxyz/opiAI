@@ -50,10 +50,6 @@ export default async function reciever(req: express.Request, res: express.Respon
           // If it has a message component, run recievedMessage()
           console.log('...Message Recieved: ', { event });
 
-          // Message parameters
-          let messageId: string = message.mid;
-          let messageText: string = message.text;
-
           // Lol
           let emojis = [
             '😀', '😂', '😇', '😍', '😘',
