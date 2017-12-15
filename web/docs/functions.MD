@@ -31,12 +31,21 @@ export let interestFinder = functions.https
         const type: String = req.query.category || undefined // (adcountry, adeducationschool, adeducationmajor, adlocale, adworkemployer, adkeyword, adzipcode, adgeolocation, audienceinterest)
         const query: String = req.query.query || undefined // (keyword)
 
+<<<<<<< Updated upstream
         // TODO: Working: adgeolocation, audienceinterest
 
         console.log(`Attempting to lookup ${query} for ${type}.`)
 
         return facebook
             .setVersion("2.9")
+=======
+
+        // TODO: https://developers.facebook.com/tools/explorer/1881894932060023?method=GET&path=search%3Ftype%3Dadgeolocation%26q%3Dcanada&version=v2.9
+
+        console.log(`Looking up ${keyword} in ${category}`)
+        return facebook
+            .setVersion("2.11")
+>>>>>>> Stashed changes
             .setAccessToken(process.env.FACEBOOK_PAGE_TOKEN)
             .get(`/search?type=${type}&q=${query}`, (error: express.Error, response: express.Response) => {
                 try {
@@ -48,4 +57,8 @@ export let interestFinder = functions.https
                 }
             })
     })
+<<<<<<< Updated upstream
 ```
+=======
+```
+>>>>>>> Stashed changes
