@@ -11,7 +11,7 @@ import { sendMessage, sendTextMessage } from './sender'
 
 // Recieving Messages 
 export default async function reciever(req: express.Request, res: express.Response) {
-  console.log('...Object recieved: ', data)
+  console.log(`...Request recieved: ${req}`)
 
   // Encapsulate
   const data = req.body;
@@ -22,42 +22,33 @@ export default async function reciever(req: express.Request, res: express.Respon
     // Iterate over each event in the object
     data.entry.forEach(entry => {
       entry.messaging.forEach(event => {
-        // Event parameters
-        const userID: string = event.sender.id;
-        const recipientID: string = event.recipient.id;
-        const timeOfPostback: Date = event.timestamp;
+        console.log(`Recieved Event: ${event}. Parsing...`)
 
-        // Potentially Undefined
-        const message: string = (event.message || false);
-        const messagePostback: string = (event.postback ? event.postback.payload : false);
-        const messagePayload: string = (message.quick_reply ? message.quick_reply.payload : false); // if a is true ? assign b, else var is false
+        console.log(JSON.stringify(event))
+        // Event parameters
+        const eventID: string = event.id;
+        const userID: string = event.sender.id;
+        const timestamp: Date = event.timestamp;
+        const botID: string = event.recipient.id;
+
+        // Message parameters
+        const message: object = event.message ? event.message.text : undefined
+        const messagePostback: string = event.postback ? event.postback.paylod : undefined
+        const messagePayload: number = event.message.quickly_reply ? parseInt(event.message.quick_reply.payload) : undefined
 
         if (messagePostback) {
           console.log('...Postback Recieved: ', { event });
-
-          // Grab the postback
-          const postbackText: string = event.postback.payload;
-
           // Assign them their survey
-          surveyAssigner(userID, postbackText);
+          surveyAssigner(userID, messagePostback);
 
         } else if (messagePayload) {
           console.log('...Payload Recieved: ', { event });
-
           // Grab the payload 
-          const messagePayload = parseInt(message.quick_reply.payload)
-          let messageText = message.text;
-
-          // Save their answer
           surveySaver(userID, messagePayload, messageText);
 
-        } else if (message && !message.postback && !message.payload) {
+        } else if (message && !messagePostback && !messagePayload) {
           // If it has a message component, run recievedMessage()
           console.log('...Message Recieved: ', { event });
-
-          // Message parameters
-          let messageId = message.mid;
-          let messageText = message.text;
 
           // Lol
           let emojis = [
@@ -68,8 +59,8 @@ export default async function reciever(req: express.Request, res: express.Respon
           ];
 
           const randomNumber = Math.floor(emojis.length * Math.random());
-
           sendTextMessage(userID, emojis[randomNumber]);
+
         } else {
           console.log('...Unknown Object Recieved:', { event });
         }

@@ -13,13 +13,13 @@ export const respondents = db.collection("respondents")
 /**
  * @param {string} userID - Facebook User Id
  */
-export async function metUser(userID: string) {
+export async function metRespondent(userID: string) {
     console.log(`Checking if ${userID} exists in Database...`);
     return respondents
         .doc(userID)
         .get()
         .then(snapshot => {
-            return snapshot.exists
+            return snapshot.exists ? snapshot.exists : false;
         })
         .catch(error => {
             console.log(`Error checking if ${userID} in Database`);
@@ -34,7 +34,7 @@ export async function saveRespondent(userID: string) {
     return respondents
         .doc(userID)
         .set({
-            metUser: true
+            metRespondent: true
         })
         .then(ref => {
             console.log(`Saved ${userID}!`);

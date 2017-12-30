@@ -5,7 +5,7 @@ import { database } from 'firebase-admin'
 
 // Local Dependencies
 import { sendMessage, sendTextMessage } from './sender'
-import { respondents, metUser, saveUser } from './getsetter'
+import { respondents, metRespondent, saveRespondent } from './getsetter'
 import { surveys, getSurvey, getSurveyQuestion, getCurrentSurvey, completeSurvey, getAvailableSurveys, saveResponse } from './getsetter'
 
 /** Checking if the user exists in the database
@@ -13,14 +13,13 @@ import { surveys, getSurvey, getSurveyQuestion, getCurrentSurvey, completeSurvey
  */
 export async function whichUser(userID: string) {
   console.log(`Checking if we\'ve met ${userID} before...`)
-  const hasMetUser: boolean = await metUser(userID)
 
-  if (hasMetUser) {
+  if (metRespondent(userID)) {
     console.log(`Met ${userID} before!`)
     surveyChecker(userID);
   } else {
     console.log(`Have not met ${userID} before!`)
-    saveUser(userID)
+    saveRespondent(userID)
       .then(() => {
         console.log(`Assigning ${userID} the Starter Survey: survey_0...`)
         surveyAssigner(userID, 'survey_0', true)
