@@ -24,7 +24,6 @@ export default async function reciever(req: express.Request, res: express.Respon
       entry.messaging.forEach(event => {
         console.log(`Recieved Event: ${event}. Parsing...`)
 
-        console.log(JSON.stringify(event))
         // Event parameters
         const eventID: string = event.id;
         const userID: string = event.sender.id;

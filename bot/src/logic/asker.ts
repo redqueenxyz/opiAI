@@ -159,9 +159,12 @@ export async function surveySender(userID: string, surveyID: string, currentQues
 };
 
 
-export async function surveySaver(userID: string, questionNumber: number, answer: string) {
+export async function surveySaver(userID: string, questionID: number, answer: string) {
   // Get current Survey
   let { currentSurvey, currentSurveyID } = await getCurrentSurvey(userID);
+
+  // Swap ID to number
+  let questionNumber = parseInt(questionID)
 
   // Log
   console.log(`Receieved ${userID}'s response ${answer} to ${questionNumber} on ${currentSurveyID}...`)
