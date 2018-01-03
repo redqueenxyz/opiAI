@@ -14,7 +14,9 @@ import { surveys, getSurvey, getSurveyQuestion, getCurrentSurvey, completeSurvey
 export async function whichUser(userID: string) {
   console.log(`Checking if we\'ve met ${userID} before...`)
 
-  if (metRespondent(userID)) {
+  const hasMetRespondent : boolean = await metRespondent(userID)
+
+  if (hasMetRespondent) {
     console.log(`Met ${userID} before!`)
     surveyChecker(userID);
   } else {
@@ -26,9 +28,6 @@ export async function whichUser(userID: string) {
           .then(() => {
             console.log(`Sending ${userID} the Starter Survey..`)
             surveyChecker(userID)
-              .then(() => {
-                console.log(`Error sending  Starter Survey to ${userID}`)
-              })
           })
       });
   }
@@ -116,7 +115,7 @@ export async function surveyLooper(userID: string) {
 
   if (!completedCurrentSurvey) {
     // This means the survey was assigned as active, but not started (usually survey_0)
-    console.log(`${userID} has not yet completed Current Survey "${currentSurveyID}"`)
+    console.log(`${userID} hasn't completed Current Survey "${currentSurveyID}"`)
 
     // Get current Survey State
     const currentQuestion = currentSurvey.currentQuestion
@@ -160,12 +159,16 @@ export async function surveySender(userID: string, surveyID: string, currentQues
 };
 
 
-export async function surveySaver(userID: string, questionNumber: number, answer: string) {
+export async function surveySaver(userID: string, questionID: string, answer: string) {
   // Get current Survey
   let { currentSurvey, currentSurveyID } = await getCurrentSurvey(userID);
 
+  // Convert
+  let questionNumber = parseInt(questionID)
+
   // Log
   console.log(`Receieved ${userID}'s response ${answer} to ${questionNumber} on ${currentSurveyID}...`)
+
   return saveResponse(userID, currentSurveyID, questionNumber, answer)
     .then(() => {
       console.log(`Increment ${userID} Question state from ${questionNumber} to ${questionNumber + 1} on ${currentSurveyID}`)

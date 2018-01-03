@@ -24,7 +24,6 @@ export default async function reciever(req: express.Request, res: express.Respon
       entry.messaging.forEach(event => {
         console.log(`Recieved Event: ${event}. Parsing...`)
 
-        console.log(JSON.stringify(event))
         // Event parameters
         const eventID: string = event.id;
         const userID: string = event.sender.id;
@@ -32,10 +31,10 @@ export default async function reciever(req: express.Request, res: express.Respon
         const botID: string = event.recipient.id;
 
         // Message parameters
-        const message: object = event.message ? event.message.text : undefined
-        const messagePostback: string = event.postback ? event.postback.paylod : undefined
-        const messagePayload: number = event.message.quickly_reply ? parseInt(event.message.quick_reply.payload) : undefined
-
+        const messageText: string = event.message ? event.message.text : undefined
+        const messagePostback: string = event.postback ? event.postback.payload : undefined
+        const messagePayload: string = event.message.quick_reply ? event.message.quick_reply.payload : undefined
+          
         if (messagePostback) {
           console.log('...Postback Recieved: ', { event });
           // Assign them their survey
@@ -43,10 +42,11 @@ export default async function reciever(req: express.Request, res: express.Respon
 
         } else if (messagePayload) {
           console.log('...Payload Recieved: ', { event });
-          // Grab the payload 
+
+          // Grab the payload; swap to Int
           surveySaver(userID, messagePayload, messageText);
 
-        } else if (message && !messagePostback && !messagePayload) {
+        } else if (!messagePostback && !messagePayload) {
           // If it has a message component, run recievedMessage()
           console.log('...Message Recieved: ', { event });
 

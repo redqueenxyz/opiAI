@@ -14,71 +14,102 @@ export let userUpdater = functions.firestore
     .document(`respondents/{userID}`)
     .onCreate(event => {
         const userID: string = event.params.userID
-        const userEntry: object = event.data.data();
+        const userEntry: object = event.data.data()
 
         console.log(`Retrieving User Data from Facebook for ${userID}`)
 
         return facebook
             .setVersion("2.10")
             .setAccessToken(process.env.FACEBOOK_PAGE_TOKEN)
-            .get(`${userID}`, (err: express.Error, res: express.Response) => {
-                try {
-                    console.log(`Retrieved this response from Facebook ${userID}: ${res}`)
-                    return event.data.ref.update(res);
-                } catch (err) {
-                    console.log(`Error updating User Data for ${userID}: ${err.stack}`)
-                }
+            .get(`${userID}`, (error, response) => {
+                    if (error) {
+                        console.log(`Error updating user data for ${userID} : ${JSON.stringify(error)}`)
+                        return response.sendStatus(500)
+                    } else {
+                        console.log(`Retrieved user response from Facebook ${userID}: ${response}`)
+                        return event.data.ref.update(response);
+                    }
             })
     })
 
 
+/** 
+ * Saves the Facebook Targeting Spec from Survey step 2
+ *
+ */
+export let adMaker = functions.firestore
+.document(`surveys/{surveyID}`)
+.onUpdate(event => {
+
+    //TODO: 
+    // 1) When a survey is created or update, grab its targeting information 
+    // 2) Save that targeting spec https://developers.facebook.com/docs/marketing-api/buying-api/targeting, using "keys" for adgeolocation and "FBID" from interestLookup()
+    // 3) 
+        // Standard
+        // const gender: number = req.query.genders || 0  // genders [0 = all (default), = male, 2 = female]
+        // const minAge: number = req.query.minAge || 13  // age_min (>= 13)
+        // const maxAge: number = req.query.maxAge || 65  // age_max (=< 65)
+
+})
+
 
 /**
- * Queries the Facebook Ad API for matching interests
+ * Queries the Facebook Ad API via Adgeolocation Search
+ * https://developers.facebook.com/docs/marketing-api/targeting-search
  */
-export let interestLookup = functions.https
+export let locationLookup = functions.https
     .onRequest((req: express.Request, res: express.Response) => {
 
+        const query: string = req.query.query || undefined
 
-        // Standard
-        const gender: number = req.query.genders || 0  // genders [0 = all (default), = male, 2 = female]
-        const minAge: number = req.query.minAge || 13  // age_min (>= 13)
-        const maxAge: number = req.query.maxAge || 65  // age_max (=< 65)
-
-        // Fancy
-        // (adcountry, adeducationschool, adeducationmajor, adlocale, adworkemployer, adkeyword, adzipcode, adgeolocation, audienceinterest)
-        const category: string = req.query.category || undefined
-        const keyword: string = req.query.keyword || undefined
-
-
-        // TODO: https://developers.facebook.com/tools/explorer/1881894932060023?method=GET&path=search%3Ftype%3Dadgeolocation%26q%3Dcanada&version=v2.9
-
-        console.log(`Looking up ${keyword} in ${category}`)
+        console.log(`Finding locations matching "${query}"...`)
         return facebook
             .setVersion("2.11")
+            .setOptions({
+                timeout:  3000
+              , pool:     { maxSockets:  Infinity }
+              , headers:  { connection:  "keep-alive" } })
             .setAccessToken(process.env.FACEBOOK_PAGE_TOKEN)
-            .get(`search?type=${category}&q=${query}`,
-            //             (response: express.Response, error: express.Error) => {
-            //                 try {
-            //                     // TODO: https://developers.facebook.com/tools/explorer/1881894932060023?method=GET&path=search%3Ftype%3Dadgeolocation%26q%3Dcanada&version=v2.9
-            //                     console.log(response)
-            //                     res.sendStatus(200)
-            //                 } catch (error) {
-            //                     console.log(`Error estimating Reach: ${error}`)
-            //                 }
-            //             })
+            .get(`search?q=${query}&type=adgeolocation` , (error, response) => {
+                    if (error) {
+                        console.log(`Error retrieving location results for "${query}" : ${JSON.stringify(error)}`)
+                        return res.sendStatus(500)
+                    } else {
+                        console.log(`Retrieved location results for "${query}" : ${response.data}`)
+                        return res.status(200).send(response.data) 
+                    }
+            })
+    })
 
-            q: keyword,
-            type: category
-            }, (response: express.Response, error: express.Error) => {
-        try {
-            console.log(response)
-            console.log(`Looked up ${keyword} in ${category}! ${response.data}`)
-            res.sendStatus(200)
-        } catch (error) {
-            console.log(error)
-            console.log(`Failed to look up ${keyword} in ${category}`)
-            res.sendStatus(500)
-        }
+
+/**
+ * Queries the Facebook Ad API via Detailed Targeting Search
+ * https://developers.facebook.com/docs/marketing-api/targeting-search
+ */
+export let targetingLookup = functions.https
+    .onRequest((req: express.Request, res: express.Response) => {
+
+        // Detailed Targeting Search
+        //https://developers.facebook.com/docs/marketing-api/targeting-search
+        const category: string = req.query.category || undefined
+        const query: string = req.query.query || undefined
+
+        console.log(`Finding demographics, interests, or behaviours matching "${query}"...`)
+        return facebook
+            .setVersion("2.11")
+            .setOptions({
+                timeout:  3000
+              , pool:     { maxSockets:  Infinity }
+              , headers:  { connection:  "keep-alive" } })
+            .setAccessToken(process.env.FACEBOOK_AD_TOKEN)
+            .get(`act_464981260561886/targetingsearch?q=${query}`, (error, response) => {
+                    if (error) {
+                        console.log(`Error retrieving targeting results for "${query}" : ${JSON.stringify(error)}`)
+                        return res.sendStatus(500)
+                    } else {
+                        console.log(`Retrieved targeting results for "${query}" : ${response.data}`)
+                        return res.status(200).send(response.data) 
+                    }
+                })
     })
-    })
+            
