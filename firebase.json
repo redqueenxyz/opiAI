@@ -1,6 +1,6 @@
 {
   "functions": {
-    "source": "./bot/build"
+    "source": "bot"
   },
   "firestore": {
     "rules": "config/firestore.rules",
