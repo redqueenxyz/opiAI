@@ -24,10 +24,10 @@ export let userUpdater = functions.firestore
             .get(`${userID}`, (error, response) => {
                     if (error) {
                         console.log(`Error updating user data for ${userID} : ${JSON.stringify(error)}`)
-                        return res.sendStatus(500)
+                        return response.sendStatus(500)
                     } else {
-                        console.log(`Retrieved user response from Facebook ${userID}: ${res}`)
-                        return event.data.ref.update(res);
+                        console.log(`Retrieved user response from Facebook ${userID}: ${response}`)
+                        return event.data.ref.update(response);
                     }
             })
     })
