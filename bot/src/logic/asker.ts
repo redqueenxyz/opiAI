@@ -168,6 +168,7 @@ export async function surveySaver(userID: string, questionID: number, answer: st
 
   // Log
   console.log(`Receieved ${userID}'s response ${answer} to ${questionNumber} on ${currentSurveyID}...`)
+
   return saveResponse(userID, currentSurveyID, questionNumber, answer)
     .then(() => {
       console.log(`Increment ${userID} Question state from ${questionNumber} to ${questionNumber + 1} on ${currentSurveyID}`)
